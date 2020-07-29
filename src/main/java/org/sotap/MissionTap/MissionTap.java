@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MissionTap extends JavaPlugin {
-    public FileConfiguration constantMissions;
+    public FileConfiguration specialMissions;
     public FileConfiguration dailyMissions;
     public FileConfiguration weeklyMissions;
 
@@ -44,7 +44,7 @@ public final class MissionTap extends JavaPlugin {
     }
 
     public void reloadMissions() {
-        constantMissions = load("constant-missions.yml");
+        specialMissions = load("special-missions.yml");
         dailyMissions = load("daily-missions.yml");
         weeklyMissions = load("weekly-missions.yml");
     }
