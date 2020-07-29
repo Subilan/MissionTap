@@ -1,0 +1,21 @@
+name: MissionTap
+main: org.sotap.MissionTap.MissionTap
+version: "1.0"
+author: sotapmc
+api-version: "1.16"
+softdepend:
+  - PlaceholderAPI
+depend:
+  - Ageing
+
+commands:
+  missiontap:
+    aliases: ["mt"]
+    description: The main command of MissionTap.
+    permission: missiontap.command
+    permission-message: "You do not have the permission to use the command."
+    usage: /mt <options>
+permissions:
+  missiontap.*:
+    description: The super permission node for MissionTap.
+    default: op
