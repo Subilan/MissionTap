@@ -1,0 +1,4 @@
+# 每周任务刷新时间，范围 1~7，对应星期日~星期六
+weekly_refresh_time: 1
+# 每日任务刷新时间，范围 0~23，对应二十四小时
+daily_refresh_time: 14
