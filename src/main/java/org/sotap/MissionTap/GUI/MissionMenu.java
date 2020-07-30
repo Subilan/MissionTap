@@ -1,4 +1,4 @@
-package org.sotap.MissionTap;
+package org.sotap.MissionTap.GUI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,15 +16,18 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.sotap.MissionTap.G;
+import org.sotap.MissionTap.Mission;
+import org.sotap.MissionTap.MissionTap;
 import net.md_5.bungee.api.ChatColor;
 
-public final class GUI implements Listener {
+public final class MissionMenu implements Listener {
     private final Inventory inventory;
     private final String type;
     private final MissionTap plug;
     private List<Mission> inventoryContent;
 
-    public GUI(String type, MissionTap plug) {
+    public MissionMenu(String type, MissionTap plug) {
         this.type = type;
         this.plug = plug;
         inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Missions");
@@ -62,8 +65,11 @@ public final class GUI implements Listener {
         final ItemStack item = new ItemStack(mat);
         final ItemMeta meta = item.getItemMeta();
         final List<String> finalLore = new ArrayList<>();
+        finalLore.add("");
+        finalLore.add(G.translateColor("&c&lUnfinished"));
+        finalLore.add("");
         for (String text : lore) {
-            finalLore.add(G.translateColor(text));
+            finalLore.add(ChatColor.RESET + G.translateColor("&f" + text));
         }
         meta.setDisplayName(ChatColor.AQUA + name);
         meta.setLore(finalLore);
