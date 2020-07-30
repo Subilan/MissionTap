@@ -18,21 +18,28 @@ public final class CommandHandler implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("missiontap")) {
             Player senderPlayer = Bukkit.getPlayer(sender.getName());
+            if (args.length == 0) {
+                // default behaviour
+                plug.mainMenu.open(senderPlayer);
+                return true;
+            }
+
             switch (args[0]) {
                 case "daily": {
-                    plug.dailyMissionGUI.open(senderPlayer);
+                    plug.dailyMissionMenu.open(senderPlayer);
                     break;
                 }
 
                 case "weekly": {
-                    plug.weeklyMissionGUI.open(senderPlayer);
+                    plug.weeklyMissionMenu.open(senderPlayer);
                     break;
                 }
 
                 default: {
-                    sender.sendMessage(G.translateColor(G.FAILED + "Invalid command"));
+                    sender.sendMessage(G.translateColor(G.FAILED + "Invalid argument"));
                 }
             }
+
             return true;
         }
         return false;
