@@ -43,8 +43,8 @@ public final class MissionTap extends JavaPlugin {
             generateRandomMissions("weekly");
         }
         updateMissions();
-        //dailyMissionGUI = new GUI("daily", this);
-        //weeklyMissionGUI = new GUI("weekly", this);
+        dailyMissionGUI = new GUI("daily", this);
+        weeklyMissionGUI = new GUI("weekly", this);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         //@SuppressWarnings("unused")
         //BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
@@ -82,7 +82,7 @@ public final class MissionTap extends JavaPlugin {
         List<String> keys = new ArrayList<String>(dailyMissions.getKeys(false));
         Map<String,Object> results = new HashMap<String,Object>();
         String randomKey;
-        while (results.size() < 2) {
+        while (results.size() < (type == "daily" ? 2 : 4)) {
             randomKey = keys.get(gen.nextInt(keys.size()));
             if (results.containsKey(randomKey)) continue;
             results.put(randomKey, missions.get(randomKey));
@@ -96,7 +96,7 @@ public final class MissionTap extends JavaPlugin {
         try {
             dailyMissions.save(new File(getDataFolder(), "daily-missions.yml"));
             weeklyMissions.save(new File(getDataFolder(), "weekly-missions.yml"));
-            specialMissions.save(new File(getDataFolder(), "speicial-missions.yml"));
+            specialMissions.save(new File(getDataFolder(), "special-missions.yml"));
             latestMissions.save(new File(getDataFolder(), "latest-missions.yml"));
         } catch (IOException e) {
             e.printStackTrace();
