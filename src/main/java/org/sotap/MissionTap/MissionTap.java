@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,11 +34,20 @@ public final class MissionTap extends JavaPlugin {
         this.dailyMissions = load("daily-missions.yml");
         this.weeklyMissions = load("weekly-missions.yml");
         this.latestMissions = load("latest-missions.yml");
+        if (latestMissions.getConfigurationSection("daily") == null) {
+            log(G.translateColor(G.INFO + "No &edaily&r missions were found, trying to regenerate them..."));
+            generateRandomMissions("daily");
+        }
+        if (latestMissions.getConfigurationSection("weekly") == null) {
+            log(G.translateColor(G.INFO + "No &eweekly&r missions were found, trying to regenerate them..."));
+            generateRandomMissions("weekly");
+        }
         updateMissions();
         dailyMissionGUI = new GUI("daily", this);
         weeklyMissionGUI = new GUI("weekly", this);
-        @SuppressWarnings("unused")
-        BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
+        Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
+        //@SuppressWarnings("unused")
+        //BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
         log(G.translateColor(G.SUCCESS + "The plugin has been &aenabled&r."));
     }
 
@@ -73,6 +83,7 @@ public final class MissionTap extends JavaPlugin {
         } else {
             missions = weeklyMissions.getValues(true);
         }
+        if (missions.size() == 0) return;
         List<String> keys = new ArrayList<String>(missions.keySet());
         Map<String,Object> results = new HashMap<String,Object>();
         String randomKey;
