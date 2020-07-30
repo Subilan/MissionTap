@@ -1,5 +1,6 @@
 package org.sotap.MissionTap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import net.md_5.bungee.api.ChatColor;
 
 public final class GUI implements Listener {
     private final Inventory inventory;
@@ -59,8 +61,12 @@ public final class GUI implements Listener {
     private ItemStack g(final Material mat, final String name, final String... lore) {
         final ItemStack item = new ItemStack(mat);
         final ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(name);
-        meta.setLore(Arrays.asList(lore));
+        final List<String> finalLore = new ArrayList<>();
+        for (String text : lore) {
+            finalLore.add(G.translateColor(text));
+        }
+        meta.setDisplayName(ChatColor.AQUA + name);
+        meta.setLore(finalLore);
         item.setItemMeta(meta);
         return item;
     }
