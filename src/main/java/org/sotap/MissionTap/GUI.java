@@ -74,6 +74,7 @@ public final class GUI implements Listener {
         e.setCancelled(true);
         if (e.getInventory() != inventory) return;
         final ItemStack clicked = e.getCurrentItem();
+        if (clicked == null) return;
         if (clicked.getType() != Material.BOOK) return;
         final Player p = (Player) e.getWhoClicked();
         final Integer slot = e.getSlot();
