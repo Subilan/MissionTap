@@ -1,6 +1,9 @@
 package org.sotap.MissionTap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,6 +20,7 @@ public final class GUI implements Listener {
     private final Inventory inventory;
     private final String type;
     private final MissionTap plug;
+    private List<Mission> inventoryContent;
 
     public GUI(String type, MissionTap plug) {
         this.type = type;
@@ -26,7 +30,21 @@ public final class GUI implements Listener {
     }
 
     private void init() {
-        // inventory.add(g(...))
+        Map<String,Object> missions = plug.load("latest-missions.yml").getConfigurationSection(type).getValues(true);
+        // next value: daily -> 10, 12; weekly -> 10, 12, 14, 16; 
+        int index = type == "daily" ? 10 : 8;
+        for (Object item : missions.values()) {
+            index += 2;
+            Mission m = new Mission(item);
+            inventory.setItem(index, g(Material.BOOK, m.name, m.description.toArray(new String[0])));
+            m.setPosition(index);
+            inventoryContent.set(index, m);
+        }
+    }
+
+    public void reloadGUI() {
+        inventory.clear();
+        init();
     }
 
     private ItemStack g(final Material mat, final String name, final String... lore) {
@@ -44,12 +62,14 @@ public final class GUI implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getInventory() != inventory) return;
         e.setCancelled(true);
+        if (e.getInventory() != inventory) return;
         final ItemStack clicked = e.getCurrentItem();
-        if (clicked == null || clicked.getType() == Material.AIR) return;
+        if (clicked.getType() != Material.BOOK) return;
         final Player p = (Player) e.getWhoClicked();
-        // ...
+        final Integer slot = e.getSlot();
+        final Mission mission = inventoryContent.get(slot);
+        // 玩家接受任务后
     }
 
     @EventHandler
