@@ -19,6 +19,8 @@ public final class MissionTap extends JavaPlugin {
     public FileConfiguration dailyMissions;
     public FileConfiguration weeklyMissions;
     public FileConfiguration latestMissions;
+    public GUI dailyMissionGUI;
+    public GUI weeklyMissionGUI;
 
     public void log(String message) {
         getLogger().info(message);
@@ -32,6 +34,8 @@ public final class MissionTap extends JavaPlugin {
         this.weeklyMissions = load("weekly-missions.yml");
         this.latestMissions = load("latest-missions.yml");
         updateMissions();
+        dailyMissionGUI = new GUI("daily", this);
+        weeklyMissionGUI = new GUI("weekly", this);
         @SuppressWarnings("unused")
         BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
         log(G.translateColor(G.SUCCESS + "The plugin has been &aenabled&r."));
