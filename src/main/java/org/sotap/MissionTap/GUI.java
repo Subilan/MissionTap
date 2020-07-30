@@ -1,11 +1,11 @@
 package org.sotap.MissionTap;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,7 +31,12 @@ public final class GUI implements Listener {
     }
 
     private void init() {
-        Map<String,Object> missions = plug.load("latest-missions.yml").getConfigurationSection(type).getValues(true);
+        ConfigurationSection missionSection = plug.load("latest-missions.yml").getConfigurationSection(type);
+        if (missionSection == null) {
+            plug.log(G.translateColor(G.WARN + "No missions were found in latest-missions.yml, stopping the initialization of GUI."));
+            return;
+        }
+        Map<String,Object> missions = missionSection.getValues(true);
         // next value: daily -> 10, 12; weekly -> 10, 12, 14, 16; 
         int index = type == "daily" ? 10 : 8;
         for (Object item : missions.values()) {
@@ -70,6 +75,7 @@ public final class GUI implements Listener {
         final Player p = (Player) e.getWhoClicked();
         final Integer slot = e.getSlot();
         final Mission mission = inventoryContent.get(slot);
+        p.sendMessage("The mission you clicked is: " + slot);
         // 玩家接受任务后
     }
 
