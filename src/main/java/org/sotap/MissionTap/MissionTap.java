@@ -2,6 +2,13 @@ package org.sotap.MissionTap;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,6 +31,7 @@ public final class MissionTap extends JavaPlugin {
         this.dailyMissions = load("daily-missions.yml");
         this.weeklyMissions = load("weekly-missions.yml");
         this.latestMissions = load("latest-missions.yml");
+        updateMissions();
         BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
         log(G.translateColor(G.SUCCESS + "The plugin has been &aenabled&r."));
     }
@@ -49,8 +57,47 @@ public final class MissionTap extends JavaPlugin {
         return YamlConfiguration.loadConfiguration(file);
     }
 
-    /**
-     * TODO: Random map or other possible data format.
-     * Please make sure writing a expiration time at the beginning of the latest-missions.yml.
-     */
+    public void generateRandomMissions(String type) {
+        if (!List.of("daily", "weekly").contains(type)) {
+            return;
+        }
+        Random gen = new Random();
+        Map<String,Object> missions;
+        if (type == "daily") {
+            missions = dailyMissions.getValues(true);
+        } else {
+            missions = weeklyMissions.getValues(true);
+        }
+        List<String> keys = new ArrayList<String>(missions.keySet());
+        Map<String,Object> results = new HashMap<String,Object>();
+        String randomKey;
+        while (results.size() < 2) {
+            randomKey = keys.get(gen.nextInt(keys.size()));
+            if (results.containsKey(randomKey)) continue;
+            results.put(randomKey, missions.get(randomKey));
+        }
+        latestMissions.set(type, null);    
+        latestMissions.createSection(type, results);
+    }
+
+    public void updateMissions() {
+        if (getHourNow(new Date()) >= getConfig().getInt("weekly_refresh_time")) {
+            generateRandomMissions("daily");
+        }
+        if (getDayInWeekNow(new Date()) >= getConfig().getInt("daily_refresh_time")) {
+            generateRandomMissions("weekly");
+        }
+    }
+
+    private static int getHourNow(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        return c.get(Calendar.HOUR_OF_DAY);
+    }
+
+    private static int getDayInWeekNow(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        return c.get(Calendar.DAY_OF_WEEK);
+    }
 }
