@@ -14,14 +14,17 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.sotap.MissionTap.GUI.MainMenu;
+import org.sotap.MissionTap.GUI.MissionMenu;
 
 public final class MissionTap extends JavaPlugin {
     public FileConfiguration specialMissions;
     public FileConfiguration dailyMissions;
     public FileConfiguration weeklyMissions;
     public FileConfiguration latestMissions;
-    public GUI dailyMissionGUI;
-    public GUI weeklyMissionGUI;
+    public MissionMenu weeklyMissionMenu;
+    public MissionMenu dailyMissionMenu;
+    public MainMenu mainMenu;
 
     public void log(String message) {
         getLogger().info(message);
@@ -43,8 +46,9 @@ public final class MissionTap extends JavaPlugin {
             generateRandomMissions("weekly");
         }
         updateMissions();
-        dailyMissionGUI = new GUI("daily", this);
-        weeklyMissionGUI = new GUI("weekly", this);
+        dailyMissionMenu = new MissionMenu("daily", this);
+        weeklyMissionMenu = new MissionMenu("weekly", this);
+        mainMenu = new MainMenu(this);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         //@SuppressWarnings("unused")
         //BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
