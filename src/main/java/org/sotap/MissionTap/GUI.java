@@ -26,6 +26,7 @@ public final class GUI implements Listener {
         this.type = type;
         this.plug = plug;
         inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Missions");
+        Bukkit.getPluginManager().registerEvents(this, plug);
         init();
     }
 
