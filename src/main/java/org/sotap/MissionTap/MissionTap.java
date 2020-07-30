@@ -43,8 +43,8 @@ public final class MissionTap extends JavaPlugin {
             generateRandomMissions("weekly");
         }
         updateMissions();
-        dailyMissionGUI = new GUI("daily", this);
-        weeklyMissionGUI = new GUI("weekly", this);
+        //dailyMissionGUI = new GUI("daily", this);
+        //weeklyMissionGUI = new GUI("weekly", this);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         //@SuppressWarnings("unused")
         //BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
@@ -77,14 +77,9 @@ public final class MissionTap extends JavaPlugin {
             return;
         }
         Random gen = new Random();
-        Map<String,Object> missions;
-        if (type == "daily") {
-            missions = dailyMissions.getValues(true);
-        } else {
-            missions = weeklyMissions.getValues(true);
-        }
-        if (missions.size() == 0) return;
-        List<String> keys = new ArrayList<String>(missions.keySet());
+        if (dailyMissions == null || weeklyMissions == null) return;
+        FileConfiguration missions = type == "daily" ? dailyMissions : weeklyMissions;
+        List<String> keys = new ArrayList<String>(dailyMissions.getKeys(false));
         Map<String,Object> results = new HashMap<String,Object>();
         String randomKey;
         while (results.size() < 2) {
@@ -94,6 +89,18 @@ public final class MissionTap extends JavaPlugin {
         }
         latestMissions.set(type, null);    
         latestMissions.createSection(type, results);
+        saveMissions();
+    }
+
+    public void saveMissions() {
+        try {
+            dailyMissions.save(new File(getDataFolder(), "daily-missions.yml"));
+            weeklyMissions.save(new File(getDataFolder(), "weekly-missions.yml"));
+            specialMissions.save(new File(getDataFolder(), "speicial-missions.yml"));
+            latestMissions.save(new File(getDataFolder(), "latest-missions.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateMissions() {
