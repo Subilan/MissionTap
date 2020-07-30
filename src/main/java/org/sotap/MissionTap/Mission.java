@@ -20,4 +20,21 @@ public final class Mission {
     public void setPosition(Integer pos) {
         this.pos = pos;
     }
+    
+    // Purpose: beautify the codes to be more human-readable.
+    public ConfigurationSection getBlockbreak() {
+        return contents.getConfigurationSection("blockbreak");
+    }
+
+    public ConfigurationSection getBreeding() {
+        return contents.getConfigurationSection("breeding");
+    }
+
+    public ConfigurationSection getCollecting() {
+        return contents.getConfigurationSection("collecting");
+    }
+
+    public ConfigurationSection getTrading() {
+        return contents.getConfigurationSection("trading");
+    }
 }
