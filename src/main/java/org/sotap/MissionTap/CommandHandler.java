@@ -28,7 +28,12 @@ public final class CommandHandler implements CommandExecutor {
                     plug.weeklyMissionGUI.open(senderPlayer);
                     break;
                 }
+
+                default: {
+                    sender.sendMessage(G.translateColor(G.FAILED + "Invalid command"));
+                }
             }
+            return true;
         }
         return false;
     }
