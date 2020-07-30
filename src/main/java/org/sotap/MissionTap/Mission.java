@@ -7,6 +7,7 @@ public final class Mission {
     public String name;
     public List<String> description;
     public ConfigurationSection contents;
+    public Integer pos;
     private ConfigurationSection mission;
     
     public Mission(Object missionObject) {
@@ -14,5 +15,9 @@ public final class Mission {
         this.name = mission.getString("name");
         this.description = mission.getStringList("description");
         this.contents = mission.getConfigurationSection("contents");
+    }
+
+    public void setPosition(Integer pos) {
+        this.pos = pos;
     }
 }
