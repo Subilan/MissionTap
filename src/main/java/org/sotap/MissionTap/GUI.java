@@ -33,19 +33,22 @@ public final class GUI implements Listener {
     private void init() {
         ConfigurationSection missionSection = plug.load("latest-missions.yml").getConfigurationSection(type);
         if (missionSection == null) {
-            plug.log(G.translateColor(G.WARN + "No missions were found in latest-missions.yml, stopping the initialization of GUI."));
+            plug.log(G.translateColor(G.WARN + "No &e" + type + "&r missions were found in latest-missions.yml, stopping the initialization of GUI."));
             return;
         }
-        Map<String,Object> missions = missionSection.getValues(true);
+        Map<String,Object> missions = missionSection.getValues(false);
+        Mission[] inventorySlots = new Mission[27];
         // next value: daily -> 10, 12; weekly -> 10, 12, 14, 16; 
         int index = type == "daily" ? 10 : 8;
         for (Object item : missions.values()) {
             index += 2;
             Mission m = new Mission(item);
+            plug.log(m.name);
             inventory.setItem(index, g(Material.BOOK, m.name, m.description.toArray(new String[0])));
             m.setPosition(index);
-            inventoryContent.set(index, m);
+            inventorySlots[index] = m;
         }
+        inventoryContent = Arrays.asList(inventorySlots);
     }
 
     public void reloadGUI() {
