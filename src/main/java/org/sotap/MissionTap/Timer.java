@@ -11,6 +11,6 @@ public final class Timer extends BukkitRunnable {
 
     @Override
     public void run() {
-        plug.updateMissions();
+        plug.refreshMissions();
     }
 }
