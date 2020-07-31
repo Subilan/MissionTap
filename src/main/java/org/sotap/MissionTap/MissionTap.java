@@ -131,18 +131,4 @@ public final class MissionTap extends JavaPlugin {
             e.printStackTrace();
         }
     }
-
-    private static int getHourNow() {
-        Date date = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        return c.get(Calendar.HOUR_OF_DAY);
-    }
-
-    private static int getDayInWeekNow() {
-        Date date = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        return c.get(Calendar.DAY_OF_WEEK);
-    }
 }
