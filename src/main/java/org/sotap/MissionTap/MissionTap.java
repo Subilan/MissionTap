@@ -132,21 +132,6 @@ public final class MissionTap extends JavaPlugin {
         }
     }
 
-    public void updateMissions() {
-        if (getHourNow() >= getConfig().getInt("weekly_refresh_time")) {
-            log("hour: " + getHourNow());
-            log(G.translateColor(G.INFO + "It's time to refresh now! Regenerating the missions..."));
-            generateRandomMissions("daily");
-            log(G.translateColor(G.SUCCESS + "Successfully regenerated the missions."));
-        }
-        if (getDayInWeekNow() >= getConfig().getInt("daily_refresh_time")) {
-            log("day: " + getHourNow());
-            log(G.translateColor(G.INFO + "It's time to refresh now! Regenerating the missions..."));
-            generateRandomMissions("weekly");
-            log(G.translateColor(G.SUCCESS + "Successfully regenerated the missions."));
-        }
-    }
-
     private static int getHourNow() {
         Date date = new Date();
         Calendar c = Calendar.getInstance();
