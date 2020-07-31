@@ -41,6 +41,7 @@ public final class MissionTap extends JavaPlugin {
         this.weeklyMissions = load("weekly-missions.yml");
         this.latestMissions = load("latest-missions.yml");
         initMissions();
+        refreshMissions();
         dailyMissionMenu = new MissionMenu("daily", this);
         weeklyMissionMenu = new MissionMenu("weekly", this);
         mainMenu = new MainMenu(this);
@@ -81,6 +82,10 @@ public final class MissionTap extends JavaPlugin {
             log(G.translateColor(G.INFO + "No &eweekly&r missions were found, trying to regenerate them..."));
             generateRandomMissions("weekly");
         }
+
+    }
+
+    public void refreshMissions() {
         // refresh generation
         if (latestMissions.getLong("daily-next-regen") <= new Date().getTime()) {
             log(G.translateColor(G.INFO + "Regenerating &edaily&r missions..."));
