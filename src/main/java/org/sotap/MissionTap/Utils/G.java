@@ -1,4 +1,4 @@
-package org.sotap.MissionTap;
+package org.sotap.MissionTap.Utils;
 
 import org.bukkit.ChatColor;
 

@@ -16,7 +16,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.sotap.MissionTap.G;
+import org.sotap.MissionTap.Utils.G;
 import org.sotap.MissionTap.Mission;
 import org.sotap.MissionTap.MissionTap;
 import net.md_5.bungee.api.ChatColor;
