@@ -91,7 +91,7 @@ public final class MainMenu implements Listener {
         if (e.getInventory() != inventory) return;
         final ItemStack clicked = e.getCurrentItem();
         if (clicked == null) return;
-        if (clicked.getType() != Material.BOOK) return;
+        if (clicked.getType() == Material.AIR) return;
         final Player p = (Player) e.getWhoClicked();
         final Integer slot = e.getSlot();
         p.closeInventory();
