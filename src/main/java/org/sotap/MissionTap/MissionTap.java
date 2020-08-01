@@ -29,6 +29,7 @@ public final class MissionTap extends JavaPlugin {
     public MissionMenu weeklyMissionMenu;
     public MissionMenu dailyMissionMenu;
     public MainMenu mainMenu;
+    public Events events;
 
     public void log(String message) {
         getLogger().info(message);
@@ -46,6 +47,7 @@ public final class MissionTap extends JavaPlugin {
         dailyMissionMenu = new MissionMenu("daily", this);
         weeklyMissionMenu = new MissionMenu("weekly", this);
         mainMenu = new MainMenu(this);
+        events = new Events(this);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         // @SuppressWarnings("unused")
         // BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
@@ -63,7 +65,7 @@ public final class MissionTap extends JavaPlugin {
     }
 
     public FileConfiguration loadPlayer(UUID uuid) {
-        File file = loadFile(new File(getDataFolder().getPath() + "/playerdata"), uuid.toString());
+        File file = loadFile(new File(getDataFolder().getPath() + "/playerdata"), uuid.toString() + ".yml");
         return YamlConfiguration.loadConfiguration(file);
     }
 
