@@ -12,7 +12,6 @@ import java.util.Random;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.sotap.MissionTap.GUI.MainMenu;
@@ -60,13 +59,11 @@ public final class MissionTap extends JavaPlugin {
     }
 
     public FileConfiguration load(String name) {
-        File file = G.loadFile(getDataFolder(), name);
-        return YamlConfiguration.loadConfiguration(file);
+        return G.loadYaml(getDataFolder(), name);
     }
 
     public FileConfiguration loadPlayer(UUID uuid) {
-        File file = G.loadFile(new File(getDataFolder().getPath() + "/playerdata"), uuid.toString() + ".yml");
-        return YamlConfiguration.loadConfiguration(file);
+        return G.loadYaml(new File(getDataFolder().getPath() + "/playerdata"), uuid.toString() + ".yml");
     }
 
     public void initMissions() {
