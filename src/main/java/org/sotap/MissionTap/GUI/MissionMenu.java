@@ -36,20 +36,26 @@ public final class MissionMenu implements Listener {
     }
 
     private void init() {
-        ConfigurationSection missionSection = plug.load("latest-missions.yml").getConfigurationSection(type);
+        ConfigurationSection missionSection =
+                plug.load("latest-missions.yml").getConfigurationSection(type);
         if (missionSection == null) {
-            plug.log(G.translateColor(G.WARN + "No &e" + type + "&r missions were found in latest-missions.yml, stopping the initialization of GUI."));
+            plug.log(G.translateColor(G.WARN + "No &e" + type
+                    + "&r missions were found in latest-missions.yml, stopping the initialization of GUI."));
             return;
         }
-        Map<String,Object> missions = missionSection.getValues(false);
+        Map<String, Object> missionObjects = missionSection.getValues(false);
+        List<String> missionKeys = new ArrayList<>(missionObjects.keySet());
+        List<Object> missions = new ArrayList<>(missionObjects.values());
         Mission[] inventorySlots = new Mission[27];
-        // next value: daily -> 10, 12; weekly -> 10, 12, 14, 16; 
         int index = type == "daily" ? 10 : 8;
-        for (Object item : missions.values()) {
+        int regularIndex = 0;
+        for (; regularIndex < missions.size(); regularIndex++) {
+            // next value: daily -> 10, 12; weekly -> 10, 12, 14, 16;
             index += 2;
-            Mission m = new Mission(item);
+            Mission m = new Mission(missionKeys.get(regularIndex), missions.get(regularIndex));
             plug.log(m.name);
-            inventory.setItem(index, g(Material.BOOK, m.name, m.description.toArray(new String[0])));
+            inventory.setItem(index,
+                    g(Material.BOOK, m.name, m.description.toArray(new String[0])));
             m.setPosition(index);
             inventorySlots[index] = m;
         }
