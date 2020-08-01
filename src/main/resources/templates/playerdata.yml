@@ -1,17 +1,13 @@
+blockbreak:
+breeding:
+collecting:
+trading:
 daily:
   object1:
     name: Object Name
     acceptance-time: 000000000
     expiration-time: 000000000
     finished: false
-    progress:
-      collecting:
-        WHEAT: 0
-        FISH: 0
-      blockbreak:
-        STONE: 0
-        DIRT: 1
-      # ...
   object2:
     # ...
 weekly:
