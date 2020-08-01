@@ -17,7 +17,7 @@ public final class Acceptance {
 
     public Map<String,Object> getAcceptance() {
         Map<String,Object> acc = new HashMap<>();
-        FileConfiguration missions = G.loadYaml(G.cwd, "latest-missions.yml");
+        FileConfiguration missions = G.load("latest-missions.yml");
         Long nextUpdateTime = missions.getLong(proto.type + "-next-regen");
         acc.put("name", proto.name);
         acc.put("acceptance-time", new Date().getTime());

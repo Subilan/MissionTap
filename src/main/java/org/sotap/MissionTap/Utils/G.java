@@ -2,6 +2,7 @@ package org.sotap.MissionTap.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -23,7 +24,7 @@ public final class G {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static File loadFile(File path, String name) {
+    public static File getFile(File path, String name) {
         File folder = path == null ? new File(cwd) : path;
         File file = new File(folder, name);
         if (!folder.exists()) {
@@ -39,7 +40,15 @@ public final class G {
         return file;
     }
 
-    public static FileConfiguration loadYaml(String path, String name) {
-        return YamlConfiguration.loadConfiguration(loadFile(new File(path), name));
+    public static FileConfiguration getYaml(String path, String name) {
+        return YamlConfiguration.loadConfiguration(getFile(new File(path), name));
+    }
+
+    public static FileConfiguration load(String name) {
+        return getYaml(cwd, name);
+    }
+
+    public static FileConfiguration loadPlayer(UUID uuid) {
+        return getYaml(cwd + "/playerdata", uuid.toString() + ".yml");
     }
 }

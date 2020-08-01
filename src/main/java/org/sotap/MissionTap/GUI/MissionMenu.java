@@ -38,7 +38,7 @@ public final class MissionMenu implements Listener {
 
     private void init() {
         ConfigurationSection missionSection =
-                plug.load("latest-missions.yml").getConfigurationSection(type);
+                G.load("latest-missions.yml").getConfigurationSection(type);
         if (missionSection == null) {
             plug.log(G.translateColor(G.WARN + "No &e" + type
                     + "&r missions were found in latest-missions.yml, stopping the initialization of GUI."));
@@ -102,7 +102,7 @@ public final class MissionMenu implements Listener {
         final Integer slot = e.getSlot();
         final Acceptance acc = new Acceptance(inventoryContent.get(slot));
         ConfigurationSection playerMissionSection =
-                plug.loadPlayer(p.getUniqueId()).getConfigurationSection(type);
+                G.loadPlayer(p.getUniqueId()).getConfigurationSection(type);
         playerMissionSection.createSection(acc.key, acc.getAcceptance());
         p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission '&a" + acc.proto.name + "&r'!"));
     }

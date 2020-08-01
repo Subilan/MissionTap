@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,11 +35,11 @@ public final class MissionTap extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        G.cwd = getDataFolder().getPath();
-        this.specialMissions = load("special-missions.yml");
-        this.dailyMissions = load("daily-missions.yml");
-        this.weeklyMissions = load("weekly-missions.yml");
-        this.latestMissions = load("latest-missions.yml");
+        G.cwd = getDataFolderPath();
+        this.specialMissions = G.load("special-missions.yml");
+        this.dailyMissions = G.load("daily-missions.yml");
+        this.weeklyMissions = G.load("weekly-missions.yml");
+        this.latestMissions = G.load("latest-missions.yml");
         initMissions();
         refreshMissions();
         dailyMissionMenu = new MissionMenu("daily", this);
@@ -56,14 +55,6 @@ public final class MissionTap extends JavaPlugin {
     @Override
     public void onDisable() {
         log(G.translateColor(G.SUCCESS + "The plugin has been &cdisabled&r."));
-    }
-
-    public FileConfiguration load(String name) {
-        return G.loadYaml(getDataFolderPath(), name);
-    }
-
-    public FileConfiguration loadPlayer(UUID uuid) {
-        return G.loadYaml(getDataFolderPath() + "/playerdata", uuid.toString() + ".yml");
     }
 
     public String getDataFolderPath() {

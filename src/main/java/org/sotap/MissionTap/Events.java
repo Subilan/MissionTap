@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.sotap.MissionTap.Utils.G;
 
 public final class Events implements Listener {
     public final MissionTap plug;
@@ -27,7 +28,7 @@ public final class Events implements Listener {
         Player p = e.getPlayer();
         UUID u = p.getUniqueId();
         if (!p.hasPlayedBefore() || !playerdataExists(u)) {
-            FileConfiguration playerdata = plug.loadPlayer(u);
+            FileConfiguration playerdata = G.loadPlayer(u);
             playerdata.set("daily", null);
             playerdata.set("weekly", null);
         }
