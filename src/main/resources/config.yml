@@ -2,3 +2,5 @@
 weekly_refresh_time: 1
 # 每日任务刷新时间，范围 0~23，对应二十四小时
 daily_refresh_time: 14
+# 是否需要玩家接受任务后才开始计算
+require_acceptance: false
