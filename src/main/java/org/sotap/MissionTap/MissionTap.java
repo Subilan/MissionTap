@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -56,9 +57,19 @@ public final class MissionTap extends JavaPlugin {
         log(G.translateColor(G.SUCCESS + "The plugin has been &cdisabled&r."));
     }
 
-    public FileConfiguration load(String filename) {
-        File folder = getDataFolder();
-        File file = new File(folder, filename);
+    public FileConfiguration load(String name) {
+        File file = loadFile(getDataFolder(), name);
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
+    public FileConfiguration loadPlayer(UUID uuid) {
+        File file = loadFile(new File(getDataFolder().getPath() + "/playerdata"), uuid.toString());
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
+    private File loadFile(File path, String name) {
+        File folder = path;
+        File file = new File(folder, name);
         if (!folder.exists()) {
             folder.mkdir();
         }
@@ -69,7 +80,7 @@ public final class MissionTap extends JavaPlugin {
                 e.printStackTrace();
             }
         }
-        return YamlConfiguration.loadConfiguration(file);
+        return file;
     }
 
     public void initMissions() {
