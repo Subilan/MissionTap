@@ -51,7 +51,7 @@ public final class MissionMenu implements Listener {
         int index = type == "daily" ? 10 : 8;
         int regularIndex = 0;
         for (; regularIndex < missions.size(); regularIndex++) {
-            // next value: daily -> 10, 12; weekly -> 10, 12, 14, 16;
+            // next value: daily -> 12, 14; weekly -> 10, 12, 14, 16;
             index += 2;
             Mission m = new Mission(missionKeys.get(regularIndex), missions.get(regularIndex), type);
             plug.log(m.name);
@@ -100,11 +100,12 @@ public final class MissionMenu implements Listener {
             return;
         final Player p = (Player) e.getWhoClicked();
         final Integer slot = e.getSlot();
-        final Acceptance acc = new Acceptance(inventoryContent.get(slot));
+        final Mission mission = inventoryContent.get(slot);
+        final Acceptance acc = new Acceptance(mission.key, null, mission.type, mission.name);
         ConfigurationSection playerMissionSection =
                 G.loadPlayer(p.getUniqueId()).getConfigurationSection(type);
         playerMissionSection.createSection(acc.key, acc.getAcceptance());
-        p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission '&a" + acc.proto.name + "&r'!"));
+        p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission '&a" + acc.name + "&r'!"));
     }
 
     @EventHandler
