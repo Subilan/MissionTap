@@ -59,11 +59,15 @@ public final class MissionTap extends JavaPlugin {
     }
 
     public FileConfiguration load(String name) {
-        return G.loadYaml(getDataFolder(), name);
+        return G.loadYaml(getDataFolderPath(), name);
     }
 
     public FileConfiguration loadPlayer(UUID uuid) {
-        return G.loadYaml(new File(getDataFolder().getPath() + "/playerdata"), uuid.toString() + ".yml");
+        return G.loadYaml(getDataFolderPath() + "/playerdata", uuid.toString() + ".yml");
+    }
+
+    public String getDataFolderPath() {
+        return getDataFolder().getPath();
     }
 
     public void initMissions() {

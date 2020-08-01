@@ -39,7 +39,7 @@ public final class G {
         return file;
     }
 
-    public static FileConfiguration loadYaml(File path, String name) {
-        return YamlConfiguration.loadConfiguration(loadFile(path, name));
+    public static FileConfiguration loadYaml(String path, String name) {
+        return YamlConfiguration.loadConfiguration(loadFile(new File(path), name));
     }
 }
