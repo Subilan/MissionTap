@@ -46,8 +46,8 @@ public final class MissionTap extends JavaPlugin {
         weeklyMissionMenu = new MissionMenu("weekly", this);
         mainMenu = new MainMenu(this);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
-        //@SuppressWarnings("unused")
-        //BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
+        // @SuppressWarnings("unused")
+        // BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
         log(G.translateColor(G.SUCCESS + "The plugin has been &aenabled&r."));
     }
 
@@ -75,11 +75,13 @@ public final class MissionTap extends JavaPlugin {
     public void initMissions() {
         // initial generation
         if (latestMissions.getConfigurationSection("daily") == null) {
-            log(G.translateColor(G.INFO + "No &edaily&r missions were found, trying to regenerate them..."));
+            log(G.translateColor(
+                    G.INFO + "No &edaily&r missions were found, trying to regenerate them..."));
             generateRandomMissions("daily");
         }
         if (latestMissions.getConfigurationSection("weekly") == null) {
-            log(G.translateColor(G.INFO + "No &eweekly&r missions were found, trying to regenerate them..."));
+            log(G.translateColor(
+                    G.INFO + "No &eweekly&r missions were found, trying to regenerate them..."));
             generateRandomMissions("weekly");
         }
 
@@ -102,14 +104,16 @@ public final class MissionTap extends JavaPlugin {
             return;
         }
         Random gen = new Random();
-        if (dailyMissions == null || weeklyMissions == null) return;
+        if (dailyMissions == null || weeklyMissions == null)
+            return;
         FileConfiguration missions = type == "daily" ? dailyMissions : weeklyMissions;
-        List<String> keys = new ArrayList<String>(dailyMissions.getKeys(false));
-        Map<String,Object> results = new HashMap<String,Object>();
+        List<String> keys = new ArrayList<>(dailyMissions.getKeys(false));
+        Map<String, Object> results = new HashMap<>();
         String randomKey;
         while (results.size() < (type == "daily" ? 2 : 4)) {
             randomKey = keys.get(gen.nextInt(keys.size()));
-            if (results.containsKey(randomKey)) continue;
+            if (results.containsKey(randomKey))
+                continue;
             results.put(randomKey, missions.get(randomKey));
         }
         latestMissions.set(type, null);
@@ -117,13 +121,15 @@ public final class MissionTap extends JavaPlugin {
         Date date = new Date();
         latestMissions.set(type + "-last-regen", date.getTime());
         latestMissions.set(type + "-next-regen", getNextRegenerationTime(type).getTime());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        log(G.translateColor(G.SUCCESS + "Regeneration done. The next regeneration will be on &a" + sdf.format(getNextRegenerationTime(type)) + "&r."));
+        log(G.translateColor(G.SUCCESS + "Regeneration done. The next regeneration will be on &a"
+                + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(getNextRegenerationTime(type))
+                + "&r."));
         saveMissions();
     }
 
     public Date getNextRegenerationTime(String type) {
-        return type == "daily" ? C.getNextDailyRefresh(getConfig()) : C.getNextWeeklyRefresh(getConfig());
+        return type == "daily" ? C.getNextDailyRefresh(getConfig())
+                : C.getNextWeeklyRefresh(getConfig());
     }
 
     public void saveMissions() {
