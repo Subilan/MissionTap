@@ -83,8 +83,8 @@ public final class MissionMenu implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        e.setCancelled(true);
         if (e.getInventory() != inventory) return;
+        e.setCancelled(true);
         final ItemStack clicked = e.getCurrentItem();
         if (clicked == null) return;
         if (clicked.getType() != Material.BOOK) return;
