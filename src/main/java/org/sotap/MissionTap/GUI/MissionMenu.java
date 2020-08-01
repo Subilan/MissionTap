@@ -17,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.Utils.G;
+import org.sotap.MissionTap.Acceptance;
 import org.sotap.MissionTap.Mission;
 import org.sotap.MissionTap.MissionTap;
 import net.md_5.bungee.api.ChatColor;
@@ -52,7 +53,7 @@ public final class MissionMenu implements Listener {
         for (; regularIndex < missions.size(); regularIndex++) {
             // next value: daily -> 10, 12; weekly -> 10, 12, 14, 16;
             index += 2;
-            Mission m = new Mission(missionKeys.get(regularIndex), missions.get(regularIndex));
+            Mission m = new Mission(missionKeys.get(regularIndex), missions.get(regularIndex), type);
             plug.log(m.name);
             inventory.setItem(index,
                     g(Material.BOOK, m.name, m.description.toArray(new String[0])));
@@ -89,20 +90,26 @@ public final class MissionMenu implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getInventory() != inventory) return;
+        if (e.getInventory() != inventory)
+            return;
         e.setCancelled(true);
         final ItemStack clicked = e.getCurrentItem();
-        if (clicked == null) return;
-        if (clicked.getType() != Material.BOOK) return;
+        if (clicked == null)
+            return;
+        if (clicked.getType() != Material.BOOK)
+            return;
         final Player p = (Player) e.getWhoClicked();
         final Integer slot = e.getSlot();
-        final Mission mission = inventoryContent.get(slot);
-        p.sendMessage("The mission you clicked is: " + slot);
-        // 玩家接受任务后
+        final Acceptance acc = new Acceptance(inventoryContent.get(slot));
+        ConfigurationSection playerMissionSection =
+                plug.loadPlayer(p.getUniqueId()).getConfigurationSection(type);
+        playerMissionSection.createSection(acc.key, acc.getAcceptance());
+        p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission '&a" + acc.proto.name + "&r'!");
     }
 
     @EventHandler
     public void onInventoryClick(InventoryDragEvent e) {
-        if (e.getInventory() == inventory) e.setCancelled(true);
+        if (e.getInventory() == inventory)
+            e.setCancelled(true);
     }
 }
