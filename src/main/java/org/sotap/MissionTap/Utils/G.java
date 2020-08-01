@@ -1,5 +1,7 @@
 package org.sotap.MissionTap.Utils;
 
+import java.io.File;
+import java.io.IOException;
 import org.bukkit.ChatColor;
 
 public final class G {
@@ -16,5 +18,21 @@ public final class G {
      */
     public static String translateColor(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    public static File loadFile(File path, String name) {
+        File folder = path;
+        File file = new File(folder, name);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file;
     }
 }

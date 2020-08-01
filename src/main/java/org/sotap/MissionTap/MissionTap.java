@@ -60,29 +60,13 @@ public final class MissionTap extends JavaPlugin {
     }
 
     public FileConfiguration load(String name) {
-        File file = loadFile(getDataFolder(), name);
+        File file = G.loadFile(getDataFolder(), name);
         return YamlConfiguration.loadConfiguration(file);
     }
 
     public FileConfiguration loadPlayer(UUID uuid) {
-        File file = loadFile(new File(getDataFolder().getPath() + "/playerdata"), uuid.toString() + ".yml");
+        File file = G.loadFile(new File(getDataFolder().getPath() + "/playerdata"), uuid.toString() + ".yml");
         return YamlConfiguration.loadConfiguration(file);
-    }
-
-    private File loadFile(File path, String name) {
-        File folder = path;
-        File file = new File(folder, name);
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return file;
     }
 
     public void initMissions() {
