@@ -104,7 +104,7 @@ public final class MissionMenu implements Listener {
         ConfigurationSection playerMissionSection =
                 plug.loadPlayer(p.getUniqueId()).getConfigurationSection(type);
         playerMissionSection.createSection(acc.key, acc.getAcceptance());
-        p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission '&a" + acc.proto.name + "&r'!");
+        p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission '&a" + acc.proto.name + "&r'!"));
     }
 
     @EventHandler
