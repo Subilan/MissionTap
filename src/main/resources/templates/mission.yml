@@ -1,0 +1,17 @@
+mission1:
+  name: Mission Name
+  description:
+    - Line 1
+    - Line 2
+    - Line 3
+  contents:
+    blockbreak:
+      STONE: 20
+      DIRT: 50
+    breeding:
+      SHEEP: 2
+    collecting:
+      WHEAT: 20
+      APPLE: 50
+    trading: 999
+  # expires: inherit
