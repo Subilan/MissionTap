@@ -9,6 +9,7 @@ public final class G {
     public final static String WARN = "&r[&eWARN&r] ";
     public final static String FAILED = "&r[&cFAILED&r] ";
     public final static String INFO = "&r[&bINFO&r] ";
+    public static String cwd;
 
     /**
      * 调用 ChatColor 对 '&' 进行转义
@@ -21,7 +22,7 @@ public final class G {
     }
 
     public static File loadFile(File path, String name) {
-        File folder = path;
+        File folder = path == null ? new File(cwd) : path;
         File file = new File(folder, name);
         if (!folder.exists()) {
             folder.mkdir();
