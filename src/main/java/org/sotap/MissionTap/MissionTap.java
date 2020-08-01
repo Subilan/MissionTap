@@ -111,7 +111,7 @@ public final class MissionTap extends JavaPlugin {
         latestMissions.set(type + "-last-regen", date.getTime());
         latestMissions.set(type + "-next-regen", getNextRegenerationTime(type).getTime());
         log(G.translateColor(G.SUCCESS + "Regeneration done. The next regeneration will be on &a"
-                + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(getNextRegenerationTime(type))
+                + G.getDateFormat().format(getNextRegenerationTime(type))
                 + "&r."));
         saveMissions();
     }

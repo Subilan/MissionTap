@@ -2,6 +2,7 @@ package org.sotap.MissionTap.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -50,5 +51,9 @@ public final class G {
 
     public static FileConfiguration loadPlayer(UUID uuid) {
         return getYaml(cwd + "/playerdata", uuid.toString() + ".yml");
+    }
+
+    public static SimpleDateFormat getDateFormat() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 }
