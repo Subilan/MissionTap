@@ -6,19 +6,21 @@ import org.bukkit.configuration.ConfigurationSection;
 public final class Mission {
     public String key;
     public String name;
+    public String type;
     public List<String> description;
     public ConfigurationSection contents;
     public Integer pos;
     private ConfigurationSection mission;
     public Object missionObject;
     
-    public Mission(String key, Object missionObject) {
+    public Mission(String key, Object missionObject, String type) {
         this.mission = (ConfigurationSection) missionObject;
         this.missionObject = missionObject;
         this.name = mission.getString("name");
         this.description = mission.getStringList("description");
         this.contents = mission.getConfigurationSection("contents");
         this.key = key;
+        this.type = type;
     }
 
     public void setPosition(Integer pos) {
