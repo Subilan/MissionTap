@@ -1,10 +1,10 @@
 package org.sotap.MissionTap;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.sotap.MissionTap.Utils.G;
 
 public final class Acceptance {
@@ -18,7 +18,7 @@ public final class Acceptance {
 
     public Map<String,Object> getAcceptance() {
         Map<String,Object> acc = new HashMap<>();
-        FileConfiguration missions = YamlConfiguration.loadConfiguration(G.loadFile(null, "latest-missions.yml"));
+        FileConfiguration missions = G.loadYaml(new File(G.cwd), "latest-missions.yml");
         Long nextUpdateTime = missions.getLong(proto.type + "-next-regen");
         acc.put("name", proto.name);
         acc.put("acceptance-time", new Date().getTime());

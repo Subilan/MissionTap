@@ -3,6 +3,8 @@ package org.sotap.MissionTap.Utils;
 import java.io.File;
 import java.io.IOException;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public final class G {
     public final static String SUCCESS = "&r[&aSUCCESS&r] ";
@@ -35,5 +37,9 @@ public final class G {
             }
         }
         return file;
+    }
+
+    public static FileConfiguration loadYaml(File path, String name) {
+        return YamlConfiguration.loadConfiguration(loadFile(path, name));
     }
 }
