@@ -1,8 +1,8 @@
 daily:
   # mission format
-daily_last_refresh: 00000000
-daily_next_refresh: 00000000
+daily_last_regen: 00000000
+daily_next_regen: 00000000
 weekly:
   # mission format
-weekly_last_refresh: 00000000
-weekly_next_refresh: 00000000
+weekly_last_regen: 00000000
+weekly_next_regen: 00000000
