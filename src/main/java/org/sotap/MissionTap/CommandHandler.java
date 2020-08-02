@@ -35,6 +35,11 @@ public final class CommandHandler implements CommandExecutor {
                     break;
                 }
 
+                case "inprocess": {
+                    plug.inprogMenu.open(senderPlayer);
+                    break;
+                }
+
                 default: {
                     sender.sendMessage(G.translateColor(G.FAILED + "Invalid argument"));
                 }
