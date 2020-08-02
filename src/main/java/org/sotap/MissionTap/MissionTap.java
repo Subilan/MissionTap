@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.sotap.MissionTap.Events.GlobalEvents;
 import org.sotap.MissionTap.GUI.InprogressMenu;
 import org.sotap.MissionTap.GUI.MainMenu;
 import org.sotap.MissionTap.GUI.MissionMenu;
@@ -25,7 +26,7 @@ public final class MissionTap extends JavaPlugin {
     public MissionMenu dailyMissionMenu;
     public MainMenu mainMenu;
     public InprogressMenu inprogMenu;
-    public Events events;
+    public GlobalEvents events;
 
     public void log(String message) {
         getLogger().info(message);
@@ -45,7 +46,7 @@ public final class MissionTap extends JavaPlugin {
         weeklyMissionMenu = new MissionMenu("weekly", this);
         mainMenu = new MainMenu(this);
         inprogMenu = new InprogressMenu(this);
-        events = new Events(this);
+        events = new GlobalEvents(this);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         // @SuppressWarnings("unused")
         // BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);

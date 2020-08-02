@@ -1,4 +1,4 @@
-package org.sotap.MissionTap;
+package org.sotap.MissionTap.Events;
 
 import java.io.File;
 import java.util.UUID;
@@ -8,12 +8,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.G;
 
-public final class Events implements Listener {
+public final class GlobalEvents implements Listener {
     public final MissionTap plug;
 
-    public Events(MissionTap plug) {
+    public GlobalEvents(MissionTap plug) {
         this.plug = plug;
         Bukkit.getPluginManager().registerEvents(this, plug);
     }
