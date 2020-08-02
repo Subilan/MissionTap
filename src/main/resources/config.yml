@@ -6,3 +6,5 @@ daily_refresh_time: 14
 require_acceptance: false
 # 是否开启荒野乱斗任务模式
 brawl_stars_mode: false
+# 是否允许用户取消任务
+allow_cancelling: false

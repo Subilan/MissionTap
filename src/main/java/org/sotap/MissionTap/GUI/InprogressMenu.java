@@ -107,6 +107,11 @@ public final class InprogressMenu implements Listener {
         Acceptance currentAcc = accList.get(slot);
         // DELETE
         if (e.getClick() == ClickType.SHIFT_LEFT) {
+            if (!G.config.getBoolean("allow_cancelling")) {
+                p.closeInventory();
+                p.sendMessage(G.translateColor(G.WARN + "You &ccan't&r cancel the mission now."));
+                return;
+            }
             currentAcc.delete(p.getUniqueId());
             removeSlot(slot);
             p.closeInventory();
