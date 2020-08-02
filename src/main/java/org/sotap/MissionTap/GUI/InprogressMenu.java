@@ -3,7 +3,6 @@ package org.sotap.MissionTap.GUI;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +25,12 @@ import org.sotap.MissionTap.Utils.G;
 import net.md_5.bungee.api.ChatColor;
 
 public final class InprogressMenu implements Listener {
-    private MissionTap plug;
     private Inventory inventory;
     private List<Acceptance> accList;
-    private ItemStack[] inventoryContent;
 
     public InprogressMenu(MissionTap plug) {
-        this.plug = plug;
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
+        this.accList = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, plug);
     }
 
@@ -58,11 +55,10 @@ public final class InprogressMenu implements Listener {
         if (playerdata.getInt(type) == -1) return;
         Map<String,Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
         List<String> keys = new ArrayList<>(acceptanceMap.keySet());
-        Acceptance[] accArray = new Acceptance[27];
         ItemStack[] inventoryContent = new ItemStack[27];
         for (int i = 0; i < acceptanceMap.size(); i++) {
             Acceptance acc = new Acceptance(keys.get(i), playerdata, type, null);
-            accArray[i] = acc;
+            accList.add(acc);
             ItemStack item = g(
                 acc.finished ? Material.ENCHANTED_BOOK : Material.BOOK,
                 acc.name,
@@ -75,7 +71,6 @@ public final class InprogressMenu implements Listener {
             inventory.addItem(item);
             inventoryContent[i] = item;
         }
-        accList = Arrays.asList(accArray);
     }
 
     public void open(Player p) {
