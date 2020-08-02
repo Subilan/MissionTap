@@ -1,13 +1,13 @@
-blockbreak:
-breeding:
-collecting:
-trading:
 daily:
   object1:
     name: Object Name
     acceptance-time: 000000000
     expiration-time: 000000000
     finished: false
+    blockbreak-data:
+    collecting-data:
+    breeding-data:
+    trading-data:
   object2:
     # ...
 weekly:
