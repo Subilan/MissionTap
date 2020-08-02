@@ -3,6 +3,7 @@ package org.sotap.MissionTap;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.sotap.MissionTap.Utils.G;
@@ -39,5 +40,11 @@ public final class Acceptance {
         acc.put("expiration-time", nextUpdateTime);
         acc.put("finished", false);
         return acc;
+    }
+
+    public void delete(UUID u) {
+        FileConfiguration data = G.loadPlayer(u);
+        data.set(type + "." + key, null);
+        G.savePlayer(data, u);
     }
 }
