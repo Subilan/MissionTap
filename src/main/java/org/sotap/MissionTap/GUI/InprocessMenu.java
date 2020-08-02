@@ -83,6 +83,10 @@ public final class InprocessMenu implements Listener {
         } */
     }
 
+    public void open(Player p) {
+        p.openInventory(inventory);
+    }
+
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent e) {
         if (e.getInventory() != inventory) return;
