@@ -58,11 +58,12 @@ public final class InprogressMenu implements Listener {
 
     public void initInventory(String type, FileConfiguration playerdata) {
         if (!List.of("daily", "weekly").contains(type)) return;
+        if (playerdata.getInt(type) == -1) return;
         Map<String,Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
         List<String> keys = new ArrayList<>(acceptanceMap.keySet());
         // List<Object> objects = new ArrayList<>(acceptanceMap.values());
         // Acceptance[] arr = new Acceptance[27];
-        for (int i = -1; i < acceptanceMap.size(); i++) {
+        for (int i = 0; i < acceptanceMap.size(); i++) {
             Acceptance item = new Acceptance(keys.get(i), playerdata, type, null);
             // arr[i] = item;
             inventory.setItem(i, g(
