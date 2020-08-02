@@ -53,6 +53,22 @@ public final class G {
         return getYaml(cwd + "/playerdata", uuid.toString() + ".yml");
     }
 
+    public static void save(FileConfiguration config) {
+        try {
+            config.save(new File(cwd));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void savePlayer(FileConfiguration data, UUID uuid) {
+        try {
+            data.save(new File(cwd + "/playerdata/" + uuid.toString() + ".yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
