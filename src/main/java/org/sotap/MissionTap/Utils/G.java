@@ -14,6 +14,7 @@ public final class G {
     public final static String FAILED = "&r[&cFAILED&r] ";
     public final static String INFO = "&r[&bINFO&r] ";
     public static String cwd;
+    public static Boolean crawl;
 
     /**
      * 调用 ChatColor 对 '&' 进行转义

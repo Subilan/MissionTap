@@ -36,6 +36,7 @@ public final class MissionTap extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         G.cwd = getDataFolderPath();
+        G.crawl = getConfig().getBoolean("crawl_stars_mode");
         this.specialMissions = G.load("special-missions.yml");
         this.dailyMissions = G.load("daily-missions.yml");
         this.weeklyMissions = G.load("weekly-missions.yml");
