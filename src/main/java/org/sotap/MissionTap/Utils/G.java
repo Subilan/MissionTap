@@ -53,9 +53,9 @@ public final class G {
         return getYaml(cwd + "/playerdata", uuid.toString() + ".yml");
     }
 
-    public static void save(FileConfiguration config) {
+    public static void save(FileConfiguration config, String filename) {
         try {
-            config.save(new File(cwd));
+            config.save(new File(cwd + "/" + filename + ".yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
