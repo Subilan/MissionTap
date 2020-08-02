@@ -15,6 +15,7 @@ public final class G {
     public final static String INFO = "&r[&bINFO&r] ";
     public static String cwd;
     public static Boolean crawl;
+    public static FileConfiguration config;
 
     /**
      * 调用 ChatColor 对 '&' 进行转义

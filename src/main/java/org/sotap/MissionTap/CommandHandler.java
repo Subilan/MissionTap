@@ -40,6 +40,12 @@ public final class CommandHandler implements CommandExecutor {
                     break;
                 }
 
+                case "reload": {
+                    plug.reload();
+                    sender.sendMessage(G.translateColor(G.SUCCESS + "Successfully reloaded the configuration"));
+                    break;
+                }
+
                 default: {
                     sender.sendMessage(G.translateColor(G.FAILED + "Invalid argument"));
                 }

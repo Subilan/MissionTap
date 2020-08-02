@@ -37,6 +37,7 @@ public final class MissionTap extends JavaPlugin {
         saveDefaultConfig();
         G.cwd = getDataFolderPath();
         G.crawl = getConfig().getBoolean("crawl_stars_mode");
+        G.config = getConfig();
         this.specialMissions = G.load("special-missions.yml");
         this.dailyMissions = G.load("daily-missions.yml");
         this.weeklyMissions = G.load("weekly-missions.yml");
@@ -128,5 +129,10 @@ public final class MissionTap extends JavaPlugin {
         G.save(weeklyMissions, "weekly-missions");
         G.save(specialMissions, "special-missions");
         G.save(latestMissions, "latest-missions");
+    }
+
+    public void reload() {
+        G.crawl = getConfig().getBoolean("crawl_stars_mode");
+        G.config = getConfig();
     }
 }
