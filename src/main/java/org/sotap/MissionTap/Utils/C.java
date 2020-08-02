@@ -2,7 +2,6 @@ package org.sotap.MissionTap.Utils;
 
 import java.util.Calendar;
 import java.util.Date;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public final class C {
     public static Date getNextWeeklyRefresh() {
