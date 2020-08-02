@@ -71,8 +71,8 @@ public final class InprogressMenu implements Listener {
                 item.name,
                 item.finished,
                 new String[] {
-                    "&9Acceptance: " + G.getDateFormat().format(new Date(item.acceptanceTime)),
-                    "&9Expiration: " + G.getDateFormat().format(new Date(item.expirationTime)),
+                    "&fAcceptance: &a" + G.getDateFormat().format(new Date(item.acceptanceTime)),
+                    "&fExpiration: &c" + G.getDateFormat().format(new Date(item.expirationTime)),
                 }
             ));
         }

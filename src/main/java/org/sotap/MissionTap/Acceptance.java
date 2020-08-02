@@ -23,7 +23,7 @@ public final class Acceptance {
             this.acc = data.getConfigurationSection(type + "." + key);
             this.name = acc.getString("name");
             this.finished = acc.getBoolean("finished");
-            this.acceptanceTime = acc.getLong("accpetance-time");
+            this.acceptanceTime = acc.getLong("acceptance-time");
             this.expirationTime = acc.getLong("expiration-time");
         } else {
             this.name = name;
