@@ -26,8 +26,6 @@ import net.md_5.bungee.api.ChatColor;
 public final class InprogressMenu implements Listener {
     private MissionTap plug;
     private Inventory inventory;
-    // private List<Acceptance> dailyInprocess;
-    // private List<Acceptance> weeklyInprocess;
 
     public InprogressMenu(MissionTap plug) {
         this.plug = plug;
@@ -61,11 +59,8 @@ public final class InprogressMenu implements Listener {
         if (playerdata.getInt(type) == -1) return;
         Map<String,Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
         List<String> keys = new ArrayList<>(acceptanceMap.keySet());
-        // List<Object> objects = new ArrayList<>(acceptanceMap.values());
-        // Acceptance[] arr = new Acceptance[27];
         for (int i = 0; i < acceptanceMap.size(); i++) {
             Acceptance item = new Acceptance(keys.get(i), playerdata, type, null);
-            // arr[i] = item;
             inventory.addItem(g(
                 item.finished ? Material.ENCHANTED_BOOK : Material.BOOK,
                 item.name,
@@ -76,12 +71,6 @@ public final class InprogressMenu implements Listener {
                 }
             ));
         }
-        // List<Acceptance> result = Arrays.asList(arr);
-        /* if (type == "daily") {
-            dailyInprocess = result;
-        } else {
-            weeklyInprocess = result;
-        } */
     }
 
     public void open(Player p) {
