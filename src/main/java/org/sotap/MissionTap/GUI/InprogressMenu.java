@@ -3,7 +3,7 @@ package org.sotap.MissionTap.GUI;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import java.util.ArrayList;
-// import java.util.Arrays;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -26,16 +28,13 @@ import net.md_5.bungee.api.ChatColor;
 public final class InprogressMenu implements Listener {
     private MissionTap plug;
     private Inventory inventory;
+    private List<Acceptance> accList;
+    private ItemStack[] inventoryContent;
 
     public InprogressMenu(MissionTap plug) {
         this.plug = plug;
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
         Bukkit.getPluginManager().registerEvents(this, plug);
-        init();
-    }
-
-    public void init() {
-        
     }
 
     private ItemStack g(final Material mat, final String name, final boolean finished, final String... lore) {
@@ -59,22 +58,32 @@ public final class InprogressMenu implements Listener {
         if (playerdata.getInt(type) == -1) return;
         Map<String,Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
         List<String> keys = new ArrayList<>(acceptanceMap.keySet());
+        Acceptance[] accArray = new Acceptance[27];
+        ItemStack[] inventoryContent = new ItemStack[27];
         for (int i = 0; i < acceptanceMap.size(); i++) {
-            Acceptance item = new Acceptance(keys.get(i), playerdata, type, null);
-            inventory.addItem(g(
-                item.finished ? Material.ENCHANTED_BOOK : Material.BOOK,
-                item.name,
-                item.finished,
+            Acceptance acc = new Acceptance(keys.get(i), playerdata, type, null);
+            accArray[i] = acc;
+            ItemStack item = g(
+                acc.finished ? Material.ENCHANTED_BOOK : Material.BOOK,
+                acc.name,
+                acc.finished,
                 new String[] {
-                    "&fAcceptance: &a" + G.getDateFormat().format(new Date(item.acceptanceTime)),
-                    "&fExpiration: &c" + G.getDateFormat().format(new Date(item.expirationTime)),
+                    "&fAcceptance: &a" + G.getDateFormat().format(new Date(acc.acceptanceTime)),
+                    "&fExpiration: &c" + G.getDateFormat().format(new Date(acc.expirationTime)),
                 }
-            ));
+            );
+            inventory.addItem(item);
+            inventoryContent[i] = item;
         }
+        accList = Arrays.asList(accArray);
     }
 
     public void open(Player p) {
         p.openInventory(inventory);
+    }
+
+    private void removeSlot(Integer slot) {
+        inventory.setItem(slot, new ItemStack(Material.AIR));
     }
 
     @EventHandler
@@ -95,11 +104,46 @@ public final class InprogressMenu implements Listener {
     public void onInventoryClick(InventoryClickEvent e) {
         if (e.getInventory() != inventory) return;
         e.setCancelled(true);
+        ItemStack item = e.getCurrentItem();
+        if (item == null) return;
+        if (item.getType() != Material.BOOK && item.getType() != Material.ENCHANTED_BOOK) return;
+        Player p = (Player) e.getWhoClicked();
+        Integer slot = e.getSlot();
+        Acceptance currentAcc = accList.get(slot);
+        // DELETE
+        if (e.getClick() == ClickType.SHIFT_LEFT) {
+            currentAcc.delete(p.getUniqueId());
+            removeSlot(slot);
+            p.closeInventory();
+            p.sendMessage(G.translateColor(G.SUCCESS + "Successfully removed the mission from your current working-on list."));
+            return;
+        }
+        // SUBMIT
+        if (e.getClick() == ClickType.LEFT) {
+            if (currentAcc.finished) {
+                // reward code goes here...
+                currentAcc.delete(p.getUniqueId());
+                removeSlot(slot);
+                p.closeInventory();
+                p.sendMessage(G.translateColor(G.SUCCESS + "&eCongratulations!&r You've finished the mission &a" + currentAcc.name + "&r!"));
+            } else {
+                p.closeInventory();
+                p.sendMessage(G.translateColor(G.WARN + "You haven't finished the mission &c" + currentAcc.name + " &ryet!"));
+            }
+            return;
+        }
     }
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent e) {
         if (e.getInventory() != inventory) return;
         e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e) {
+        if (e.getInventory() != inventory) return;
+        inventory.clear();
+        accList = new ArrayList<>();
     }
 }
