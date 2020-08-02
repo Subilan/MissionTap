@@ -29,8 +29,9 @@ public final class Events implements Listener {
         UUID u = p.getUniqueId();
         if (!p.hasPlayedBefore() || !playerdataExists(u)) {
             FileConfiguration playerdata = G.loadPlayer(u);
-            playerdata.set("daily", null);
-            playerdata.set("weekly", null);
+            playerdata.set("daily", 0);
+            playerdata.set("weekly", 0);
+            G.savePlayer(playerdata, u);
         }
     }
 }
