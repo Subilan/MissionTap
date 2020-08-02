@@ -27,7 +27,7 @@ public final class MissionTap extends JavaPlugin {
     public MissionMenu weeklyMissionMenu;
     public MissionMenu dailyMissionMenu;
     public MainMenu mainMenu;
-    public InprogressMenu inprogHanMenu;
+    public InprogressMenu inprogMenu;
     public Events events;
 
     public void log(String message) {
