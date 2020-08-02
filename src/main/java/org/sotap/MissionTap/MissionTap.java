@@ -125,13 +125,9 @@ public final class MissionTap extends JavaPlugin {
     }
 
     public void saveMissions() {
-        try {
-            dailyMissions.save(new File(getDataFolder(), "daily-missions.yml"));
-            weeklyMissions.save(new File(getDataFolder(), "weekly-missions.yml"));
-            specialMissions.save(new File(getDataFolder(), "special-missions.yml"));
-            latestMissions.save(new File(getDataFolder(), "latest-missions.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        G.save(dailyMissions, "daily-missions");
+        G.save(weeklyMissions, "weekly-missions");
+        G.save(specialMissions, "special-missions");
+        G.save(latestMissions, "latest-missions");
     }
 }
