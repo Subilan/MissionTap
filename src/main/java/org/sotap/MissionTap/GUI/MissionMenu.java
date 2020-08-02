@@ -108,7 +108,7 @@ public final class MissionMenu implements Listener {
         if (playerdata.getInt(acc.type) == -1) {
             playerdata.set(acc.type, null);
         }
-        // if the already-existing accpetance is expired or the acceptance does not exist
+        // if the already-existing accpetance is expired
         if (playerdata.getLong(acc.type + "." + acc.key + ".expiration-time") <= new Date().getTime()) {
             playerdata.set(acc.type + "." + acc.key, null);
         } else {
@@ -118,7 +118,7 @@ public final class MissionMenu implements Listener {
         }
         playerdata.createSection(acc.type + "." + acc.key, acc.getAcceptance());
         G.savePlayer((FileConfiguration) playerdata, p.getUniqueId());
-        p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission '&a" + acc.name + "&r'!"));
+        p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission &a" + acc.name + "&r!"));
     }
 
     @EventHandler
