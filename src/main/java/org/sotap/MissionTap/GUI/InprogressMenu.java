@@ -23,13 +23,13 @@ import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.G;
 import net.md_5.bungee.api.ChatColor;
 
-public final class InprocessMenu implements Listener {
+public final class InprogressMenu implements Listener {
     private MissionTap plug;
     private Inventory inventory;
     // private List<Acceptance> dailyInprocess;
     // private List<Acceptance> weeklyInprocess;
 
-    public InprocessMenu(MissionTap plug) {
+    public InprogressMenu(MissionTap plug) {
         this.plug = plug;
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
         Bukkit.getPluginManager().registerEvents(this, plug);
