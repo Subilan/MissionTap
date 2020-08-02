@@ -2,6 +2,7 @@ package org.sotap.MissionTap.GUI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
@@ -106,6 +107,14 @@ public final class MissionMenu implements Listener {
         ConfigurationSection playerdata = G.loadPlayer(p.getUniqueId());
         if (playerdata.getInt(acc.type) == -1) {
             playerdata.set(acc.type, null);
+        }
+        // if the already-existing accpetance is expired or the acceptance does not exist
+        if (playerdata.getLong(acc.type + "." + acc.key + ".expiration-time") <= new Date().getTime()) {
+            playerdata.set(acc.type + "." + acc.key, null);
+        } else {
+            p.closeInventory();
+            p.sendMessage(G.translateColor(G.FAILED + "You cannot accept a mission that is already accepted!"));
+            return;
         }
         playerdata.createSection(acc.type + "." + acc.key, acc.getAcceptance());
         G.savePlayer((FileConfiguration) playerdata, p.getUniqueId());
