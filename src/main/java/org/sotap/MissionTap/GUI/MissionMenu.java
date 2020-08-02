@@ -7,6 +7,7 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -102,9 +103,12 @@ public final class MissionMenu implements Listener {
         final Integer slot = e.getSlot();
         final Mission mission = inventoryContent.get(slot);
         final Acceptance acc = new Acceptance(mission.key, null, mission.type, mission.name);
-        ConfigurationSection playerMissionSection =
-                G.loadPlayer(p.getUniqueId()).getConfigurationSection(type);
-        playerMissionSection.createSection(acc.key, acc.getAcceptance());
+        ConfigurationSection playerdata = G.loadPlayer(p.getUniqueId());
+        if (playerdata.getInt(acc.type) == -1) {
+            playerdata.set(acc.type, null);
+        }
+        playerdata.createSection(acc.type + "." + acc.key, acc.getAcceptance());
+        G.savePlayer((FileConfiguration) playerdata, p.getUniqueId());
         p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission '&a" + acc.name + "&r'!"));
     }
 
