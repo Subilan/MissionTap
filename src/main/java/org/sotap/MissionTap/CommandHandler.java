@@ -35,7 +35,7 @@ public final class CommandHandler implements CommandExecutor {
                     break;
                 }
 
-                case "inprocess": {
+                case "inprogress": {
                     plug.inprogMenu.open(senderPlayer);
                     break;
                 }

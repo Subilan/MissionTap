@@ -93,7 +93,7 @@ public final class InprogressMenu implements Listener {
         Player p = (Player) e.getPlayer();
         FileConfiguration playerdata = G.loadPlayer(p.getUniqueId());
         if (playerdata.getInt("daily") == -1 && playerdata.getInt("weekly") == -1) {
-            p.sendMessage(G.translateColor(G.WARN + "You haven't accepted any missions now."));
+            p.sendMessage(G.translateColor(G.WARN + "You haven't accepted any mission now."));
             e.setCancelled(true);
             return;
         }
