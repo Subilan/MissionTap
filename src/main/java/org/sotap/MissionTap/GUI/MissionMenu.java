@@ -119,10 +119,11 @@ public final class MissionMenu implements Listener {
         playerdata.createSection(acc.type + "." + acc.key, acc.getAcceptance());
         G.savePlayer((FileConfiguration) playerdata, p.getUniqueId());
         p.sendMessage(G.translateColor(G.SUCCESS + "Successfully accepted the mission &a" + acc.name + "&r!"));
+        p.closeInventory();
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryDragEvent e) {
+    public void onInventoryDrag(InventoryDragEvent e) {
         if (e.getInventory() == inventory)
             e.setCancelled(true);
     }
