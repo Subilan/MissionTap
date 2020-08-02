@@ -120,8 +120,8 @@ public final class MissionTap extends JavaPlugin {
     }
 
     public Date getNextRegenerationTime(String type) {
-        return type == "daily" ? C.getNextDailyRefresh(getConfig())
-                : C.getNextWeeklyRefresh(getConfig());
+        return type == "daily" ? C.getNextDailyRefresh()
+                : C.getNextWeeklyRefresh();
     }
 
     public void saveMissions() {
