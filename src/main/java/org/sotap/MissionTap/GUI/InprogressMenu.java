@@ -66,7 +66,7 @@ public final class InprogressMenu implements Listener {
         for (int i = 0; i < acceptanceMap.size(); i++) {
             Acceptance item = new Acceptance(keys.get(i), playerdata, type, null);
             // arr[i] = item;
-            inventory.setItem(i, g(
+            inventory.addItem(g(
                 item.finished ? Material.ENCHANTED_BOOK : Material.BOOK,
                 item.name,
                 item.finished,
