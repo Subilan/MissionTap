@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -73,5 +74,9 @@ public final class G {
 
     public static SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static boolean isOnlinePlayer(UUID uuid) {
+        return Bukkit.getPlayer(uuid) != null;
     }
 }
