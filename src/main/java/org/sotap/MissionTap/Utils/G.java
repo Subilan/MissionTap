@@ -3,6 +3,7 @@ package org.sotap.MissionTap.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -74,6 +75,10 @@ public final class G {
 
     public static SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static String getDateString(Long stamp) {
+        return getDateFormat().format(new Date(stamp));
     }
 
     public static boolean isOnlinePlayer(UUID uuid) {
