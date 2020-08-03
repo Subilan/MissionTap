@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public final class G {
     public final static String SUCCESS = "&r[&aSUCCESS&r] ";
@@ -83,5 +86,13 @@ public final class G {
 
     public static boolean isOnlinePlayer(UUID uuid) {
         return Bukkit.getPlayer(uuid) != null;
+    }
+
+    public static void dispatchCommands(Player p, List<String> commands) {
+        CommandSender sender = Bukkit.getConsoleSender();
+        for (String cmd : commands) {
+            Bukkit.dispatchCommand(sender,
+                    cmd.replace("%playername%", p.getName()).replace("%uuid%", p.getUniqueId().toString()));
+        }
     }
 }
