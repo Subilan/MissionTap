@@ -48,6 +48,7 @@ public final class MissionEvents implements Listener {
     // for BREEDING
     @EventHandler
     public void onEntityBreed(EntityBreedEvent e) {
+        if (e.getBreeder() == null) return;
         UUID u = e.getBreeder().getUniqueId();
         if (G.isOnlinePlayer(u)) {
             FileConfiguration playerdata = G.loadPlayer(u);
