@@ -70,13 +70,11 @@ public final class MissionTap extends JavaPlugin {
     public void initMissions() {
         // initial generation
         if (latestMissions.getConfigurationSection("daily") == null) {
-            log(G.translateColor(
-                    G.INFO + "No &edaily&r missions were found, trying to regenerate them..."));
+            log(G.translateColor(G.INFO + "No &edaily&r missions were found, trying to regenerate them..."));
             generateRandomMissions("daily");
         }
         if (latestMissions.getConfigurationSection("weekly") == null) {
-            log(G.translateColor(
-                    G.INFO + "No &eweekly&r missions were found, trying to regenerate them..."));
+            log(G.translateColor(G.INFO + "No &eweekly&r missions were found, trying to regenerate them..."));
             generateRandomMissions("weekly");
         }
 
@@ -105,7 +103,8 @@ public final class MissionTap extends JavaPlugin {
         List<String> keys = new ArrayList<>(dailyMissions.getKeys(false));
         Map<String, Object> results = new HashMap<>();
         String randomKey;
-        while (results.size() < (type == "daily" ? 2 : 4)) {
+        while (results.size() < (type == "daily" ? (keys.size() >= 2 ? 2 : keys.size())
+                : (keys.size() >= 4 ? 4 : keys.size()))) {
             randomKey = keys.get(gen.nextInt(keys.size()));
             if (results.containsKey(randomKey))
                 continue;
@@ -117,14 +116,12 @@ public final class MissionTap extends JavaPlugin {
         latestMissions.set(type + "-last-regen", date.getTime());
         latestMissions.set(type + "-next-regen", getNextRegenerationTime(type).getTime());
         log(G.translateColor(G.SUCCESS + "Regeneration done. The next regeneration will be on &a"
-                + G.getDateFormat().format(getNextRegenerationTime(type))
-                + "&r."));
+                + G.getDateFormat().format(getNextRegenerationTime(type)) + "&r."));
         saveMissions();
     }
 
     public Date getNextRegenerationTime(String type) {
-        return type == "daily" ? C.getNextDailyRefresh()
-                : C.getNextWeeklyRefresh();
+        return type == "daily" ? C.getNextDailyRefresh() : C.getNextWeeklyRefresh();
     }
 
     public void saveMissions() {
