@@ -58,6 +58,7 @@ public final class InprogressMenu implements Listener {
         ItemStack[] inventoryContent = new ItemStack[27];
         for (int i = 0; i < acceptanceMap.size(); i++) {
             Acceptance acc = new Acceptance(keys.get(i), playerdata, type, null);
+            if (new Date(acc.expirationTime).getTime() <= new Date().getTime()) continue;
             accList.add(acc);
             ItemStack item = g(
                 acc.finished ? Material.ENCHANTED_BOOK : Material.BOOK,
