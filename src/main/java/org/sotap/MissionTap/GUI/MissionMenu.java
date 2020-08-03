@@ -39,14 +39,14 @@ public final class MissionMenu implements Listener {
     }
 
     private void init() {
-        ConfigurationSection missionSection =
-                G.load("latest-missions.yml").getConfigurationSection(type);
-        if (missionSection == null) {
+        FileConfiguration missionFile = G.load("latest-missions.yml");
+        if (missionFile.getConfigurationSection(type) == null) {
             plug.log(G.translateColor(G.WARN + "No &e" + type
                     + "&r missions were found in latest-missions.yml, stopping the initialization of GUI."));
             return;
         }
-        Map<String, Object> missionObjects = missionSection.getValues(false);
+        Long expirationTime = missionFile.getLong(type + "-next-regen");
+        Map<String, Object> missionObjects = missionFile.getConfigurationSection(type).getValues(false);
         List<String> missionKeys = new ArrayList<>(missionObjects.keySet());
         List<Object> missions = new ArrayList<>(missionObjects.values());
         Mission[] inventorySlots = new Mission[27];
@@ -58,7 +58,7 @@ public final class MissionMenu implements Listener {
             Mission m = new Mission(missionKeys.get(regularIndex), missions.get(regularIndex), type);
             plug.log(m.name);
             inventory.setItem(index,
-                    g(Material.BOOK, m.name, m.description.toArray(new String[0])));
+                    g(Material.BOOK, m.name, expirationTime, m.description.toArray(new String[0])));
             m.setPosition(index);
             inventorySlots[index] = m;
         }
@@ -70,7 +70,7 @@ public final class MissionMenu implements Listener {
         init();
     }
 
-    private ItemStack g(final Material mat, final String name, final String... lore) {
+    private ItemStack g(final Material mat, final String name, final Long expiration, final String... lore) {
         final ItemStack item = new ItemStack(mat);
         final ItemMeta meta = item.getItemMeta();
         final List<String> finalLore = new ArrayList<>();
@@ -80,6 +80,8 @@ public final class MissionMenu implements Listener {
         for (String text : lore) {
             finalLore.add(ChatColor.RESET + G.translateColor("&f" + text));
         }
+        finalLore.add("");
+        finalLore.add(G.translateColor("&8Expiration: &c" + G.getDateString(expiration)));
         meta.setDisplayName(ChatColor.AQUA + name);
         meta.setLore(finalLore);
         item.setItemMeta(meta);
