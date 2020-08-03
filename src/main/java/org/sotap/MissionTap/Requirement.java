@@ -24,6 +24,7 @@ public final class Requirement {
             return true;
         Map<String, Integer> compare = cast(actualContents.getValues(false));
         for (String k : compare.keySet()) {
+            if (toCompare.get(k) == null) continue;
             if (compare.get(k) > toCompare.get(k))
                 return false;
         }
