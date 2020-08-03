@@ -1,15 +1,17 @@
 package org.sotap.MissionTap.GUI;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -21,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.Acceptance;
 import org.sotap.MissionTap.MissionTap;
+import org.sotap.MissionTap.Requirement;
 import org.sotap.MissionTap.Utils.G;
 import net.md_5.bungee.api.ChatColor;
 
@@ -126,8 +129,9 @@ public final class InprogressMenu implements Listener {
         }
         // SUBMIT
         if (e.getClick() == ClickType.LEFT) {
-            if (currentAcc.finished) {
-                // reward code goes here...
+            if (checkFinished(p.getUniqueId(), currentAcc.type, currentAcc.key)) {
+                List<String> commands = G.load("latest-missions").getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
+                G.dispatchCommands(p, commands);
                 currentAcc.delete(p.getUniqueId());
                 removeSlot(slot);
                 p.closeInventory();
@@ -138,6 +142,18 @@ public final class InprogressMenu implements Listener {
             }
             return;
         }
+    }
+
+    public boolean checkFinished(UUID u, String type, String key) {
+        String dest = type + "." + key;
+        ConfigurationSection object = G.loadPlayer(u).getConfigurationSection(dest);
+        Map<String,Object> blockbreak = object.getConfigurationSection("blockbreak-data").getValues(false);
+        Map<String,Object> collecting = object.getConfigurationSection("collecting-data").getValues(false);
+        Map<String,Object> breeding = object.getConfigurationSection("breeding-data").getValues(false);
+        Requirement blockbreakRequirement = new Requirement(type, key, blockbreak);
+        Requirement collectingRequirement = new Requirement(type, key, collecting);
+        Requirement breedingRequirement = new Requirement(type, key, breeding);
+        return blockbreakRequirement.met() && collectingRequirement.met() && breedingRequirement.met();
     }
 
     @EventHandler
