@@ -7,18 +7,20 @@ import org.sotap.MissionTap.Utils.G;
 public final class Requirement {
     public String type;
     public String key;
+    public String compareType;
     public ConfigurationSection contents;
     public Map<String, Integer> toCompare;
 
-    public Requirement(String type, String key, Map<String, Object> toCompare) {
+    public Requirement(String type, String key, String compareType, Map<String, Object> toCompare) {
         this.toCompare = cast(toCompare);
+        this.compareType = compareType;
         this.contents = G.load("latest-missions.yml").getConfigurationSection(type + "." + key + ".contents");
     }
 
     public boolean met() {
-        Map<String, Integer> compare = cast(contents.getValues(false));
-        for (String key : compare.keySet()) {
-            if (compare.get(key) > toCompare.get(key))
+        Map<String, Integer> compare = cast(contents.getConfigurationSection(compareType).getValues(false));
+        for (String k : compare.keySet()) {
+            if (compare.get(k) > toCompare.get(k))
                 return false;
         }
         return true;
