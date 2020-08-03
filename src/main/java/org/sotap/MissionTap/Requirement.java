@@ -12,7 +12,7 @@ public final class Requirement {
 
     public Requirement(String type, String key, Map<String, Object> toCompare) {
         this.toCompare = cast(toCompare);
-        this.contents = G.load("latest-missions").getConfigurationSection(type + "." + key + ".contents");
+        this.contents = G.load("latest-missions.yml").getConfigurationSection(type + "." + key + ".contents");
     }
 
     public boolean met() {
