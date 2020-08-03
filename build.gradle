@@ -21,7 +21,7 @@ dependencies {
     compileOnly "me.clip:PlaceholderAPI:$papiVersion"
     testImplementation 'junit:junit:4.13'
     testImplementation 'com.google.code.findbugs:jsr305:3.0.2'
-    compile 'org.jetbrains:annotations:16.0.2'
+    implementation 'org.jetbrains:annotations:16.0.2'
     // https://mvnrepository.com/artifact/javax.validation/validation-api
     implementation group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
 }
