@@ -53,8 +53,8 @@ public final class MissionTap extends JavaPlugin {
         globalevents = new GlobalEvents(this);
         missionevents = new MissionEvents(this);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
-        // @SuppressWarnings("unused")
-        // BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
+        @SuppressWarnings("unused")
+        BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
         log(G.translateColor(G.SUCCESS + "The plugin has been &aenabled&r."));
     }
 
