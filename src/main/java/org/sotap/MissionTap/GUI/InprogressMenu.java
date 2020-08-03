@@ -130,7 +130,7 @@ public final class InprogressMenu implements Listener {
         // SUBMIT
         if (e.getClick() == ClickType.LEFT) {
             if (checkFinished(p.getUniqueId(), currentAcc.type, currentAcc.key)) {
-                List<String> commands = G.load("latest-missions").getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
+                List<String> commands = G.load("latest-missions.yml").getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
                 G.dispatchCommands(p, commands);
                 currentAcc.delete(p.getUniqueId());
                 removeSlot(slot);
@@ -150,9 +150,9 @@ public final class InprogressMenu implements Listener {
         Map<String,Object> blockbreak = object.getConfigurationSection("blockbreak-data").getValues(false);
         Map<String,Object> collecting = object.getConfigurationSection("collecting-data").getValues(false);
         Map<String,Object> breeding = object.getConfigurationSection("breeding-data").getValues(false);
-        Requirement blockbreakRequirement = new Requirement(type, key, blockbreak);
-        Requirement collectingRequirement = new Requirement(type, key, collecting);
-        Requirement breedingRequirement = new Requirement(type, key, breeding);
+        Requirement blockbreakRequirement = new Requirement(type, key, "blockbreak", blockbreak);
+        Requirement collectingRequirement = new Requirement(type, key, "collecting", collecting);
+        Requirement breedingRequirement = new Requirement(type, key, "breeding", breeding);
         return blockbreakRequirement.met() && collectingRequirement.met() && breedingRequirement.met();
     }
 
