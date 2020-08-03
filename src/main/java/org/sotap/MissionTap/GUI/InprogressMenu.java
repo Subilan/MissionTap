@@ -58,7 +58,7 @@ public final class InprogressMenu implements Listener {
         ItemStack[] inventoryContent = new ItemStack[27];
         for (int i = 0; i < acceptanceMap.size(); i++) {
             Acceptance acc = new Acceptance(keys.get(i), playerdata, type, null);
-            if (new Date(acc.expirationTime).getTime() <= new Date().getTime()) continue;
+            if (acc.expirationTime <= new Date().getTime()) continue;
             accList.add(acc);
             ItemStack item = g(
                 acc.finished ? Material.ENCHANTED_BOOK : Material.BOOK,
@@ -106,6 +106,11 @@ public final class InprogressMenu implements Listener {
         Player p = (Player) e.getWhoClicked();
         Integer slot = e.getSlot();
         Acceptance currentAcc = accList.get(slot);
+        if (currentAcc.expirationTime <= new Date().getTime()) {
+            p.closeInventory();
+            p.sendMessage(G.translateColor(G.WARN + "The mission is already &cexpired&r now!"));
+            return;
+        }
         // DELETE
         if (e.getClick() == ClickType.SHIFT_LEFT) {
             if (!G.config.getBoolean("allow_cancelling")) {
