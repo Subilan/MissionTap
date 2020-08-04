@@ -37,16 +37,13 @@ public final class InprogressMenu implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plug);
     }
 
-    private ItemStack g(final Material mat, final String name, final boolean finished, final String... lore) {
-        final ItemStack item = new ItemStack(mat);
+    private ItemStack g(final String name, final long expirationTime, final boolean finished) {
+        final ItemStack item = new ItemStack(finished ? Material.ENCHANTED_BOOK : Material.BOOK);
         final ItemMeta meta = item.getItemMeta();
         final List<String> finalLore = new ArrayList<>();
-        finalLore.add("");
         finalLore.add(G.translateColor( finished ? "&a&lFinished" : "&c&lUnfinished"));
         finalLore.add("");
-        for (String text : lore) {
-            finalLore.add(ChatColor.RESET + G.translateColor("&f" + text));
-        }
+        finalLore.add(G.translateColor("&8" + G.getDateFormat().format(new Date(expirationTime))));
         meta.setDisplayName(ChatColor.AQUA + name);
         meta.setLore(finalLore);
         item.setItemMeta(meta);
@@ -64,13 +61,9 @@ public final class InprogressMenu implements Listener {
             if (acc.expirationTime <= new Date().getTime()) continue;
             accList.add(acc);
             ItemStack item = g(
-                acc.finished ? Material.ENCHANTED_BOOK : Material.BOOK,
                 acc.name,
-                acc.finished,
-                new String[] {
-                    "&fAcceptance: &a" + G.getDateFormat().format(new Date(acc.acceptanceTime)),
-                    "&fExpiration: &c" + G.getDateFormat().format(new Date(acc.expirationTime)),
-                }
+                acc.expirationTime,
+                acc.finished
             );
             inventory.addItem(item);
             inventoryContent[i] = item;
