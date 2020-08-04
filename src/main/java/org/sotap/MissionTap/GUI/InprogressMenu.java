@@ -140,9 +140,9 @@ public final class InprogressMenu implements Listener {
     public boolean checkFinished(UUID u, String type, String key) {
         String dest = type + "." + key;
         ConfigurationSection object = G.loadPlayer(u).getConfigurationSection(dest);
-        Map<String,Object> blockbreak = object.getConfigurationSection("blockbreak-data").getValues(false);
-        Map<String,Object> collecting = object.getConfigurationSection("collecting-data").getValues(false);
-        Map<String,Object> breeding = object.getConfigurationSection("breeding-data").getValues(false);
+        ConfigurationSection blockbreak = object.getConfigurationSection("blockbreak-data");
+        ConfigurationSection collecting = object.getConfigurationSection("collecting-data");
+        ConfigurationSection breeding = object.getConfigurationSection("breeding-data");
         Requirement blockbreakRequirement = new Requirement(type, key, "blockbreak", blockbreak);
         Requirement collectingRequirement = new Requirement(type, key, "collecting", collecting);
         Requirement breedingRequirement = new Requirement(type, key, "breeding", breeding);
