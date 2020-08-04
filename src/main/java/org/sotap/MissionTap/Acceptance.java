@@ -39,10 +39,6 @@ public final class Acceptance {
         acc.put("acceptance-time", new Date().getTime());
         acc.put("expiration-time", nextUpdateTime);
         acc.put("finished", false);
-        acc.put("blockbreak-data", new Object());
-        acc.put("collecting-data", new Object());
-        acc.put("breeding-data", new Object());
-        acc.put("trading-data", new Object());
         return acc;
     }
 
