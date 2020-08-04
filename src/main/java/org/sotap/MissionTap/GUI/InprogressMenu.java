@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -138,14 +137,9 @@ public final class InprogressMenu implements Listener {
     }
 
     public boolean checkFinished(UUID u, String type, String key) {
-        String dest = type + "." + key;
-        ConfigurationSection object = G.loadPlayer(u).getConfigurationSection(dest);
-        ConfigurationSection blockbreak = object.getConfigurationSection("blockbreak-data");
-        ConfigurationSection collecting = object.getConfigurationSection("collecting-data");
-        ConfigurationSection breeding = object.getConfigurationSection("breeding-data");
-        Requirement blockbreakRequirement = new Requirement(type, key, "blockbreak", blockbreak);
-        Requirement collectingRequirement = new Requirement(type, key, "collecting", collecting);
-        Requirement breedingRequirement = new Requirement(type, key, "breeding", breeding);
+        Requirement blockbreakRequirement = new Requirement(u, type, key, "blockbreak");
+        Requirement collectingRequirement = new Requirement(u, type, key, "collecting");
+        Requirement breedingRequirement = new Requirement(u, type, key, "breeding");
         return blockbreakRequirement.met() && collectingRequirement.met() && breedingRequirement.met();
     }
 

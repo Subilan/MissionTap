@@ -1,6 +1,7 @@
 package org.sotap.MissionTap;
 
 import java.util.Map;
+import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 import org.sotap.MissionTap.Utils.G;
 
@@ -11,26 +12,30 @@ public final class Requirement {
     public ConfigurationSection contents;
     public ConfigurationSection toCompareCS;
 
-    public Requirement(String type, String key, String compareType, ConfigurationSection toCompare) {
-        this.toCompareCS = toCompare;
+    public Requirement(UUID u, String type, String key, String compareType) {
+        this.toCompareCS = G.loadPlayer(u).getConfigurationSection(type + "."  + key + "." + compareType + "-data");
+        System.out.println(type + "."  + key + "." + compareType + "-data");
         this.compareType = compareType;
         this.contents = G.load("latest-missions.yml")
                 .getConfigurationSection(type + "." + key + ".contents");
     }
 
     public boolean met() {
-        if (toCompareCS == null) return true;
         ConfigurationSection actualContents = contents.getConfigurationSection(compareType);
-        if (actualContents == null)
+        if (toCompareCS == null && actualContents == null) return true;
+        if (toCompareCS == null && actualContents != null) return false;
+        if (toCompareCS != null && actualContents == null) return true;
+        if (toCompareCS != null && actualContents != null) {
+            Map<String, Integer> compare = cast(actualContents.getValues(false));
+            Map<String, Integer> toCompare = cast(toCompareCS.getValues(false));
+            for (String k : compare.keySet()) {
+                if (toCompare.get(k) == null) continue;
+                if (compare.get(k) > toCompare.get(k))
+                    return false;
+            }
             return true;
-        Map<String, Integer> compare = cast(actualContents.getValues(false));
-        Map<String, Integer> toCompare = cast(toCompareCS.getValues(false));
-        for (String k : compare.keySet()) {
-            if (toCompare.get(k) == null) continue;
-            if (compare.get(k) > toCompare.get(k))
-                return false;
         }
-        return true;
+        return false;
     }
 
     /**
