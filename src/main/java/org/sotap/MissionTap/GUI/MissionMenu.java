@@ -74,14 +74,11 @@ public final class MissionMenu implements Listener {
         final ItemStack item = new ItemStack(mat);
         final ItemMeta meta = item.getItemMeta();
         final List<String> finalLore = new ArrayList<>();
-        finalLore.add("");
-        finalLore.add(G.translateColor("&c&lUnfinished"));
-        finalLore.add("");
         for (String text : lore) {
             finalLore.add(ChatColor.RESET + G.translateColor("&f" + text));
         }
         finalLore.add("");
-        finalLore.add(G.translateColor("&8Expiration: &c" + G.getDateString(expiration)));
+        finalLore.add(G.translateColor("&8" + G.getDateString(expiration)));
         meta.setDisplayName(ChatColor.AQUA + name);
         meta.setLore(finalLore);
         item.setItemMeta(meta);
