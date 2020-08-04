@@ -3,6 +3,7 @@ main: org.sotap.MissionTap.MissionTap
 version: "1.0"
 author: sotapmc
 api-version: "1.16"
+api: []
 softdepend:
   - PlaceholderAPI
 depend:
