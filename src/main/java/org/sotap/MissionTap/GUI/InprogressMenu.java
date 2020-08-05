@@ -35,6 +35,7 @@ public final class InprogressMenu implements Listener {
     public InprogressMenu(MissionTap plug) {
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
         this.accList = new ArrayList<>();
+        this.misList = new ArrayList<>();
         this.plug = plug;
         Bukkit.getPluginManager().registerEvents(this, plug);
     }
