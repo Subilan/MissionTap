@@ -23,7 +23,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.Acceptance;
 import org.sotap.MissionTap.Mission;
 import org.sotap.MissionTap.MissionTap;
-import org.sotap.MissionTap.Requirement;
 import org.sotap.MissionTap.Utils.G;
 import net.md_5.bungee.api.ChatColor;
 
@@ -126,8 +125,10 @@ public final class InprogressMenu implements Listener {
         if (item == null) return;
         if (item.getType() != Material.BOOK && item.getType() != Material.ENCHANTED_BOOK) return;
         Player p = (Player) e.getWhoClicked();
+        UUID u = p.getUniqueId();
         Integer slot = e.getSlot();
         Acceptance currentAcc = accList.get(slot);
+        currentAcc.updateData(G.loadPlayer(u));
         if (currentAcc.expirationTime <= new Date().getTime()) {
             p.closeInventory();
             p.sendMessage(G.translateColor(G.WARN + "The mission is already &cexpired&r now!"));
@@ -140,7 +141,7 @@ public final class InprogressMenu implements Listener {
                 p.sendMessage(G.translateColor(G.WARN + "You &ccan't&r cancel the mission now."));
                 return;
             }
-            currentAcc.delete(p.getUniqueId());
+            currentAcc.delete(u);
             removeSlot(slot);
             p.closeInventory();
             p.sendMessage(G.translateColor(G.SUCCESS + "Successfully removed the mission from your current working-on list."));
@@ -148,10 +149,10 @@ public final class InprogressMenu implements Listener {
         }
         // SUBMIT
         if (e.getClick() == ClickType.LEFT) {
-            if (checkFinished(p.getUniqueId(), currentAcc.type, currentAcc.key)) {
+            if (currentAcc.isFinished()) {
                 List<String> commands = G.load("latest-missions.yml").getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
                 G.dispatchCommands(p, commands);
-                currentAcc.delete(p.getUniqueId());
+                currentAcc.delete(u);
                 removeSlot(slot);
                 p.closeInventory();
                 p.sendMessage(G.translateColor(G.SUCCESS + "&eCongratulations!&r You've finished the mission &a" + currentAcc.name + "&r!"));
@@ -161,13 +162,6 @@ public final class InprogressMenu implements Listener {
             }
             return;
         }
-    }
-
-    public boolean checkFinished(UUID u, String type, String key) {
-        Requirement blockbreakRequirement = new Requirement(u, type, key, "blockbreak");
-        Requirement collectingRequirement = new Requirement(u, type, key, "collecting");
-        Requirement breedingRequirement = new Requirement(u, type, key, "breeding");
-        return blockbreakRequirement.met() && collectingRequirement.met() && breedingRequirement.met();
     }
 
     @EventHandler

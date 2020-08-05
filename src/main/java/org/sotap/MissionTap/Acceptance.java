@@ -49,9 +49,14 @@ public final class Acceptance {
         G.savePlayer(data, u);
     }
 
+    public void updateData(FileConfiguration data) {
+        this.data = data;
+        this.acc = data.getConfigurationSection(type + "." + key);
+    }
+
     public boolean isFinished() {
         for (String compareType : new String[] {"blockbreak", "collecting", "breeding", "trading"}) {
-            Requirement requirement = new Requirement(u, type, key, compareType);
+            Requirement requirement = new Requirement(acc, type, key, compareType);
             if (!requirement.met()) return false;
         }
         return true;
