@@ -1,7 +1,6 @@
 package org.sotap.MissionTap;
 
 import java.util.Map;
-import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 import org.sotap.MissionTap.Utils.G;
 
@@ -13,16 +12,16 @@ public final class Requirement {
     public ConfigurationSection contents;
     public ConfigurationSection toCompareCS;
 
-    public Requirement(UUID u, String type, String key, String compareType) {
-        this.toCompareCS = G.loadPlayer(u)
-                .getConfigurationSection(type + "." + key + "." + compareType + "-data");
-        System.out.println(type + "." + key + "." + compareType + "-data");
+    public Requirement(ConfigurationSection playerdata, String type, String key, String compareType) {
+        this.toCompareCS = playerdata.getConfigurationSection(compareType + "-data");
         this.compareType = compareType;
         this.contents = G.load("latest-missions.yml")
                 .getConfigurationSection(type + "." + key + ".contents");
     }
 
     public boolean met() {
+        // if the requirements does not exists, return true.
+        if (contents == null) return true;
         ConfigurationSection actualContents = contents.getConfigurationSection(compareType);
         if (toCompareCS == null && actualContents == null)
             return true;
