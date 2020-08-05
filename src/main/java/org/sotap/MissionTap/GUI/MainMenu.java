@@ -29,7 +29,7 @@ public final class MainMenu implements Listener {
     }
 
     private void init() {
-        FileConfiguration config = plug.getConfig();
+        FileConfiguration config = G.config;
         inventory = Bukkit.createInventory(null, InventoryType.CHEST, "MissionMenu");
         Integer dailyTime = config.getInt("daily_refresh_time");
         Integer weeklyTime = config.getInt("weekly_refresh_time");
@@ -83,7 +83,7 @@ public final class MainMenu implements Listener {
 
     public void open(final Player p) {
         // if acceptance is not required
-        if (!plug.getConfig().getBoolean("require_acceptance"))
+        if (!G.config.getBoolean("require_acceptance"))
             return;
         p.openInventory(inventory);
     }

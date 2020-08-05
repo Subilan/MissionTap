@@ -100,7 +100,7 @@ public final class InprogressMenu implements Listener {
             e.setCancelled(true);
             return;
         }
-        if (plug.getConfig().getBoolean("require_acceptance")) {
+        if (G.config.getBoolean("require_acceptance")) {
             initInventory("daily", playerdata);
             initInventory("weekly", playerdata);
         } else {
@@ -122,7 +122,7 @@ public final class InprogressMenu implements Listener {
         UUID u = p.getUniqueId();
         Integer slot = e.getSlot();
         FileConfiguration playerdata = G.loadPlayer(u);
-        if (plug.getConfig().getBoolean("require_acceptance")) {
+        if (G.config.getBoolean("require_acceptance")) {
             Acceptance currentAcc = accList.get(slot);
             currentAcc.updateData(playerdata);
             if (currentAcc.expirationTime <= new Date().getTime()) {

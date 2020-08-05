@@ -83,7 +83,7 @@ public final class MissionMenu implements Listener {
 
     public void open(final Player p) {
         // if acceptance is not required
-        if (!plug.getConfig().getBoolean("require_acceptance"))
+        if (!G.config.getBoolean("require_acceptance"))
             return;
         p.openInventory(inventory);
     }
