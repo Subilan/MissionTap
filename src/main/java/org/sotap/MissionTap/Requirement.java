@@ -8,6 +8,7 @@ import org.sotap.MissionTap.Utils.G;
 public final class Requirement {
     public String type;
     public String key;
+    // NOTE: The compareType needs '-data' suffix to work.
     public String compareType;
     public ConfigurationSection contents;
     public ConfigurationSection toCompareCS;
@@ -30,28 +31,29 @@ public final class Requirement {
         if (toCompareCS != null && actualContents == null)
             return true;
         if (toCompareCS != null && actualContents != null) {
-            // compare 相当于任务的需求
+            // compare as requirements of the mission.
             Map<String, Integer> compare = cast(actualContents.getValues(false));
-            // toCompare 相当于玩家当前的完成度
+            // toCompare as the actual progress of the player.
             Map<String, Integer> toCompare = cast(toCompareCS.getValues(false));
             for (String k : compare.keySet()) {
-                // 如果任务的需求大于玩家完成度或者玩家没有相应需求的完成度相当于未完成，返回 false
+                // if one's actual progress is less than the requirement or the progress is null, return false.
                 if (toCompare.get(k) == null)
                     return false;
                 if (compare.get(k) > toCompare.get(k))
                     return false;
             }
-            // 其余情况都返回 true
+            // otherwise, return true.
             return true;
         }
         return false;
     }
 
     /**
-     * 强行让编译器将 Map(String,Object) 作为 Map(String,Integer) 来处理 这种方法有效解决了性能上的无谓损失，因为已经确定了其所有值必为 Integer
-     * 若通过循环来创建一个新的 Map 则显得没有必要。因此通过这种欺骗编译器的方式来解决。
+     * Forcefully convert Map(String,Object) to Map(String,Integer) in case that the type of values is confirmed as Integer.
      * 
-     * @param object 要强行识别的 Map(String,Object)
+     * It's unnecessary to use a `for` loop here, and it's smarter to cheat the compiler.
+     * 
+     * @param object Map(String,Object) to convert
      * @return Map(String,Integer)
      */
     public Map<String, Integer> cast(Map<String, Object> object) {
