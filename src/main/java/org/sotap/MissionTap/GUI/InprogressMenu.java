@@ -57,10 +57,8 @@ public final class InprogressMenu implements Listener {
         if (!List.of("daily", "weekly").contains(type)) return;
         if (playerdata.getInt(type) == -1) return;
         Map<String,Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
-        List<String> keys = new ArrayList<>(acceptanceMap.keySet());
-        int index = 0;
-        for (; index < acceptanceMap.size(); index++) {
-            Acceptance acc = new Acceptance(keys.get(index), playerdata, type, null);
+        for (String key : acceptanceMap.keySet()) {
+            Acceptance acc = new Acceptance(key, playerdata, type, null);
             if (acc.expirationTime <= new Date().getTime()) continue;
             accList.add(acc);
             ItemStack item = g(
@@ -73,13 +71,11 @@ public final class InprogressMenu implements Listener {
     }
 
     public void initGlobalInventory(FileConfiguration playerdata) {
-        int index = 0;
         for (String type : new String[] {"daily", "weekly"}) {
             if (plug.latestMissions.getLong(type + "-next-regen") <= new Date().getTime()) continue;
             Map<String,Object> missionMap = plug.latestMissions.getConfigurationSection(type).getValues(false);
-            List<String> keys = new ArrayList<>(missionMap.keySet());
-            for (; index < missionMap.size(); index++) {
-                Mission m = new Mission(keys.get(index), missionMap.get(keys.get(index)), type);
+            for (String key : missionMap.keySet()) {
+                Mission m = new Mission(key, missionMap.get(key), type);
                 misList.add(m);
                 ItemStack item = g(
                     m.name,
