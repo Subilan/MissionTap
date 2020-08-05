@@ -65,7 +65,7 @@ public final class InprogressMenu implements Listener {
             ItemStack item = g(
                 acc.name,
                 acc.expirationTime,
-                acc.finished
+                acc.isFinished()
             );
             inventory.addItem(item);
         }
