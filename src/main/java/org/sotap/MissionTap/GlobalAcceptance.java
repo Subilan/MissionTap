@@ -2,6 +2,7 @@ package org.sotap.MissionTap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -51,10 +52,11 @@ public final class GlobalAcceptance {
         return received.contains(key);
     }
 
-    public void setReceived() {
+    public void setReceived(UUID u) {
         List<String> received = playerdata.getStringList("global-received." + type);
         received = received == null ? new ArrayList<>() : received;
         received.add(key);
         playerdata.set("global-received." + type, received);
+        G.savePlayer(playerdata, u);
     }
 }
