@@ -21,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.Acceptance;
+import org.sotap.MissionTap.Mission;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Requirement;
 import org.sotap.MissionTap.Utils.G;
@@ -29,10 +30,13 @@ import net.md_5.bungee.api.ChatColor;
 public final class InprogressMenu implements Listener {
     private Inventory inventory;
     private List<Acceptance> accList;
+    private List<Mission> misList;
+    private MissionTap plug;
 
     public InprogressMenu(MissionTap plug) {
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
         this.accList = new ArrayList<>();
+        this.plug = plug;
         Bukkit.getPluginManager().registerEvents(this, plug);
     }
 
@@ -54,7 +58,6 @@ public final class InprogressMenu implements Listener {
         if (playerdata.getInt(type) == -1) return;
         Map<String,Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
         List<String> keys = new ArrayList<>(acceptanceMap.keySet());
-        ItemStack[] inventoryContent = new ItemStack[27];
         int index = 0;
         for (; index < acceptanceMap.size(); index++) {
             Acceptance acc = new Acceptance(keys.get(index), playerdata, type, null);
@@ -66,7 +69,26 @@ public final class InprogressMenu implements Listener {
                 acc.finished
             );
             inventory.addItem(item);
-            inventoryContent[index] = item;
+        }
+    }
+
+    public void initGlobalInventory(FileConfiguration playerdata) {
+        int index = 0;
+        for (String type : new String[] {"daily", "weekly"}) {
+            if (plug.latestMissions.getLong(type + "-next-regen") <= new Date().getTime()) continue;
+            Map<String,Object> missionMap = plug.latestMissions.getConfigurationSection(type).getValues(false);
+            List<String> keys = new ArrayList<>(missionMap.keySet());
+            for (; index < missionMap.size(); index++) {
+                Mission m = new Mission(keys.get(index), missionMap.get(keys.get(index)), type);
+                misList.add(m);
+                ItemStack item = g(
+                    m.name,
+                    plug.latestMissions.getLong(type + "-next-regen"),
+                    // TBC
+                    false
+                );
+                inventory.addItem(item);
+            }
         }
     }
 
@@ -88,8 +110,12 @@ public final class InprogressMenu implements Listener {
             e.setCancelled(true);
             return;
         }
-        initInventory("daily", playerdata);
-        initInventory("weekly", playerdata);
+        if (plug.getConfig().getBoolean("require_acceptance")) {
+            initInventory("daily", playerdata);
+            initInventory("weekly", playerdata);
+        } else {
+            initGlobalInventory(playerdata);
+        }
     }
 
     @EventHandler
