@@ -1,5 +1,8 @@
 package org.sotap.MissionTap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.sotap.MissionTap.Utils.G;
@@ -14,12 +17,14 @@ public final class GlobalAcceptance {
     private ConfigurationSection gacc;
     private ConfigurationSection globalData;
     private FileConfiguration data;
+    private FileConfiguration playerdata;
 
     public GlobalAcceptance(String key, FileConfiguration playerdata, String type) {
         this.key = key;
         this.type = type;
         this.data = G.load("latest-missions.yml");
         this.gacc = data.getConfigurationSection(type + "." + key);
+        this.playerdata = playerdata;
         this.globalData = playerdata.getConfigurationSection("global");
         this.name = gacc.getString("name");
         this.acceptanceTime = data.getLong(type + "-last-regen");
@@ -39,5 +44,17 @@ public final class GlobalAcceptance {
                 return false;
         }
         return true;
+    }
+
+    public boolean isReceived() {
+        List<String> received = playerdata.getStringList("global-received." + type);
+        return received.contains(key);
+    }
+
+    public void setReceived() {
+        List<String> received = playerdata.getStringList("global-received." + type);
+        received = received == null ? new ArrayList<>() : received;
+        received.add(key);
+        playerdata.set("global-received." + type, received);
     }
 }
