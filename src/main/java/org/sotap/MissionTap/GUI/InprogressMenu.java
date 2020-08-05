@@ -44,7 +44,7 @@ public final class InprogressMenu implements Listener {
         final ItemStack item = new ItemStack(finished ? Material.ENCHANTED_BOOK : Material.BOOK);
         final ItemMeta meta = item.getItemMeta();
         final List<String> finalLore = new ArrayList<>();
-        finalLore.add(G.translateColor( finished ? "&a&lFinished" : "&c&lUnfinished"));
+        finalLore.add(G.translateColor(finished ? "&a&lFinished" : "&c&lUnfinished"));
         finalLore.add("");
         finalLore.add(G.translateColor("&8" + G.getDateFormat().format(new Date(expirationTime))));
         meta.setDisplayName(ChatColor.AQUA + name);
@@ -54,36 +54,29 @@ public final class InprogressMenu implements Listener {
     }
 
     public void initInventory(String type, FileConfiguration playerdata) {
-        if (!List.of("daily", "weekly").contains(type)) return;
-        if (playerdata.getInt(type) == -1) return;
-        Map<String,Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
+        if (!List.of("daily", "weekly").contains(type))
+            return;
+        if (playerdata.getInt(type) == -1)
+            return;
+        Map<String, Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
         for (String key : acceptanceMap.keySet()) {
             Acceptance acc = new Acceptance(key, playerdata, type, null);
-            if (acc.expirationTime <= new Date().getTime()) continue;
+            if (acc.expirationTime <= new Date().getTime())
+                continue;
             accList.add(acc);
-            ItemStack item = g(
-                acc.name,
-                acc.expirationTime,
-                acc.isFinished()
-            );
-            inventory.addItem(item);
+            inventory.addItem(g(acc.name, acc.expirationTime, acc.isFinished()));
         }
     }
 
     public void initGlobalInventory(FileConfiguration playerdata) {
-        for (String type : new String[] {"daily", "weekly"}) {
-            if (plug.latestMissions.getLong(type + "-next-regen") <= new Date().getTime()) continue;
-            Map<String,Object> missionMap = plug.latestMissions.getConfigurationSection(type).getValues(false);
+        for (String type : new String[] { "daily", "weekly" }) {
+            if (plug.latestMissions.getLong(type + "-next-regen") <= new Date().getTime())
+                continue;
+            Map<String, Object> missionMap = plug.latestMissions.getConfigurationSection(type).getValues(false);
             for (String key : missionMap.keySet()) {
                 Mission m = new Mission(key, missionMap.get(key), type);
                 misList.add(m);
-                ItemStack item = g(
-                    m.name,
-                    plug.latestMissions.getLong(type + "-next-regen"),
-                    // TBC
-                    false
-                );
-                inventory.addItem(item);
+                inventory.addItem(g(m.name, plug.latestMissions.getLong(type + "-next-regen"), false));
             }
         }
     }
@@ -98,7 +91,8 @@ public final class InprogressMenu implements Listener {
 
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent e) {
-        if (e.getInventory() != inventory) return;
+        if (e.getInventory() != inventory)
+            return;
         Player p = (Player) e.getPlayer();
         FileConfiguration playerdata = G.loadPlayer(p.getUniqueId());
         if (playerdata.getInt("daily") == -1 && playerdata.getInt("weekly") == -1) {
@@ -116,11 +110,14 @@ public final class InprogressMenu implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getInventory() != inventory) return;
+        if (e.getInventory() != inventory)
+            return;
         e.setCancelled(true);
         ItemStack item = e.getCurrentItem();
-        if (item == null) return;
-        if (item.getType() != Material.BOOK && item.getType() != Material.ENCHANTED_BOOK) return;
+        if (item == null)
+            return;
+        if (item.getType() != Material.BOOK && item.getType() != Material.ENCHANTED_BOOK)
+            return;
         Player p = (Player) e.getWhoClicked();
         UUID u = p.getUniqueId();
         Integer slot = e.getSlot();
@@ -141,21 +138,25 @@ public final class InprogressMenu implements Listener {
             currentAcc.delete(u);
             removeSlot(slot);
             p.closeInventory();
-            p.sendMessage(G.translateColor(G.SUCCESS + "Successfully removed the mission from your current working-on list."));
+            p.sendMessage(G
+                    .translateColor(G.SUCCESS + "Successfully removed the mission from your current working-on list."));
             return;
         }
         // SUBMIT
         if (e.getClick() == ClickType.LEFT) {
             if (currentAcc.isFinished()) {
-                List<String> commands = G.load("latest-missions.yml").getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
+                List<String> commands = G.load("latest-missions.yml")
+                        .getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
                 G.dispatchCommands(p, commands);
                 currentAcc.delete(u);
                 removeSlot(slot);
                 p.closeInventory();
-                p.sendMessage(G.translateColor(G.SUCCESS + "&eCongratulations!&r You've finished the mission &a" + currentAcc.name + "&r!"));
+                p.sendMessage(G.translateColor(
+                        G.SUCCESS + "&eCongratulations!&r You've finished the mission &a" + currentAcc.name + "&r!"));
             } else {
                 p.closeInventory();
-                p.sendMessage(G.translateColor(G.WARN + "You haven't finished the mission &c" + currentAcc.name + " &ryet!"));
+                p.sendMessage(
+                        G.translateColor(G.WARN + "You haven't finished the mission &c" + currentAcc.name + " &ryet!"));
             }
             return;
         }
@@ -163,13 +164,15 @@ public final class InprogressMenu implements Listener {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent e) {
-        if (e.getInventory() != inventory) return;
+        if (e.getInventory() != inventory)
+            return;
         e.setCancelled(true);
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
-        if (e.getInventory() != inventory) return;
+        if (e.getInventory() != inventory)
+            return;
         inventory.clear();
         accList = new ArrayList<>();
     }
