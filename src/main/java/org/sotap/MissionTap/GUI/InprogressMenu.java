@@ -40,8 +40,10 @@ public final class InprogressMenu implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plug);
     }
 
-    private ItemStack g(final String name, final long expirationTime, final boolean finished) {
-        final ItemStack item = new ItemStack(finished ? Material.ENCHANTED_BOOK : Material.BOOK);
+    private ItemStack g(final String name, final long expirationTime, final boolean finished, final Boolean received) {
+        final ItemStack item = new ItemStack(
+                (received == null || received == false) ? (finished ? Material.ENCHANTED_BOOK : Material.BOOK)
+                        : Material.FEATHER);
         final ItemMeta meta = item.getItemMeta();
         final List<String> finalLore = new ArrayList<>();
         finalLore.add(G.translateColor(finished ? "&a&lFinished" : "&c&lUnfinished"));
@@ -64,7 +66,7 @@ public final class InprogressMenu implements Listener {
             if (acc.expirationTime <= new Date().getTime())
                 continue;
             accList.add(acc);
-            inventory.addItem(g(acc.name, acc.expirationTime, acc.isFinished()));
+            inventory.addItem(g(acc.name, acc.expirationTime, acc.isFinished(), null));
         }
     }
 
@@ -76,7 +78,7 @@ public final class InprogressMenu implements Listener {
             for (String key : missionMap.keySet()) {
                 GlobalAcceptance gacc = new GlobalAcceptance(key, playerdata, type);
                 gaccList.add(gacc);
-                inventory.addItem(g(gacc.name, gacc.expirationTime, gacc.isFinished()));
+                inventory.addItem(g(gacc.name, gacc.expirationTime, gacc.isFinished(), gacc.isReceived()));
             }
         }
     }
@@ -171,10 +173,15 @@ public final class InprogressMenu implements Listener {
                 return;
             }
             if (currentAcc.isFinished()) {
+                if (currentAcc.isReceived()) {
+                    p.closeInventory();
+                    p.sendMessage(G.translateColor(G.WARN + "You have already received the awards!"));
+                    return;
+                }
                 List<String> commands = G.load("latest-missions.yml")
                         .getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
                 G.dispatchCommands(p, commands);
-                removeSlot(slot);
+                currentAcc.setReceived(u);
                 p.closeInventory();
                 p.sendMessage(G.translateColor(
                         G.SUCCESS + "&eCongratulations!&r You've finished the mission &a" + currentAcc.name + "&r!"));
