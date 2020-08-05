@@ -26,6 +26,10 @@ public final class MissionEvents implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plug);
     }
 
+    public boolean requireAcceptance() {
+        return G.config.getBoolean("require_acceptance");
+    }
+
     // for BLOCKBREAK
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -33,14 +37,19 @@ public final class MissionEvents implements Listener {
         FileConfiguration playerdata = G.loadPlayer(p.getUniqueId());
         String blockname = e.getBlock().getType().toString();
         String dest;
-        for (String type : new String[] {"daily", "weekly"}) {
-            Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
-            if (keys.size() == 0)
-                continue;
-            for (String key : keys) {
-                dest = type + "." + key + ".blockbreak-data." + blockname;
-                playerdata.set(dest, playerdata.getInt(dest) + 1);
+        if (requireAcceptance()) {
+            for (String type : new String[] { "daily", "weekly" }) {
+                Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
+                if (keys.size() == 0)
+                    continue;
+                for (String key : keys) {
+                    dest = type + "." + key + ".blockbreak-data." + blockname;
+                    playerdata.set(dest, playerdata.getInt(dest) + 1);
+                }
             }
+        } else {
+            dest = "global.blockbreak-data." + blockname;
+            playerdata.set(dest, playerdata.getInt(dest) + 1);
         }
         G.savePlayer(playerdata, p.getUniqueId());
     }
@@ -48,20 +57,26 @@ public final class MissionEvents implements Listener {
     // for BREEDING
     @EventHandler
     public void onEntityBreed(EntityBreedEvent e) {
-        if (e.getBreeder() == null) return;
+        if (e.getBreeder() == null)
+            return;
         UUID u = e.getBreeder().getUniqueId();
         if (G.isOnlinePlayer(u)) {
             FileConfiguration playerdata = G.loadPlayer(u);
             String dest;
             String entityName = e.getEntityType().toString();
-            for (String type : new String[] {"daily", "weekly"}) {
-                Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
-                if (keys.size() == 0)
-                    continue;
-                for (String key : keys) {
-                    dest = type + "." + key + ".breeding-data." + entityName;
-                    playerdata.set(dest, playerdata.getInt(dest) + 1);
+            if (requireAcceptance()) {
+                for (String type : new String[] { "daily", "weekly" }) {
+                    Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
+                    if (keys.size() == 0)
+                        continue;
+                    for (String key : keys) {
+                        dest = type + "." + key + ".breeding-data." + entityName;
+                        playerdata.set(dest, playerdata.getInt(dest) + 1);
+                    }
                 }
+            } else {
+                dest = "global.breeding-data." + entityName;
+                playerdata.set(dest, playerdata.getInt(dest) + 1);
             }
             G.savePlayer(playerdata, u);
         }
@@ -77,18 +92,25 @@ public final class MissionEvents implements Listener {
     @EventHandler
     public void onEntityPickupItem(EntityPickupItemEvent e) {
         UUID u = e.getEntity().getUniqueId();
-        if (droppedItems.contains(e.getItem().getUniqueId())) return;
+        if (droppedItems.contains(e.getItem().getUniqueId()))
+            return;
         if (G.isOnlinePlayer(u)) {
             FileConfiguration playerdata = G.loadPlayer(u);
             String dest;
             String itemName = e.getItem().getItemStack().getType().toString();
-            for (String type : new String[] {"daily", "weekly"}) {
-                Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
-                if (keys.size() == 0) continue;
-                for (String key : keys) {
-                    dest = type + "." + key + ".collecting-data." + itemName;
-                    playerdata.set(dest, playerdata.getInt(dest) + 1);
+            if (requireAcceptance()) {
+                for (String type : new String[] { "daily", "weekly" }) {
+                    Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
+                    if (keys.size() == 0)
+                        continue;
+                    for (String key : keys) {
+                        dest = type + "." + key + ".collecting-data." + itemName;
+                        playerdata.set(dest, playerdata.getInt(dest) + 1);
+                    }
                 }
+            } else {
+                dest = "global.collecting-data." + itemName;
+                playerdata.set(dest, playerdata.getInt(dest) + 1);
             }
             G.savePlayer(playerdata, u);
         }
