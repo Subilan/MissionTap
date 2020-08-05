@@ -21,7 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.Acceptance;
-import org.sotap.MissionTap.Mission;
+import org.sotap.MissionTap.GlobalAcceptance;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.G;
 import net.md_5.bungee.api.ChatColor;
@@ -29,13 +29,13 @@ import net.md_5.bungee.api.ChatColor;
 public final class InprogressMenu implements Listener {
     private Inventory inventory;
     private List<Acceptance> accList;
-    private List<Mission> misList;
+    private List<GlobalAcceptance> gaccList;
     private MissionTap plug;
 
     public InprogressMenu(MissionTap plug) {
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
         this.accList = new ArrayList<>();
-        this.misList = new ArrayList<>();
+        this.gaccList = new ArrayList<>();
         this.plug = plug;
         Bukkit.getPluginManager().registerEvents(this, plug);
     }
@@ -74,9 +74,9 @@ public final class InprogressMenu implements Listener {
                 continue;
             Map<String, Object> missionMap = plug.latestMissions.getConfigurationSection(type).getValues(false);
             for (String key : missionMap.keySet()) {
-                Mission m = new Mission(key, missionMap.get(key), type);
-                misList.add(m);
-                inventory.addItem(g(m.name, plug.latestMissions.getLong(type + "-next-regen"), false));
+                GlobalAcceptance gacc = new GlobalAcceptance(key, playerdata, type);
+                gaccList.add(gacc);
+                inventory.addItem(g(gacc.name, gacc.expirationTime, gacc.isFinished()));
             }
         }
     }
@@ -121,34 +121,59 @@ public final class InprogressMenu implements Listener {
         Player p = (Player) e.getWhoClicked();
         UUID u = p.getUniqueId();
         Integer slot = e.getSlot();
-        Acceptance currentAcc = accList.get(slot);
-        currentAcc.updateData(G.loadPlayer(u));
-        if (currentAcc.expirationTime <= new Date().getTime()) {
-            p.closeInventory();
-            p.sendMessage(G.translateColor(G.WARN + "The mission is already &cexpired&r now!"));
-            return;
-        }
-        // DELETE
-        if (e.getClick() == ClickType.SHIFT_LEFT) {
-            if (!G.config.getBoolean("allow_cancelling")) {
+        FileConfiguration playerdata = G.loadPlayer(u);
+        if (plug.getConfig().getBoolean("require_acceptance")) {
+            Acceptance currentAcc = accList.get(slot);
+            currentAcc.updateData(playerdata);
+            if (currentAcc.expirationTime <= new Date().getTime()) {
                 p.closeInventory();
-                p.sendMessage(G.translateColor(G.WARN + "You &ccan't&r cancel the mission now."));
+                p.sendMessage(G.translateColor(G.WARN + "The mission is already &cexpired&r now!"));
                 return;
             }
-            currentAcc.delete(u);
-            removeSlot(slot);
-            p.closeInventory();
-            p.sendMessage(G
-                    .translateColor(G.SUCCESS + "Successfully removed the mission from your current working-on list."));
-            return;
-        }
-        // SUBMIT
-        if (e.getClick() == ClickType.LEFT) {
+            // DELETE
+            if (e.getClick() == ClickType.SHIFT_LEFT) {
+                if (!G.config.getBoolean("allow_cancelling")) {
+                    p.closeInventory();
+                    p.sendMessage(G.translateColor(G.WARN + "You &ccan't&r cancel the mission now."));
+                    return;
+                }
+                currentAcc.delete(u);
+                removeSlot(slot);
+                p.closeInventory();
+                p.sendMessage(G.translateColor(
+                        G.SUCCESS + "Successfully removed the mission from your current working-on list."));
+                return;
+            }
+            // SUBMIT
+            if (e.getClick() == ClickType.LEFT) {
+                if (currentAcc.isFinished()) {
+                    List<String> commands = G.load("latest-missions.yml")
+                            .getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
+                    G.dispatchCommands(p, commands);
+                    currentAcc.delete(u);
+                    removeSlot(slot);
+                    p.closeInventory();
+                    p.sendMessage(G.translateColor(G.SUCCESS + "&eCongratulations!&r You've finished the mission &a"
+                            + currentAcc.name + "&r!"));
+                } else {
+                    p.closeInventory();
+                    p.sendMessage(G.translateColor(
+                            G.WARN + "You haven't finished the mission &c" + currentAcc.name + " &ryet!"));
+                }
+                return;
+            }
+        } else {
+            GlobalAcceptance currentAcc = gaccList.get(slot);
+            currentAcc.updateData(playerdata);
+            if (currentAcc.expirationTime <= new Date().getTime()) {
+                p.closeInventory();
+                p.sendMessage(G.translateColor(G.WARN + "The mission is already &cexpired&r now!"));
+                return;
+            }
             if (currentAcc.isFinished()) {
                 List<String> commands = G.load("latest-missions.yml")
                         .getStringList(currentAcc.type + "." + currentAcc.key + ".rewards");
                 G.dispatchCommands(p, commands);
-                currentAcc.delete(u);
                 removeSlot(slot);
                 p.closeInventory();
                 p.sendMessage(G.translateColor(
@@ -175,5 +200,6 @@ public final class InprogressMenu implements Listener {
             return;
         inventory.clear();
         accList = new ArrayList<>();
+        gaccList = new ArrayList<>();
     }
 }
