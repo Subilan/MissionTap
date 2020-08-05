@@ -50,15 +50,11 @@ public final class MissionMenu implements Listener {
         List<String> missionKeys = new ArrayList<>(missionObjects.keySet());
         List<Object> missions = new ArrayList<>(missionObjects.values());
         Mission[] inventorySlots = new Mission[27];
-        int index = type == "daily" ? 10 : 8;
-        int regularIndex = 0;
-        for (; regularIndex < missions.size(); regularIndex++) {
-            // next value: daily -> 12, 14; weekly -> 10, 12, 14, 16;
-            index += 2;
-            Mission m = new Mission(missionKeys.get(regularIndex), missions.get(regularIndex), type);
+        int index = 0;
+        for (; index < missions.size(); index++) {
+            Mission m = new Mission(missionKeys.get(index), missions.get(index), type);
             plug.log(m.name);
-            inventory.setItem(index,
-                    g(Material.BOOK, m.name, expirationTime, m.description.toArray(new String[0])));
+            inventory.setItem(index, g(Material.BOOK, m.name, expirationTime, m.description.toArray(new String[0])));
             m.setPosition(index);
             inventorySlots[index] = m;
         }

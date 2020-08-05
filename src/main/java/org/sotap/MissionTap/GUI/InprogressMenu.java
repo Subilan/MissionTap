@@ -55,8 +55,9 @@ public final class InprogressMenu implements Listener {
         Map<String,Object> acceptanceMap = playerdata.getConfigurationSection(type).getValues(false);
         List<String> keys = new ArrayList<>(acceptanceMap.keySet());
         ItemStack[] inventoryContent = new ItemStack[27];
-        for (int i = 0; i < acceptanceMap.size(); i++) {
-            Acceptance acc = new Acceptance(keys.get(i), playerdata, type, null);
+        int index = 0;
+        for (; index < acceptanceMap.size(); index++) {
+            Acceptance acc = new Acceptance(keys.get(index), playerdata, type, null);
             if (acc.expirationTime <= new Date().getTime()) continue;
             accList.add(acc);
             ItemStack item = g(
@@ -65,7 +66,7 @@ public final class InprogressMenu implements Listener {
                 acc.finished
             );
             inventory.addItem(item);
-            inventoryContent[i] = item;
+            inventoryContent[index] = item;
         }
     }
 
