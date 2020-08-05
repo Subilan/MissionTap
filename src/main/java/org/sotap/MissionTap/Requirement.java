@@ -13,8 +13,9 @@ public final class Requirement {
     public ConfigurationSection toCompareCS;
 
     public Requirement(UUID u, String type, String key, String compareType) {
-        this.toCompareCS = G.loadPlayer(u).getConfigurationSection(type + "."  + key + "." + compareType + "-data");
-        System.out.println(type + "."  + key + "." + compareType + "-data");
+        this.toCompareCS = G.loadPlayer(u)
+                .getConfigurationSection(type + "." + key + "." + compareType + "-data");
+        System.out.println(type + "." + key + "." + compareType + "-data");
         this.compareType = compareType;
         this.contents = G.load("latest-missions.yml")
                 .getConfigurationSection(type + "." + key + ".contents");
@@ -22,17 +23,25 @@ public final class Requirement {
 
     public boolean met() {
         ConfigurationSection actualContents = contents.getConfigurationSection(compareType);
-        if (toCompareCS == null && actualContents == null) return true;
-        if (toCompareCS == null && actualContents != null) return false;
-        if (toCompareCS != null && actualContents == null) return true;
+        if (toCompareCS == null && actualContents == null)
+            return true;
+        if (toCompareCS == null && actualContents != null)
+            return false;
+        if (toCompareCS != null && actualContents == null)
+            return true;
         if (toCompareCS != null && actualContents != null) {
+            // compare 相当于任务的需求
             Map<String, Integer> compare = cast(actualContents.getValues(false));
+            // toCompare 相当于玩家当前的完成度
             Map<String, Integer> toCompare = cast(toCompareCS.getValues(false));
             for (String k : compare.keySet()) {
-                if (toCompare.get(k) == null) continue;
+                // 如果任务的需求大于玩家完成度或者玩家没有相应需求的完成度相当于未完成，返回 false
+                if (toCompare.get(k) == null)
+                    return false;
                 if (compare.get(k) > toCompare.get(k))
                     return false;
             }
+            // 其余情况都返回 true
             return true;
         }
         return false;
