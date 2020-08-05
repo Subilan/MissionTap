@@ -32,6 +32,7 @@ public final class GlobalEvents implements Listener {
             FileConfiguration playerdata = G.loadPlayer(u);
             playerdata.set("daily", -1);
             playerdata.set("weekly", -1);
+            playerdata.set("global", -1);
             G.savePlayer(playerdata, u);
         }
     }
