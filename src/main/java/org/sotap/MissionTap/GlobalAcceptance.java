@@ -48,15 +48,15 @@ public final class GlobalAcceptance {
     }
 
     public boolean isReceived() {
-        List<String> received = playerdata.getStringList("global-received." + type);
+        List<String> received = playerdata.getStringList("global-received-list." + type);
         return received.contains(key);
     }
 
     public void setReceived(UUID u) {
-        List<String> received = playerdata.getStringList("global-received." + type);
+        List<String> received = playerdata.getStringList("global-received-list." + type);
         received = received == null ? new ArrayList<>() : received;
         received.add(key);
-        playerdata.set("global-received." + type, received);
+        playerdata.set("global-received-list." + type, received);
         G.savePlayer(playerdata, u);
     }
 }
