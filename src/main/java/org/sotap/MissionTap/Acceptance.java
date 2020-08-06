@@ -20,6 +20,7 @@ public final class Acceptance {
     public long expirationTime;
     private ConfigurationSection acc;
     private FileConfiguration data;
+    private boolean allowMultiple;
 
     public Acceptance(String key, FileConfiguration data, String type, String name) {
         this.key = key;
@@ -33,6 +34,7 @@ public final class Acceptance {
         } else {
             this.name = name;
         }
+        this.allowMultiple = G.config.getInt("multiple-acceptance-cooldown") != -1;
     }
 
     public Map<String, Object> getAcceptance() {
@@ -57,23 +59,40 @@ public final class Acceptance {
     }
 
     public boolean isFinished() {
-        for (String compareType : new String[] {"blockbreak", "collecting", "breeding", "trading"}) {
+        for (String compareType : new String[] { "blockbreak", "collecting", "breeding", "trading" }) {
             Requirement requirement = new Requirement(acc, type, key, compareType);
-            if (!requirement.met()) return false;
+            if (!requirement.met())
+                return false;
         }
         return true;
     }
-    
+
     public boolean isReceived() {
+        // If the multiple acceptance is allowed
+        if (allowMultiple)
+            return false;
         List<String> received = data.getStringList("received-list." + type);
         return received.contains(key);
     }
 
     public void setReceived(UUID u) {
+        if (allowMultiple)
+            return;
         List<String> received = data.getStringList("received-list." + type);
         received = received == null ? new ArrayList<>() : received;
         received.add(key);
         data.set("received-list." + type, received);
+        G.savePlayer(data, u);
+    }
+
+    public void setNotReceived(UUID u) {
+        if (allowMultiple)
+            return;
+        List<String> received = data.getStringList("received-list." + type);
+        if (received == null)
+            return;
+        received.remove(key);
+        data.set("received-list", received);
         G.savePlayer(data, u);
     }
 }
