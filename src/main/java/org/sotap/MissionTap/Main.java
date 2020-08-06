@@ -11,8 +11,8 @@ public final class Main extends JavaPlugin {
         saveDefaultConfig();
         Functions.initUtils(this);
         Functions.initMissions(this);
+        Functions.initMenus(this);
         Functions.refreshMissions(this);
-        // todo: menu
     }
 
     @Override

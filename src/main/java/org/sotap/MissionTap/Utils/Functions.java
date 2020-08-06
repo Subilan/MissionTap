@@ -6,10 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.Main;
+import net.md_5.bungee.api.ChatColor;
 
 public final class Functions {
 
@@ -29,6 +33,10 @@ public final class Functions {
         Files.speicalMissions = Files.load(".", "special-missions.yml");
         Files.DailyMissions = Files.load("./generated", "daily-missions.yml");
         Files.WeeklyMissions = Files.load("./generated", "weekly-missions.yml");
+    }
+
+    public static void initMenus(Main plugin) {
+       Menus.refresh(plugin);
     }
 
     public static void initMissions(Main plugin) {
@@ -81,5 +89,14 @@ public final class Functions {
         plugin.log(Logger.SUCCESS + "Regeneration done. The next regeneration will be on &a"
                 + Calendars.stampToString(nextRefresh) + "&r.");
         Files.save(target, "./generated/" + type + "-missions.yml");
+    }
+
+    public static ItemStack createItemStack(final String name, final Material material, final List<String> lore) {
+        final ItemStack item = new ItemStack(material);
+        final ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.AQUA + name);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 }
