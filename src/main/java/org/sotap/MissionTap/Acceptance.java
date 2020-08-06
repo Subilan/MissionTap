@@ -1,7 +1,9 @@
 package org.sotap.MissionTap;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -60,5 +62,18 @@ public final class Acceptance {
             if (!requirement.met()) return false;
         }
         return true;
+    }
+    
+    public boolean isReceived() {
+        List<String> received = data.getStringList("received-list." + type);
+        return received.contains(key);
+    }
+
+    public void setReceived(UUID u) {
+        List<String> received = data.getStringList("received-list." + type);
+        received = received == null ? new ArrayList<>() : received;
+        received.add(key);
+        data.set("received-list." + type, received);
+        G.savePlayer(data, u);
     }
 }
