@@ -38,7 +38,7 @@ public final class InprogressMenu implements Listener {
                 Mission m = new Mission(type, key);
                 if (m.isExpired(u)) continue;
                 missions.add(m);
-                inventory.addItem(m.getItemStack());
+                inventory.addItem(m.getItemStack(u));
             }
         }
     }

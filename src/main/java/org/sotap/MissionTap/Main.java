@@ -13,11 +13,12 @@ public final class Main extends JavaPlugin {
         Functions.initMissions(this);
         Functions.initMenus(this);
         Functions.refreshMissions(this);
+        log(Logger.SUCCESS + "The plugin has been &aenabled&r.");
     }
 
     @Override
     public void onDisable() {
-
+        log(Logger.SUCCESS + "The plugin has been &cdisabled&r.");
     }
 
     public void log(String message) {

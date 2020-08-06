@@ -47,7 +47,7 @@ public final class MissionMenu implements Listener {
         int index = 0;
         for (String key : missionObjects.keySet()) {
             Mission m = new Mission(type, key);
-            inventory.setItem(index, m.getItemStack());
+            inventory.setItem(index, m.getItemStack(null));
             missions.add(m);
             index++;
         }

@@ -1,5 +1,6 @@
 package org.sotap.MissionTap.Classes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,15 +29,18 @@ public final class Mission {
         this.object = missions.getConfigurationSection(key);
     }
 
-    public ItemStack getItemStack() {
+    public ItemStack getItemStack(UUID u) {
         List<String> lore = object.getStringList("lore");
-        int i = 0;
-        for (; i < lore.size(); i++) {
-            lore.set(i, ChatColor.WHITE + lore.get(i));
+        List<String> finalLore = new ArrayList<>();
+        if (u != null) {
+            finalLore.add(Logger.translateColor(isFinished(u) ? "&l&aFinished" : "&l&cUnfinished"));
         }
-        lore.add("");
-        lore.add(Logger.translateColor("&8" + Calendars.getNextRefresh(type)));
-        return Functions.createItemStack(object.getString("name"), Material.BOOK, lore);
+        for (String text : lore) {
+            finalLore.add(ChatColor.WHITE + text);
+        }
+        finalLore.add("");
+        finalLore.add(Logger.translateColor("&8" + Calendars.getNextRefresh(type)));
+        return Functions.createItemStack(object.getString("name"), Material.BOOK, finalLore);
     }
 
     public void accept(UUID u) {
