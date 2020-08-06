@@ -8,3 +8,5 @@ require_acceptance: false
 require_submittion: false
 # 是否允许用户取消任务
 allow_cancelling: false
+# 再次接受同一任务的冷却时间，若不需要冷却则设为 0，若不允许重复接受任务则设为 -1
+multiple_acceptance_cooldown: 0
