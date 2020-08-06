@@ -54,7 +54,7 @@ public final class MissionMenu implements Listener {
     }
 
     public void open(final Player p) {
-        if (!Files.config.getBoolean("require_acceptance")) {
+        if (!Files.config.getBoolean("require-acceptance")) {
             p.sendMessage(Logger.translateColor(
                     Logger.INFO + "You don't need to accept the missions manually now."));
             return;

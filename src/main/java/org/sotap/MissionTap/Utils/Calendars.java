@@ -23,7 +23,7 @@ public final class Calendars {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         Integer today = cal.get(Calendar.DAY_OF_WEEK);
-        Integer refreshDay = Files.config.getInt("weekly_refresh_time");
+        Integer refreshDay = Files.config.getInt("weekly-refresh-time");
         Integer nextWeekdayOffset = today == (refreshDay - 1) ? 1 : refreshDay + 7 - today;
         cal.add(Calendar.DAY_OF_MONTH, nextWeekdayOffset);
         return cal.getTime();
@@ -33,7 +33,7 @@ public final class Calendars {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         Integer now = cal.get(Calendar.HOUR_OF_DAY);
-        Integer refreshHour = Files.config.getInt("daily_refresh_time");
+        Integer refreshHour = Files.config.getInt("daily-refresh-time");
         if (now >= refreshHour) {
             cal.add(Calendar.DATE, 1);
         }
