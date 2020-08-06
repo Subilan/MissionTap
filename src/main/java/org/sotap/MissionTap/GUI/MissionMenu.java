@@ -103,6 +103,11 @@ public final class MissionMenu implements Listener {
         final Mission mission = inventoryContent.get(slot);
         final Acceptance acc = new Acceptance(mission.key, null, mission.type, mission.name);
         ConfigurationSection playerdata = G.loadPlayer(p.getUniqueId());
+        if (acc.isReceived()) {
+            p.closeInventory();
+            p.sendMessage(G.translateColor(G.FAILED + "You cannot accept a mission that is already done by yourself!"));
+            return;
+        }
         if (playerdata.getInt(acc.type) == -1) {
             playerdata.set(acc.type, null);
         }
