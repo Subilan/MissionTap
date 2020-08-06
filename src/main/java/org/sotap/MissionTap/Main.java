@@ -22,7 +22,7 @@ public final class Main extends JavaPlugin {
     }
 
     public void log(String message) {
-        this.getLogger().info(Logger.translateColor(message));;
+        this.getLogger().info(Logger.translateColor(message));
     }
 
     public void reload() {

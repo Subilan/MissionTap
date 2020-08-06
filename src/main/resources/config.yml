@@ -8,7 +8,7 @@ require-acceptance: false
 require-submittion: false
 # 是否允许用户取消任务
 allow-cancelling: false
-# 是否允许重复接受同一人物
+# 是否允许重复接受同一任务
 allow-multiple-acceptance: true
 # 再次接受同一任务的冷却时间，若不需要冷却则设为 0
 multiple-acceptance-cooldown: 0
