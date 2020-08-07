@@ -25,24 +25,27 @@ import org.sotap.MissionTap.Utils.Logger;
 public final class InprogressMenu implements Listener {
     private final Inventory inventory;
     private List<Mission> missions;
+    public MissionTap plugin;
 
     public InprogressMenu(MissionTap plugin) {
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
         this.missions = new ArrayList<>();
+        this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void init(UUID u) {
+        int index = 0;
         for (String type : new String[] {"daily", "weekly"}) {
             ConfigurationSection objects = Files.loadPlayer(u).getConfigurationSection(type);
             if (Files.isEmptyConfiguration(objects))
                 continue;
             Map<String, Object> objectMap = objects.getValues(false);
-            int index = 0;
             for (String key : objectMap.keySet()) {
                 Mission m = new Mission(type, key);
-                if (m.isExpired(u))
+                if (m.isExpired(u)) {
                     continue;
+                }
                 missions.add(m);
                 inventory.setItem(index, m.getItemStack(u));
                 index++;
@@ -76,9 +79,7 @@ public final class InprogressMenu implements Listener {
             return;
         }
         if (e.getClick() == ClickType.SHIFT_LEFT) {
-            if (!Files.config.getBoolean("require-acceptance"))
-                return;
-            if (!Files.config.getBoolean("allow-cancelling")) {
+            if (!Files.config.getBoolean("allow-cancelling") || !Files.config.getBoolean("require-acceptance")) {
                 p.sendMessage(
                         Logger.translateColor(Logger.FAILED + "You can't cancel the mission now."));
                 return;

@@ -111,9 +111,11 @@ public final class Functions {
     }
 
     public static void reloadPlugin(MissionTap plugin) {
+        plugin.reloadConfig();
         initUtils(plugin);
         initMissions(plugin);
         initMenus(plugin);
+        initEvents(plugin);
     }
 
     public static void resetSubmittedList(UUID u) {

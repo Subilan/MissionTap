@@ -44,7 +44,7 @@ public final class Mission {
         finalLore.add("");
         finalLore.add(Logger
                 .translateColor("&8" + Calendars.stampToString(Calendars.getNextRefresh(type))));
-        return Functions.createItemStack(object.getString("name"), Material.BOOK, finalLore);
+        return Functions.createItemStack(object.getString("name"), u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK) : Material.BOOK, finalLore);
     }
 
     public void accept(UUID u) {
