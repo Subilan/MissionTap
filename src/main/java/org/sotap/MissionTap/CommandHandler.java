@@ -10,9 +10,9 @@ import org.sotap.MissionTap.Utils.Logger;
 import org.sotap.MissionTap.Utils.Menus;
 
 public final class CommandHandler implements CommandExecutor {
-    public final Main plugin;
+    public final MissionTap plugin;
 
-    public CommandHandler(Main plugin) {
+    public CommandHandler(MissionTap plugin) {
         this.plugin = plugin;
     }
 

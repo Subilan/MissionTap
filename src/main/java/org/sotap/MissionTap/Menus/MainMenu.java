@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.sotap.MissionTap.Main;
+import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.Menus;
@@ -18,7 +18,7 @@ import org.sotap.MissionTap.Utils.Menus;
 public final class MainMenu implements Listener {
     private final Inventory inventory;
 
-    public MainMenu(Main plugin) {
+    public MainMenu(MissionTap plugin) {
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Main Menu");
         Bukkit.getPluginManager().registerEvents(this, plugin);
         init();

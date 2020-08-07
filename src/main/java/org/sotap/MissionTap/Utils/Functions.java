@@ -13,7 +13,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.sotap.MissionTap.Main;
+import org.sotap.MissionTap.MissionTap;
 import net.md_5.bungee.api.ChatColor;
 
 public final class Functions {
@@ -26,7 +26,7 @@ public final class Functions {
         }
     }
 
-    public static void initUtils(Main plugin) {
+    public static void initUtils(MissionTap plugin) {
         Files.cwd = plugin.getDataFolder().getPath();
         Files.config = plugin.getConfig();
         Files.dailyMissions = Files.load(".", "daily-missions.yml");
@@ -36,11 +36,11 @@ public final class Functions {
         Files.WeeklyMissions = Files.load("./generated", "weekly-missions.yml");
     }
 
-    public static void initMenus(Main plugin) {
+    public static void initMenus(MissionTap plugin) {
        Menus.refresh(plugin);
     }
 
-    public static void initMissions(Main plugin) {
+    public static void initMissions(MissionTap plugin) {
         if (Files.DailyMissions == null) {
             plugin.log(
                     Logger.INFO + "No &edaily&r missions were found, trying to regenerate them...");
@@ -53,7 +53,7 @@ public final class Functions {
         }
     }
 
-    public static void refreshMissions(Main plugin) {
+    public static void refreshMissions(MissionTap plugin) {
         if (Files.DailyMissions.getLong("next-gen") <= Calendars.getNow()) {
             plugin.log(Logger.INFO + "Regenerating &edaily&r missions...");
             generateMissions("daily", plugin);
@@ -64,7 +64,7 @@ public final class Functions {
         }
     }
 
-    public static void generateMissions(String type, Main plugin) {
+    public static void generateMissions(String type, MissionTap plugin) {
         if (!List.of("daily", "weekly").contains(type)) {
             return;
         }
@@ -101,7 +101,7 @@ public final class Functions {
         return item;
     }
 
-    public static void reloadPlugin(Main plugin) {
+    public static void reloadPlugin(MissionTap plugin) {
         initUtils(plugin);
         initMissions(plugin);
         initMenus(plugin);

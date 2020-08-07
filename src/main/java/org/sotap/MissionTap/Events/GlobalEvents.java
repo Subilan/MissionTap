@@ -6,13 +6,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.sotap.MissionTap.Main;
+import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.Functions;
 
 public final class GlobalEvents implements Listener {
-    public Main plugin;
+    public MissionTap plugin;
 
-    public GlobalEvents(Main plugin) {
+    public GlobalEvents(MissionTap plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }

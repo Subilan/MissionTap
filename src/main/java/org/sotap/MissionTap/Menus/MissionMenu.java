@@ -15,7 +15,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.sotap.MissionTap.Main;
+import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Logger;
@@ -23,11 +23,11 @@ import org.sotap.MissionTap.Utils.Logger;
 public final class MissionMenu implements Listener {
     private final Inventory inventory;
     private final String type;
-    private final Main plugin;
+    private final MissionTap plugin;
     private final FileConfiguration objects;
     private List<Mission> missions;
 
-    public MissionMenu(String type, Main plugin) {
+    public MissionMenu(String type, MissionTap plugin) {
         this.type = type;
         this.plugin = plugin;
         this.objects = type != null ? (type == "daily" ? Files.DailyMissions : Files.WeeklyMissions)

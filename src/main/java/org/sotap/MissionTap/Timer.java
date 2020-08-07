@@ -4,9 +4,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.sotap.MissionTap.Utils.Functions;
 
 public final class Timer extends BukkitRunnable {
-    private final Main plugin;
+    private final MissionTap plugin;
 
-    public Timer(Main plugin) {
+    public Timer(MissionTap plugin) {
         this.plugin = plugin;
     }
 

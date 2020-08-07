@@ -14,14 +14,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.sotap.MissionTap.Main;
+import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.Files;
 
 public final class MissionEvents implements Listener {
-    private final Main plugin;
+    private final MissionTap plugin;
     private List<UUID> droppedItem;
 
-    public MissionEvents(Main plugin) {
+    public MissionEvents(MissionTap plugin) {
         this.plugin = plugin;
         this.droppedItem = new ArrayList<>();
     }

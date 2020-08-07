@@ -15,7 +15,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.sotap.MissionTap.Main;
+import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Logger;
@@ -24,7 +24,7 @@ public final class InprogressMenu implements Listener {
     private final Inventory inventory;
     private List<Mission> missions;
 
-    public InprogressMenu(Main plugin) {
+    public InprogressMenu(MissionTap plugin) {
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }

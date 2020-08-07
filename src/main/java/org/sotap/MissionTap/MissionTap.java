@@ -7,7 +7,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.Logger;
 
-public final class Main extends JavaPlugin {
+public final class MissionTap extends JavaPlugin {
 
     @Override
     public void onEnable() {
