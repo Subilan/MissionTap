@@ -28,15 +28,17 @@ public final class InprogressMenu implements Listener {
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
-    
+
     public void init(UUID u) {
         for (String type : new String[] {"daily", "weekly"}) {
             ConfigurationSection objects = Files.loadPlayer(u).getConfigurationSection(type);
-            if (objects == null) continue;
-            Map<String,Object> objectMap = objects.getValues(false);
+            if (objects == null)
+                continue;
+            Map<String, Object> objectMap = objects.getValues(false);
             for (String key : objectMap.keySet()) {
                 Mission m = new Mission(type, key);
-                if (m.isExpired(u)) continue;
+                if (m.isExpired(u))
+                    continue;
                 missions.add(m);
                 inventory.addItem(m.getItemStack(u));
             }
@@ -54,39 +56,52 @@ public final class InprogressMenu implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getInventory() != inventory) return;
+        if (e.getInventory() != inventory)
+            return;
         e.setCancelled(true);
         ItemStack clicked = e.getCurrentItem();
-        if (clicked == null) return;
-        if (clicked.getType() != Material.BOOK && clicked.getType() != Material.ENCHANTED_BOOK) return;
+        if (clicked == null)
+            return;
+        if (clicked.getType() != Material.BOOK && clicked.getType() != Material.ENCHANTED_BOOK)
+            return;
         Player p = (Player) e.getWhoClicked();
         UUID u = p.getUniqueId();
         Integer slot = e.getSlot();
         Mission clickedMission = missions.get(slot);
         p.closeInventory();
         if (clickedMission.isExpired(u)) {
-            p.sendMessage(Logger.translateColor(Logger.WARN + "The mission is already &cexpired&r."));
+            p.sendMessage(
+                    Logger.translateColor(Logger.WARN + "The mission is already &cexpired&r."));
             return;
         }
         if (e.getClick() == ClickType.SHIFT_LEFT) {
-            if (!Files.config.getBoolean("require-acceptance")) return;
+            if (!Files.config.getBoolean("require-acceptance"))
+                return;
             if (!Files.config.getBoolean("allow-cancelling")) {
-                p.sendMessage(Logger.translateColor(Logger.FAILED + "You can't cancel the mission now."));
+                p.sendMessage(
+                        Logger.translateColor(Logger.FAILED + "You can't cancel the mission now."));
                 return;
             }
             clickedMission.destory(u);
             removeSlot(slot);
-            p.sendMessage(Logger.translateColor(Logger.SUCCESS + "Successfully removed the mission from your current working-on list."));
+            p.sendMessage(Logger.translateColor(Logger.SUCCESS
+                    + "Successfully removed the mission from your current working-on list."));
             return;
         }
         if (e.getClick() == ClickType.LEFT) {
             if (clickedMission.isFinished(u)) {
                 clickedMission.reward(p);
+                // if multiple acceptance is not allowed, record the submittion and prevent the next acceptance.
+                if (!Files.config.getBoolean("allow-multiple-acceptance"))
+                    clickedMission.setSubmitted(u);
                 clickedMission.destory(u);
                 removeSlot(slot);
-                p.sendMessage(Logger.translateColor(Logger.SUCCESS + "&bCongratulations!&r You've finished the mission \"&a" + clickedMission.getName() + "&r\"!"));
+                p.sendMessage(Logger.translateColor(
+                        Logger.SUCCESS + "&bCongratulations!&r You've finished the mission \"&a"
+                                + clickedMission.getName() + "&r\"!"));
             } else {
-                p.sendMessage(Logger.translateColor(Logger.FAILED + "You haven't finished the mission yet!"));
+                p.sendMessage(Logger
+                        .translateColor(Logger.FAILED + "You haven't finished the mission yet!"));
             }
             return;
         }

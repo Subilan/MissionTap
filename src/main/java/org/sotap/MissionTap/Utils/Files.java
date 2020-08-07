@@ -46,6 +46,10 @@ public final class Files {
         }
     }
 
+    public static void savePlayer(FileConfiguration data, UUID u) {
+        save(data, "./playerdata/" + u.toString() + ".yml");
+    }
+
     public static FileConfiguration getGeneratedMissions(String type) {
         switch (type) {
             case "daily":

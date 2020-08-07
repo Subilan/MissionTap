@@ -50,7 +50,7 @@ public final class Mission {
         missionContent.put("acceptance", Calendars.getNow());
         missionContent.put("expiration", missions.getLong("next-gen"));
         playerdata.createSection(type + "." + key, missionContent);
-        Files.save(playerdata, "./playerdata/" + u.toString() + ".yml");
+        Files.savePlayer(playerdata, u);
     }
 
     public String getName() {
@@ -97,5 +97,23 @@ public final class Mission {
     public void reward(Player p) {
         List<String> commands = object.getStringList("rewards");
         Functions.dispatchCommands(p, commands);
+    }
+
+    public void setSubmitted(UUID u) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        List<String> submittedList = playerdata.getStringList("submitted-list");
+        submittedList = submittedList == null ? new ArrayList<>() : submittedList;
+        submittedList.add(key);
+        playerdata.set("submitted-list", submittedList);
+        Files.savePlayer(playerdata, u);
+    }
+
+    public boolean isSubmitted(UUID u) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        List<String> submittedList = playerdata.getStringList("submitted-list");
+        if (submittedList != null) {
+            return submittedList.contains(key);
+        }
+        return false;
     }
 }

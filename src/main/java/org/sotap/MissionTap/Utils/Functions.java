@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -98,5 +99,20 @@ public final class Functions {
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;
+    }
+
+    public static void reloadPlugin(Main plugin) {
+        initUtils(plugin);
+        initMissions(plugin);
+        initMenus(plugin);
+    }
+
+    public static void resetSubmittedList(UUID u) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        playerdata.set("submitted-list", null);
+    }
+
+    public static void resetSubmittedListForAll() {
+        // to be continued
     }
 }

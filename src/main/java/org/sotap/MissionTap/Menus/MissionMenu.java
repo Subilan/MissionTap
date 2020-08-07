@@ -87,6 +87,13 @@ public final class MissionMenu implements Listener {
             clickedMission.destory(u);
             return;
         }
+        if (!Files.config.getBoolean("allow-multiple-acceptance")) {
+            if (clickedMission.isSubmitted(u)) {
+                p.sendMessage(Logger.translateColor(Logger.WARN + "You cannot accept the mission that you've &ealready finished before&r!"));
+                clickedMission.destory(u);
+                return;
+            }
+        }
         clickedMission.accept(u);
         p.sendMessage(Logger.translateColor(Logger.SUCCESS + "Successfully accepted the mission &a"
                 + clickedMission.getName() + "&r!"));
