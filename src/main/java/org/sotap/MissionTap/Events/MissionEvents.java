@@ -48,7 +48,6 @@ public final class MissionEvents implements Listener {
         droppedItem.add(e.getItemDrop().getUniqueId());
     }
 
-    // for collecting
     @EventHandler
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
         if (e.getEntityType() != EntityType.PLAYER) return;
@@ -57,7 +56,6 @@ public final class MissionEvents implements Listener {
         updateData(p.getUniqueId(), "collecting", e.getItem().getItemStack().getType().toString());
     }
 
-    // for breeding
     @EventHandler
     public void onEntityBreeding(EntityBreedEvent e) {
         if (e.getBreeder().getType() != EntityType.PLAYER) return;
@@ -65,7 +63,6 @@ public final class MissionEvents implements Listener {
         updateData(p.getUniqueId(), "breeding", e.getEntity().getType().toString());
     }
 
-    // for blockbreak
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();

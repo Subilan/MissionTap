@@ -91,8 +91,6 @@ public final class InprogressMenu implements Listener {
         if (e.getClick() == ClickType.LEFT) {
             if (clickedMission.isFinished(u)) {
                 clickedMission.reward(p);
-                // if multiple acceptance is not allowed, record the submittion and prevent the next
-                // acceptance.
                 if (!Files.config.getBoolean("allow-multiple-acceptance"))
                     clickedMission.setSubmitted(u);
                 clickedMission.destory(u);
