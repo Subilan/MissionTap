@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,13 +24,13 @@ public final class MissionMenu implements Listener {
     private final Inventory inventory;
     private final String type;
     private final MissionTap plugin;
-    private final FileConfiguration objects;
+    private final ConfigurationSection objects;
     private List<Mission> missions;
 
     public MissionMenu(String type, MissionTap plugin) {
         this.type = type;
         this.plugin = plugin;
-        this.objects = type != null ? (type == "daily" ? Files.DailyMissions : Files.WeeklyMissions)
+        this.objects = type != null ? Files.getGeneratedMissions(type)
                 : null;
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Missions");
         this.missions = new ArrayList<>();
@@ -39,7 +39,7 @@ public final class MissionMenu implements Listener {
     }
 
     private void init() {
-        if (objects == null) {
+        if (Files.isEmptyConfiguration(objects)) {
             plugin.log(Logger.WARN + "No &e" + type + "&r missions were found.");
             return;
         }
@@ -80,11 +80,6 @@ public final class MissionMenu implements Listener {
         if (clickedMission.isAccepted(u)) {
             p.sendMessage(Logger.translateColor(
                     Logger.FAILED + "You cannot accept a mission that is already accepted!"));
-            return;
-        }
-        if (clickedMission.isExpired(u)) {
-            p.sendMessage(Logger.translateColor(Logger.WARN + "The mission is &cexpired&r now."));
-            clickedMission.destory(u);
             return;
         }
         if (!Files.config.getBoolean("allow-multiple-acceptance")) {

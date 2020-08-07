@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -12,18 +13,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
-import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.Files;
 
 public final class MissionEvents implements Listener {
-    private final MissionTap plugin;
     private List<UUID> droppedItem;
 
     public MissionEvents(MissionTap plugin) {
-        this.plugin = plugin;
         this.droppedItem = new ArrayList<>();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public static void updateData(UUID u, String missionType, String dataName) {
@@ -44,8 +44,7 @@ public final class MissionEvents implements Listener {
 
     // cheating action filter
     @EventHandler
-    public void onPlayerDropItem(EntityDropItemEvent e) {
-        if (e.getEntityType() != EntityType.PLAYER) return;
+    public void onPlayerDropItem(PlayerDropItemEvent e) {
         droppedItem.add(e.getItemDrop().getUniqueId());
     }
 
@@ -55,7 +54,7 @@ public final class MissionEvents implements Listener {
         if (e.getEntityType() != EntityType.PLAYER) return;
         if (droppedItem.contains(e.getItem().getUniqueId())) return;
         Player p = (Player) e.getEntity();
-        updateData(p.getUniqueId(), "collecting", e.getItem().getType().toString());
+        updateData(p.getUniqueId(), "collecting", e.getItem().getItemStack().getType().toString());
     }
 
     // for breeding

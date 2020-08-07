@@ -19,13 +19,15 @@ import net.md_5.bungee.api.ChatColor;
 public final class Mission {
     public String type;
     public String key;
-    public final FileConfiguration missions;
+    public final FileConfiguration missionFile;
+    public final ConfigurationSection missions;
     public final ConfigurationSection object;
 
     public Mission(String type, String key) {
         this.type = type;
         this.key = key;
-        this.missions = Files.getGeneratedMissions(type);
+        this.missionFile = Files.getGeneratedMissionFile(type);
+        this.missions = missionFile.getConfigurationSection(type);
         this.object = missions.getConfigurationSection(key);
     }
 
@@ -33,13 +35,15 @@ public final class Mission {
         List<String> lore = object.getStringList("lore");
         List<String> finalLore = new ArrayList<>();
         if (u != null) {
-            finalLore.add(Logger.translateColor(isFinished(u) ? "&l&aFinished" : "&l&cUnfinished"));
+            finalLore.add(Logger.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
+            finalLore.add("");
         }
         for (String text : lore) {
-            finalLore.add(ChatColor.WHITE + text);
+            finalLore.add(ChatColor.WHITE + Logger.translateColor(text));
         }
         finalLore.add("");
-        finalLore.add(Logger.translateColor("&8" + Calendars.getNextRefresh(type)));
+        finalLore.add(Logger
+                .translateColor("&8" + Calendars.stampToString(Calendars.getNextRefresh(type))));
         return Functions.createItemStack(object.getString("name"), Material.BOOK, finalLore);
     }
 
@@ -48,7 +52,7 @@ public final class Mission {
         Map<String, Object> missionContent = new HashMap<>();
         missionContent.put("name", object.getString("name"));
         missionContent.put("acceptance", Calendars.getNow());
-        missionContent.put("expiration", missions.getLong("next-gen"));
+        missionContent.put("expiration", missionFile.getLong("next-gen"));
         playerdata.createSection(type + "." + key, missionContent);
         Files.savePlayer(playerdata, u);
     }
@@ -77,13 +81,23 @@ public final class Mission {
 
     public boolean isFinished(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String missionType : new String[] {"blockbreak", "collecting", "breeding", "trading"}) {
-            if (object.getConfigurationSection(missionType + "-data") == null) continue;
-            Map<String,Object> requirement = object.getConfigurationSection(missionType).getValues(false);
-            Map<String,Object> progress = playerdata.getConfigurationSection(type + "." + key + "." + missionType + "-data").getValues(false);
+        for (String missionType : new String[] {"blockbreak", "collecting", "breeding",
+                "trading"}) {
+            if (object.getConfigurationSection(missionType) == null)
+                continue;
+            if (playerdata.getConfigurationSection(
+                    type + "." + key + "." + missionType + "-data") == null)
+                return false;
+            Map<String, Object> requirement =
+                    object.getConfigurationSection(missionType).getValues(false);
+            Map<String, Object> progress = playerdata
+                    .getConfigurationSection(type + "." + key + "." + missionType + "-data")
+                    .getValues(false);
             for (String reqKey : requirement.keySet()) {
-                if (progress.get(reqKey) == null) return false;
-                if ((Integer) progress.get(reqKey) < (Integer) requirement.get(reqKey)) return false;
+                if (progress.get(reqKey) == null)
+                    return false;
+                if ((Integer) progress.get(reqKey) < (Integer) requirement.get(reqKey))
+                    return false;
             }
         }
         return true;
@@ -92,6 +106,7 @@ public final class Mission {
     public void destory(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
         playerdata.set(type + "." + key, null);
+        Files.savePlayer(playerdata, u);
     }
 
     public void reward(Player p) {
@@ -101,16 +116,16 @@ public final class Mission {
 
     public void setSubmitted(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        List<String> submittedList = playerdata.getStringList("submitted-list");
+        List<String> submittedList = playerdata.getStringList("submitted-list." + type);
         submittedList = submittedList == null ? new ArrayList<>() : submittedList;
         submittedList.add(key);
-        playerdata.set("submitted-list", submittedList);
+        playerdata.set("submitted-list." + type, submittedList);
         Files.savePlayer(playerdata, u);
     }
 
     public boolean isSubmitted(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        List<String> submittedList = playerdata.getStringList("submitted-list");
+        List<String> submittedList = playerdata.getStringList("submitted-list." + type);
         if (submittedList != null) {
             return submittedList.contains(key);
         }

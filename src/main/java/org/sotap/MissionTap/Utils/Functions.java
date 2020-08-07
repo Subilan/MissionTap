@@ -37,16 +37,20 @@ public final class Functions {
     }
 
     public static void initMenus(MissionTap plugin) {
-       Menus.refresh(plugin);
+        Menus.refresh(plugin);
+    }
+
+    public static void initEvents(MissionTap plugin) {
+        Events.refresh(plugin);
     }
 
     public static void initMissions(MissionTap plugin) {
-        if (Files.DailyMissions == null) {
+        if (Files.isEmptyConfiguration(Files.DailyMissions)) {
             plugin.log(
                     Logger.INFO + "No &edaily&r missions were found, trying to regenerate them...");
             generateMissions("daily", plugin);
         }
-        if (Files.WeeklyMissions == null) {
+        if (Files.isEmptyConfiguration(Files.WeeklyMissions)) {
             plugin.log(Logger.INFO
                     + "No &eweekly&r missions were found, trying to regenerate them...");
             generateMissions("weekly", plugin);
@@ -54,13 +58,17 @@ public final class Functions {
     }
 
     public static void refreshMissions(MissionTap plugin) {
-        if (Files.DailyMissions.getLong("next-gen") <= Calendars.getNow()) {
-            plugin.log(Logger.INFO + "Regenerating &edaily&r missions...");
-            generateMissions("daily", plugin);
+        if (!Files.isEmptyConfiguration(Files.DailyMissions)) {
+            if (Files.DailyMissions.getLong("next-gen") <= Calendars.getNow()) {
+                plugin.log(Logger.INFO + "Regenerating &edaily&r missions...");
+                generateMissions("daily", plugin);
+            }
         }
-        if (Files.WeeklyMissions.getLong("next-gen") <= Calendars.getNow()) {
-            plugin.log(Logger.INFO + "Regenerating &eweekly&r missions...");
-            generateMissions("weekly", plugin);
+        if (!Files.isEmptyConfiguration(Files.WeeklyMissions)) {
+            if (Files.WeeklyMissions.getLong("next-gen") <= Calendars.getNow()) {
+                plugin.log(Logger.INFO + "Regenerating &eweekly&r missions...");
+                generateMissions("weekly", plugin);
+            }
         }
     }
 
@@ -82,17 +90,18 @@ public final class Functions {
                 continue;
             results.put(randomKey, missions.get(randomKey));
         }
-        FileConfiguration target = Files.getGeneratedMissions(type);
+        FileConfiguration target = Files.getGeneratedMissionFile(type);
         long nextRefresh = Calendars.getNextRefresh(type);
         target.createSection(type, results);
         target.set("last-gen", Calendars.getNow());
         target.set("next-gen", nextRefresh);
+        Files.save(target, "./generated/" + type + "-missions.yml");
         plugin.log(Logger.SUCCESS + "Regeneration done. The next regeneration will be on &a"
                 + Calendars.stampToString(nextRefresh) + "&r.");
-        Files.save(target, "./generated/" + type + "-missions.yml");
     }
 
-    public static ItemStack createItemStack(final String name, final Material material, final List<String> lore) {
+    public static ItemStack createItemStack(final String name, final Material material,
+            final List<String> lore) {
         final ItemStack item = new ItemStack(material);
         final ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.AQUA + name);
@@ -117,7 +126,7 @@ public final class Functions {
     }
 
     public static void initDataForPlayer(UUID u) {
-        // to be fixed
+        @SuppressWarnings("unused")
         FileConfiguration playerdata = Files.loadPlayer(u);
     }
 }

@@ -15,6 +15,7 @@ public final class MissionTap extends JavaPlugin {
         Functions.initUtils(this);
         Functions.initMissions(this);
         Functions.initMenus(this);
+        Functions.initEvents(this);
         Functions.refreshMissions(this);
         @SuppressWarnings("unused")
         BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);

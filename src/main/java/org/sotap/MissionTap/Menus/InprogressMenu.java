@@ -1,5 +1,6 @@
 package org.sotap.MissionTap.Menus;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -26,21 +28,24 @@ public final class InprogressMenu implements Listener {
 
     public InprogressMenu(MissionTap plugin) {
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
+        this.missions = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void init(UUID u) {
         for (String type : new String[] {"daily", "weekly"}) {
             ConfigurationSection objects = Files.loadPlayer(u).getConfigurationSection(type);
-            if (objects == null)
+            if (Files.isEmptyConfiguration(objects))
                 continue;
             Map<String, Object> objectMap = objects.getValues(false);
+            int index = 0;
             for (String key : objectMap.keySet()) {
                 Mission m = new Mission(type, key);
                 if (m.isExpired(u))
                     continue;
                 missions.add(m);
-                inventory.addItem(m.getItemStack(u));
+                inventory.setItem(index, m.getItemStack(u));
+                index++;
             }
         }
     }
@@ -48,10 +53,6 @@ public final class InprogressMenu implements Listener {
     public void open(final Player p) {
         init(p.getUniqueId());
         p.openInventory(inventory);
-    }
-
-    public void removeSlot(Integer slot) {
-        inventory.setItem(slot, new ItemStack(Material.AIR));
     }
 
     @EventHandler
@@ -83,7 +84,6 @@ public final class InprogressMenu implements Listener {
                 return;
             }
             clickedMission.destory(u);
-            removeSlot(slot);
             p.sendMessage(Logger.translateColor(Logger.SUCCESS
                     + "Successfully removed the mission from your current working-on list."));
             return;
@@ -91,11 +91,11 @@ public final class InprogressMenu implements Listener {
         if (e.getClick() == ClickType.LEFT) {
             if (clickedMission.isFinished(u)) {
                 clickedMission.reward(p);
-                // if multiple acceptance is not allowed, record the submittion and prevent the next acceptance.
+                // if multiple acceptance is not allowed, record the submittion and prevent the next
+                // acceptance.
                 if (!Files.config.getBoolean("allow-multiple-acceptance"))
                     clickedMission.setSubmitted(u);
                 clickedMission.destory(u);
-                removeSlot(slot);
                 p.sendMessage(Logger.translateColor(
                         Logger.SUCCESS + "&bCongratulations!&r You've finished the mission \"&a"
                                 + clickedMission.getName() + "&r\"!"));
@@ -109,8 +109,15 @@ public final class InprogressMenu implements Listener {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent e) {
+        if (e.getInventory() == inventory)
+            e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e) {
         if (e.getInventory() != inventory)
             return;
-        e.setCancelled(true);
+        inventory.clear();
+        missions = new ArrayList<>();
     }
 }
