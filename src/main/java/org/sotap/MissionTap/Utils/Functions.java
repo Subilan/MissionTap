@@ -115,4 +115,9 @@ public final class Functions {
     public static void resetSubmittedListForAll() {
         // to be continued
     }
+
+    public static void initDataForPlayer(UUID u) {
+        // to be fixed
+        FileConfiguration playerdata = Files.loadPlayer(u);
+    }
 }

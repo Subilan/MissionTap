@@ -1,5 +1,6 @@
 package org.sotap.MissionTap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 // import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -17,6 +18,7 @@ public final class Main extends JavaPlugin {
         Functions.refreshMissions(this);
         @SuppressWarnings("unused")
         BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
+        Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         log(Logger.SUCCESS + "The plugin has been &aenabled&r.");
     }
 
