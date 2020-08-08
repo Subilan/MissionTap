@@ -10,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.sotap.Ageing.Exception.AgeingAPIException;
 import org.sotap.MissionTap.Utils.Calendars;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
@@ -114,8 +115,15 @@ public final class Mission {
 
     public boolean reward(Player p) {
         List<String> commands = object.getStringList("rewards");
+        Integer ageExp = object.getInt("age-exp");
         if (commands.size() == 0) return false;
         Functions.dispatchCommands(p, commands);
+        try {
+            AgeingAPI.api.updateExperience(ageExp, p.getName());
+            p.sendMessage(Logger.translateColor(Logger.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
+        } catch (AgeingAPIException e) {
+            p.sendMessage(Logger.translateColor(Logger.WARN + "在更新 Ageing 数据时出现问题。"));
+        }
         return true;
     }
 
