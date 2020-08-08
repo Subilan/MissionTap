@@ -116,7 +116,7 @@ public final class Mission {
     public boolean reward(Player p) {
         List<String> commands = object.getStringList("rewards");
         Integer ageExp = object.getInt("age-exp");
-        if (commands.size() == 0) return false;
+        if (commands.size() == 0 && ageExp == 0) return false;
         Functions.dispatchCommands(p, commands);
         try {
             AgeingAPI.api.updateExperience(ageExp, p.getName());
