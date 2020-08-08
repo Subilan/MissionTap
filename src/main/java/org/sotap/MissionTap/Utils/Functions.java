@@ -149,7 +149,7 @@ public final class Functions {
             m.destory(u);
         }
         p.sendMessage(Logger.translateColor(Logger.SUCCESS
-                + "&e恭喜！&r你成功完成了任务 \"&a" + m.getName() + "&r\"！"));
+                + "&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！"));
         if (!m.reward(p)) {
             p.sendMessage(
                     Logger.translateColor(Logger.WARN + "这个任务&c没有给予任何奖励&r。"));
