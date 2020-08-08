@@ -2,6 +2,13 @@
 weekly-refresh-time: 1
 # 每日任务刷新时间，范围 0~23，对应二十四小时
 daily-refresh-time: 14
+# 周任务抽取数量
+weekly-mission-amount: 4
+# 日任务抽取数量
+daily-mission-amount: 2
+# 是否允许已接受的周任务只在月末清空
+# 若为 false，则随周任务刷新而清空（每周一次）
+allow-tarriance: false
 # 是否需要玩家接受任务后才开始计算
 require-acceptance: false
 # 是否需要玩家提交后才会获得奖励
