@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.GlobalMission;
+import org.sotap.MissionTap.Classes.Mission;
 import net.md_5.bungee.api.ChatColor;
 
 public final class Functions {
@@ -142,5 +143,25 @@ public final class Functions {
     public static void initDataForPlayer(UUID u) {
         @SuppressWarnings("unused")
         FileConfiguration playerdata = Files.loadPlayer(u);
+    }
+
+    public static void finishMission(Mission m, Player p) {
+        UUID u = p.getUniqueId();
+        if (Files.config.getBoolean("require-acceptance")
+                && !Files.config.getBoolean("allow-multiple-acceptance")) {
+            m.setSubmitted(u);
+            m.destory(u);
+        } else if (!Files.config.getBoolean("require-acceptance")
+                && Files.config.getBoolean("allow-multiple-acceptance")) {
+            m.clearData(u);
+        } else {
+            m.destory(u);
+        }
+        p.sendMessage(Logger.translateColor(Logger.SUCCESS
+                + "&bCongratulations!&r You've finished the mission \"&a" + m.getName() + "&r\"!"));
+        if (!m.reward(p)) {
+            p.sendMessage(
+                    Logger.translateColor(Logger.WARN + "&cNo rewards&r found for this mission!"));
+        }
     }
 }

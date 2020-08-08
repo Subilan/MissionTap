@@ -112,9 +112,11 @@ public final class Mission {
         Files.savePlayer(playerdata, u);
     }
 
-    public void reward(Player p) {
+    public boolean reward(Player p) {
         List<String> commands = object.getStringList("rewards");
+        if (commands.size() == 0) return false;
         Functions.dispatchCommands(p, commands);
+        return true;
     }
 
     public void setSubmitted(UUID u) {

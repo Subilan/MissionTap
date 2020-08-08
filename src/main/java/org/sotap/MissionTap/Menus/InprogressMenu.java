@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
+import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.Logger;
 
 public final class InprogressMenu implements Listener {
@@ -97,20 +98,7 @@ public final class InprogressMenu implements Listener {
         }
         if (e.getClick() == ClickType.LEFT) {
             if (clickedMission.isFinished(u)) {
-                clickedMission.reward(p);
-                if (Files.config.getBoolean("require-acceptance")
-                        && !Files.config.getBoolean("allow-multiple-acceptance")) {
-                    clickedMission.setSubmitted(u);
-                    clickedMission.destory(u);
-                } else if (!Files.config.getBoolean("require-acceptance")
-                        && Files.config.getBoolean("allow-multiple-acceptance")) {
-                    clickedMission.clearData(u);
-                } else {
-                    clickedMission.destory(u);
-                }
-                p.sendMessage(Logger.translateColor(
-                        Logger.SUCCESS + "&bCongratulations!&r You've finished the mission \"&a"
-                                + clickedMission.getName() + "&r\"!"));
+                Functions.finishMission(clickedMission, p);
             } else {
                 p.sendMessage(Logger
                         .translateColor(Logger.FAILED + "You haven't finished the mission yet!"));
