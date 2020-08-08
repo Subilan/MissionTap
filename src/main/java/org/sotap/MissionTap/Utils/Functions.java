@@ -49,13 +49,11 @@ public final class Functions {
 
     public static void initMissions(MissionTap plugin) {
         if (Files.isEmptyConfiguration(Files.DailyMissions)) {
-            plugin.log(
-                    Logger.INFO + "找不到存在的&e每日&r任务，正在尝试重新生成...");
+            plugin.log(Logger.INFO + "找不到存在的&e每日&r任务，正在尝试重新生成...");
             generateMissions("daily", plugin);
         }
         if (Files.isEmptyConfiguration(Files.WeeklyMissions)) {
-            plugin.log(Logger.INFO
-                    + "找不到存在的&e每周&r任务，正在尝试重新生成...");
+            plugin.log(Logger.INFO + "找不到存在的&e每周&r任务，正在尝试重新生成...");
             generateMissions("weekly", plugin);
         }
     }
@@ -86,8 +84,9 @@ public final class Functions {
         List<String> keys = new ArrayList<>(missions.getKeys(false));
         Map<String, Object> results = new HashMap<>();
         String randomKey;
-        while (results.size() < (type == "daily" ? (keys.size() >= 2 ? 2 : keys.size())
-                : (keys.size() >= 4 ? 4 : keys.size()))) {
+        Integer amount = Files.config.getInt(type + "-mission-amount");
+        while (results.size() < (amount == 0 ? (type == "daily" ? 2 : 4)
+                : (keys.size() >= amount ? amount : keys.size()))) {
             randomKey = keys.get(gen.nextInt(keys.size()));
             if (results.containsKey(randomKey))
                 continue;
@@ -99,8 +98,8 @@ public final class Functions {
         target.set("last-gen", Calendars.getNow());
         target.set("next-gen", nextRefresh);
         Files.save(target, "./generated/" + type + "-missions.yml");
-        plugin.log(Logger.SUCCESS + "刷新成功。下次刷新日期为 &a"
-                + Calendars.stampToString(nextRefresh) + "&r。");
+        plugin.log(
+                Logger.SUCCESS + "刷新成功。下次刷新日期为 &a" + Calendars.stampToString(nextRefresh) + "&r。");
         if (!Files.config.getBoolean("require-acceptance")) {
             plugin.log(Logger.INFO + "正在向玩家档案写入任务数据...");
             acceptGlobalMission(type);
@@ -148,11 +147,10 @@ public final class Functions {
         } else {
             m.destory(u);
         }
-        p.sendMessage(Logger.translateColor(Logger.SUCCESS
-                + "&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！"));
+        p.sendMessage(Logger
+                .translateColor(Logger.SUCCESS + "&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！"));
         if (!m.reward(p)) {
-            p.sendMessage(
-                    Logger.translateColor(Logger.WARN + "这个任务&c没有给予任何奖励&r。"));
+            p.sendMessage(Logger.translateColor(Logger.WARN + "这个任务&c没有给予任何奖励&r。"));
         }
     }
 }
