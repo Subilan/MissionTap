@@ -35,7 +35,10 @@ public final class Mission {
     public ItemStack getItemStack(UUID u) {
         List<String> lore = object.getStringList("lore");
         List<String> finalLore = new ArrayList<>();
+        Long expiration = 0L;
+        Long refresh = missionFile.getLong("next-gen");
         if (u != null) {
+            expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
             finalLore.add(Logger.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
             finalLore.add("");
         }
@@ -43,8 +46,8 @@ public final class Mission {
             finalLore.add(ChatColor.WHITE + Logger.translateColor(text));
         }
         finalLore.add("");
-        finalLore.add(Logger
-                .translateColor("&8" + Calendars.stampToString(Calendars.getNextRefresh(type))));
+        finalLore.add(Logger.translateColor("&8"
+                + (u != null ? Calendars.stampToString(expiration) : Calendars.stampToString(refresh))));
         return Functions.createItemStack(object.getString("name"),
                 u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK)
                         : Material.BOOK,
@@ -56,7 +59,7 @@ public final class Mission {
         Map<String, Object> missionContent = new HashMap<>();
         missionContent.put("name", object.getString("name"));
         missionContent.put("acceptance", Calendars.getNow());
-        missionContent.put("expiration", missionFile.getLong("next-gen"));
+        missionContent.put("expiration", Calendars.getMissionExpiration(type));
         playerdata.createSection(type + "." + key, missionContent);
         Files.savePlayer(playerdata, u);
     }
@@ -116,11 +119,13 @@ public final class Mission {
     public boolean reward(Player p) {
         List<String> commands = object.getStringList("rewards");
         Integer ageExp = object.getInt("age-exp");
-        if (commands.size() == 0 && ageExp == 0) return false;
+        if (commands.size() == 0 && ageExp == 0)
+            return false;
         Functions.dispatchCommands(p, commands);
         try {
             AgeingAPI.api.updateExperience(ageExp, p.getName());
-            p.sendMessage(Logger.translateColor(Logger.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
+            p.sendMessage(
+                    Logger.translateColor(Logger.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
         } catch (AgeingAPIException e) {
             p.sendMessage(Logger.translateColor(Logger.WARN + "在更新 Ageing 数据时出现问题。"));
         }
@@ -170,7 +175,8 @@ public final class Mission {
             for (String reqKey : requirement.keySet()) {
                 // if is finished, the former value should be greater than the latter value.
                 result = (Integer) progress.get(reqKey) - (Integer) requirement.get(reqKey);
-                playerdata.set(type + "." + key + "." + missionType + "-data." + reqKey, result < 0 ? 0 : result);
+                playerdata.set(type + "." + key + "." + missionType + "-data." + reqKey,
+                        result < 0 ? 0 : result);
             }
         }
         Files.savePlayer(playerdata, u);
