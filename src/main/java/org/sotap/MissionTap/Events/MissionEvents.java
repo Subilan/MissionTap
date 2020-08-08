@@ -30,7 +30,7 @@ public final class MissionEvents implements Listener {
         FileConfiguration playerdata = Files.loadPlayer(u);
         for (String type : new String[] { "daily", "weekly"} ) {
             ConfigurationSection section = playerdata.getConfigurationSection(type);
-            if (section == null) continue;
+            if (section == null || Files.isEmptyConfiguration(section)) continue;
             Map<String,Object> data = section.getValues(false);
             String dest = "";
             for (String key : data.keySet()) {

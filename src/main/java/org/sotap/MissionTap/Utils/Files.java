@@ -2,6 +2,10 @@ package org.sotap.MissionTap.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,11 +36,14 @@ public final class Files {
     }
 
     public static FileConfiguration load(String path, String name) {
-        return YamlConfiguration.loadConfiguration(getFile(new File(path.replace("./", cwd + "/")), name));
+        return YamlConfiguration
+                .loadConfiguration(getFile(new File(path.replace(path.length() == 1 ? "." : "./",
+                        path.length() == 1 ? cwd : cwd + "/")), name));
     }
 
     public static boolean isEmptyConfiguration(ConfigurationSection config) {
-        if (config == null) return true;
+        if (config == null)
+            return true;
         return config.getKeys(false).size() == 0;
     }
 
@@ -76,5 +83,35 @@ public final class Files {
             default:
                 return null;
         }
+    }
+
+    public static List<File> getSubfileList(File directory) {
+        if (directory == null)
+            return null;
+        if (!directory.isDirectory())
+            return null;
+        List<File> files = new ArrayList<>();
+        for (File f : directory.listFiles()) {
+            if (f.isFile()) {
+                files.add(f);
+            }
+        }
+        return files;
+    }
+
+    public static Map<String, FileConfiguration> getAllPlayerdata() {
+        Map<String, FileConfiguration> result = new HashMap<>();
+        for (File f : getSubfileList(new File(cwd + "/playerdata"))) {
+            result.put(f.getName(), YamlConfiguration.loadConfiguration(f));
+        }
+        return result;
+    }
+
+    public static List<UUID> getAllPlayerUUID() {
+        List<UUID> result = new ArrayList<>();
+        for (File f : getSubfileList(new File(cwd + "/playerdata"))) {
+            result.add(UUID.fromString(f.getName().replace(".yml", "")));
+        }
+        return result;
     }
 }

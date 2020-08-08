@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.MissionTap;
+import org.sotap.MissionTap.Classes.GlobalMission;
 import net.md_5.bungee.api.ChatColor;
 
 public final class Functions {
@@ -21,8 +22,9 @@ public final class Functions {
     public static void dispatchCommands(Player p, List<String> commands) {
         CommandSender sender = Bukkit.getConsoleSender();
         for (String cmd : commands) {
-            Bukkit.dispatchCommand(sender, cmd.replace("%playername%", p.getName())
-                    .replace("%uuid%", p.getUniqueId().toString()));
+            Bukkit.dispatchCommand(sender,
+                    Logger.translateColor(cmd.replace("%playername%", p.getName()).replace("%uuid%",
+                            p.getUniqueId().toString())));
         }
     }
 
@@ -98,6 +100,11 @@ public final class Functions {
         Files.save(target, "./generated/" + type + "-missions.yml");
         plugin.log(Logger.SUCCESS + "Regeneration done. The next regeneration will be on &a"
                 + Calendars.stampToString(nextRefresh) + "&r.");
+        if (!Files.config.getBoolean("require-acceptance")) {
+            plugin.log(Logger.INFO + "Writting generated missions to playerdata...");
+            acceptGlobalMission(type);
+            plugin.log(Logger.SUCCESS + "Writting process done.");
+        }
     }
 
     public static ItemStack createItemStack(final String name, final Material material,
@@ -114,8 +121,13 @@ public final class Functions {
         plugin.reloadConfig();
         initUtils(plugin);
         initMissions(plugin);
-        initMenus(plugin);
-        initEvents(plugin);
+        // not reloading menu
+        // not reloading event
+    }
+
+    public static void acceptGlobalMission(String type) {
+        GlobalMission mission = new GlobalMission(type);
+        mission.accept();
     }
 
     public static void resetSubmittedList(UUID u) {

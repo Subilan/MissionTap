@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.sotap.MissionTap.Classes.GlobalMission;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.Logger;
@@ -48,6 +49,19 @@ public final class CommandHandler implements CommandExecutor {
                     break;
                 }
 
+                case "init": {
+                    sender.sendMessage(Logger.translateColor(Logger.INFO + "Initializing for current settings..."));
+                    Functions.reloadPlugin(plugin);                    
+                    if (!Files.config.getBoolean("require-acceptance")) {
+                        GlobalMission globalDailyMission = new GlobalMission("daily");
+                        GlobalMission globalWeeklyMission = new GlobalMission("weekly");
+                        globalDailyMission.accept();
+                        globalWeeklyMission.accept();
+                    }
+                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "Initialization done."));
+                    break;
+                }
+
                 case "player": {
                     if (args.length < 3) {
                         sender.sendMessage(Logger.translateColor(Logger.FAILED + "Not enough arguments."));
@@ -67,9 +81,7 @@ public final class CommandHandler implements CommandExecutor {
                                         sender.sendMessage(Logger.translateColor(Logger.FAILED + "Invalid argument."));
                                     }
                                 } else {
-                                    for (String type : new String[] {"daily", "weekly"}) {
-                                        playerdata.set("submitted-list." + type, null);
-                                    }
+                                    playerdata.set("submitted-list", null);
                                     sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "Successfully cleared all of &a" + pl.getName() + "&r's mission submittion history."));
                                 }
                                 Files.savePlayer(playerdata, u);

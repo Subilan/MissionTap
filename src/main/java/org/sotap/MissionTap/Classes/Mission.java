@@ -44,7 +44,10 @@ public final class Mission {
         finalLore.add("");
         finalLore.add(Logger
                 .translateColor("&8" + Calendars.stampToString(Calendars.getNextRefresh(type))));
-        return Functions.createItemStack(object.getString("name"), u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK) : Material.BOOK, finalLore);
+        return Functions.createItemStack(object.getString("name"),
+                u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK)
+                        : Material.BOOK,
+                finalLore);
     }
 
     public void accept(UUID u) {
@@ -130,5 +133,36 @@ public final class Mission {
             return submittedList.contains(key);
         }
         return false;
+    }
+
+    public void clearData(UUID u) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        for (String missionType : new String[] {"blockbreak", "collecting", "breeding",
+                "trading"}) {
+            playerdata.set(type + "." + key + "." + missionType + "-data", null);
+        }
+    }
+
+    public void clearDataWithRequirement(UUID u) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        Integer result;
+        for (String missionType : new String[] {"blockbreak", "collecting", "breeding",
+                "trading"}) {
+            if (object.getConfigurationSection(missionType) == null
+                    || playerdata.getConfigurationSection(
+                            type + "." + key + "." + missionType + "-data") == null)
+                continue;
+            Map<String, Object> requirement =
+                    object.getConfigurationSection(missionType).getValues(false);
+            Map<String, Object> progress = playerdata
+                    .getConfigurationSection(type + "." + key + "." + missionType + "-data")
+                    .getValues(false);
+            for (String reqKey : requirement.keySet()) {
+                // if is finished, the former value should be greater than the latter value.
+                result = (Integer) progress.get(reqKey) - (Integer) requirement.get(reqKey);
+                playerdata.set(type + "." + key + "." + missionType + "-data." + reqKey, result < 0 ? 0 : result);
+            }
+        }
+        Files.savePlayer(playerdata, u);
     }
 }

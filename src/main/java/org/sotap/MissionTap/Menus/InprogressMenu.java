@@ -55,6 +55,11 @@ public final class InprogressMenu implements Listener {
 
     public void open(final Player p) {
         init(p.getUniqueId());
+        if (inventory.firstEmpty() == 0) {
+            p.sendMessage(Logger
+                    .translateColor(Logger.INFO + "You don't have any accepted mission now."));
+            return;
+        }
         p.openInventory(inventory);
     }
 
@@ -79,7 +84,8 @@ public final class InprogressMenu implements Listener {
             return;
         }
         if (e.getClick() == ClickType.SHIFT_LEFT) {
-            if (!Files.config.getBoolean("allow-cancelling") || !Files.config.getBoolean("require-acceptance")) {
+            if (!Files.config.getBoolean("allow-cancelling")
+                    || !Files.config.getBoolean("require-acceptance")) {
                 p.sendMessage(
                         Logger.translateColor(Logger.FAILED + "You can't cancel the mission now."));
                 return;
@@ -92,9 +98,16 @@ public final class InprogressMenu implements Listener {
         if (e.getClick() == ClickType.LEFT) {
             if (clickedMission.isFinished(u)) {
                 clickedMission.reward(p);
-                if (!Files.config.getBoolean("allow-multiple-acceptance"))
+                if (Files.config.getBoolean("require-acceptance")
+                        && !Files.config.getBoolean("allow-multiple-acceptance")) {
                     clickedMission.setSubmitted(u);
-                clickedMission.destory(u);
+                    clickedMission.destory(u);
+                } else if (!Files.config.getBoolean("require-acceptance")
+                        && Files.config.getBoolean("allow-multiple-acceptance")) {
+                    clickedMission.clearData(u);
+                } else {
+                    clickedMission.destory(u);
+                }
                 p.sendMessage(Logger.translateColor(
                         Logger.SUCCESS + "&bCongratulations!&r You've finished the mission \"&a"
                                 + clickedMission.getName() + "&r\"!"));
