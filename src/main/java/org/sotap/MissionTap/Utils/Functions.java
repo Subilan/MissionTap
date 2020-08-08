@@ -131,15 +131,6 @@ public final class Functions {
         mission.accept();
     }
 
-    public static void resetSubmittedList(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
-        playerdata.set("submitted-list", null);
-    }
-
-    public static void resetSubmittedListForAll() {
-        // to be continued
-    }
-
     public static void initDataForPlayer(UUID u) {
         @SuppressWarnings("unused")
         FileConfiguration playerdata = Files.loadPlayer(u);
