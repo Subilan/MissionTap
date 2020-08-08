@@ -105,6 +105,14 @@ public final class CommandHandler implements CommandExecutor {
                     break;
                 }
 
+                case "about": {
+                    sender.sendMessage(Logger.translateColor("&e# 关于 MissionTap"));
+                    sender.sendMessage(Logger.translateColor("&bMissionTap&r 是 SoTap 独立开发的第一个玩法性插件，如有问题请见谅 >_<!"));
+                    sender.sendMessage(Logger.translateColor("如果您对 MissionTap 有什么想说的，可以在讨论群内联系管理组，畅所欲言~"));
+                    sender.sendMessage(Logger.translateColor("GitHub: &a&nhttps://github.com/sotapmc/MissionTap"));
+                    break;
+                }
+
                 default: {
                     sender.sendMessage(Logger.translateColor(Logger.FAILED + "无效参数。"));
                 }
