@@ -1,16 +1,17 @@
 package org.sotap.MissionTap;
 
 import org.bukkit.scheduler.BukkitRunnable;
+import org.sotap.MissionTap.Utils.Functions;
 
 public final class Timer extends BukkitRunnable {
-    private final MissionTap plug;
+    private final MissionTap plugin;
 
-    public Timer(MissionTap plug) {
-        this.plug = plug;
+    public Timer(MissionTap plugin) {
+        this.plugin = plugin;
     }
 
     @Override
     public void run() {
-        plug.refreshMissions();
+        Functions.refreshMissions(plugin);
     }
 }

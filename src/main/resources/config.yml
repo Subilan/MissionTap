@@ -1,12 +1,14 @@
 # 每周任务刷新时间，范围 1~7，对应星期日~星期六
-weekly_refresh_time: 1
+weekly-refresh-time: 1
 # 每日任务刷新时间，范围 0~23，对应二十四小时
-daily_refresh_time: 14
+daily-refresh-time: 14
 # 是否需要玩家接受任务后才开始计算
-require_acceptance: false
+require-acceptance: false
 # 是否需要玩家提交后才会获得奖励
-require_submittion: false
+require-submittion: false
 # 是否允许用户取消任务
-allow_cancelling: false
-# 再次接受同一任务的冷却时间，若不需要冷却则设为 0，若不允许重复接受任务则设为 -1
-multiple_acceptance_cooldown: 0
+allow-cancelling: false
+# 是否允许重复接受同一任务
+allow-multiple-acceptance: true
+# 再次接受同一任务的冷却时间，若不需要冷却则设为 0
+multiple-acceptance-cooldown: 0

@@ -2,10 +2,12 @@ package org.sotap.MissionTap.Events;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,105 +16,77 @@ import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.sotap.MissionTap.MissionTap;
-import org.sotap.MissionTap.Utils.G;
+import org.sotap.MissionTap.Classes.Mission;
+import org.sotap.MissionTap.Utils.Files;
+import org.sotap.MissionTap.Utils.Functions;
 
 public final class MissionEvents implements Listener {
-    public MissionTap plug;
-    public List<UUID> droppedItems;
+    private List<UUID> droppedItem;
 
-    public MissionEvents(MissionTap plug) {
-        this.plug = plug;
-        this.droppedItems = new ArrayList<>();
-        Bukkit.getPluginManager().registerEvents(this, plug);
+    public MissionEvents(MissionTap plugin) {
+        this.droppedItem = new ArrayList<>();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    public boolean requireAcceptance() {
-        return G.config.getBoolean("require_acceptance");
+    public static void updateData(UUID u, String missionType, String dataName) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        for (String type : new String[] { "daily", "weekly"} ) {
+            ConfigurationSection section = playerdata.getConfigurationSection(type);
+            if (section == null || Files.isEmptyConfiguration(section)) continue;
+            Map<String,Object> data = section.getValues(false);
+            String dest = "";
+            for (String key : data.keySet()) {
+                dest = missionType + "-data" + "." + dataName;
+                ConfigurationSection object = (ConfigurationSection) data.get(key);
+                object.set(dest, object.getInt(dest) + 1);
+            }
+        }
+        Files.savePlayer(playerdata, u);
     }
 
-    // for BLOCKBREAK
+    public static void handleAutoSubmittion(Player p) {
+        if (Files.config.getBoolean("require-submittion")) return;
+        UUID u = p.getUniqueId();
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        for (String type : new String[] { "daily", "weekly"} ) {
+            ConfigurationSection section = playerdata.getConfigurationSection(type);
+            if (section == null || Files.isEmptyConfiguration(section)) continue;
+            for (String key : section.getKeys(false)) {
+                Mission m = new Mission(type, key);
+                if (m.isFinished(u)) {
+                    Functions.finishMission(m, p);
+                }
+            }
+        }
+    }
+
+    // cheating action filter
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent e) {
+        droppedItem.add(e.getItemDrop().getUniqueId());
+    }
+
+    @EventHandler
+    public void onPlayerPickupItem(EntityPickupItemEvent e) {
+        if (e.getEntityType() != EntityType.PLAYER) return;
+        if (droppedItem.contains(e.getItem().getUniqueId())) return;
+        Player p = (Player) e.getEntity();
+        updateData(p.getUniqueId(), "collecting", e.getItem().getItemStack().getType().toString());
+        handleAutoSubmittion(p);
+    }
+
+    @EventHandler
+    public void onEntityBreeding(EntityBreedEvent e) {
+        if (e.getBreeder().getType() != EntityType.PLAYER) return;
+        Player p = (Player) e.getBreeder();
+        updateData(p.getUniqueId(), "breeding", e.getEntity().getType().toString());
+        handleAutoSubmittion(p);
+    }
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
-        FileConfiguration playerdata = G.loadPlayer(p.getUniqueId());
-        String blockname = e.getBlock().getType().toString();
-        String dest;
-        if (requireAcceptance()) {
-            for (String type : new String[] { "daily", "weekly" }) {
-                Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
-                if (keys.size() == 0)
-                    continue;
-                for (String key : keys) {
-                    dest = type + "." + key + ".blockbreak-data." + blockname;
-                    playerdata.set(dest, playerdata.getInt(dest) + 1);
-                }
-            }
-        } else {
-            dest = "global.blockbreak-data." + blockname;
-            playerdata.set(dest, playerdata.getInt(dest) + 1);
-        }
-        G.savePlayer(playerdata, p.getUniqueId());
-    }
-
-    // for BREEDING
-    @EventHandler
-    public void onEntityBreed(EntityBreedEvent e) {
-        if (e.getBreeder() == null)
-            return;
-        UUID u = e.getBreeder().getUniqueId();
-        if (G.isOnlinePlayer(u)) {
-            FileConfiguration playerdata = G.loadPlayer(u);
-            String dest;
-            String entityName = e.getEntityType().toString();
-            if (requireAcceptance()) {
-                for (String type : new String[] { "daily", "weekly" }) {
-                    Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
-                    if (keys.size() == 0)
-                        continue;
-                    for (String key : keys) {
-                        dest = type + "." + key + ".breeding-data." + entityName;
-                        playerdata.set(dest, playerdata.getInt(dest) + 1);
-                    }
-                }
-            } else {
-                dest = "global.breeding-data." + entityName;
-                playerdata.set(dest, playerdata.getInt(dest) + 1);
-            }
-            G.savePlayer(playerdata, u);
-        }
-    }
-
-    // prevent self-collecting
-    @EventHandler
-    public void onPlayerDropItem(PlayerDropItemEvent e) {
-        droppedItems.add(e.getItemDrop().getUniqueId());
-    }
-
-    // for collecting
-    @EventHandler
-    public void onEntityPickupItem(EntityPickupItemEvent e) {
-        UUID u = e.getEntity().getUniqueId();
-        if (droppedItems.contains(e.getItem().getUniqueId()))
-            return;
-        if (G.isOnlinePlayer(u)) {
-            FileConfiguration playerdata = G.loadPlayer(u);
-            String dest;
-            String itemName = e.getItem().getItemStack().getType().toString();
-            if (requireAcceptance()) {
-                for (String type : new String[] { "daily", "weekly" }) {
-                    Set<String> keys = playerdata.getConfigurationSection(type).getKeys(false);
-                    if (keys.size() == 0)
-                        continue;
-                    for (String key : keys) {
-                        dest = type + "." + key + ".collecting-data." + itemName;
-                        playerdata.set(dest, playerdata.getInt(dest) + 1);
-                    }
-                }
-            } else {
-                dest = "global.collecting-data." + itemName;
-                playerdata.set(dest, playerdata.getInt(dest) + 1);
-            }
-            G.savePlayer(playerdata, u);
-        }
+        updateData(p.getUniqueId(), "blockbreak", e.getBlock().getType().toString());
+        handleAutoSubmittion(p);
     }
 }
