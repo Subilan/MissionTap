@@ -65,11 +65,4 @@ public final class Calendars {
             return 0;
         return type == "daily" ? getNextDailyRefresh().getTime() : getNextWeeklyRefresh().getTime();
     }
-
-    // public static boolean isNowTheFirstWeekOfTheMonth() {
-    // Calendar cal = Calendar.getInstance();
-    // cal.setTime(new Date());
-    // Integer now = cal.get(Calendar.WEEK_OF_MONTH);
-    // return now == 1;
-    // }
 }
