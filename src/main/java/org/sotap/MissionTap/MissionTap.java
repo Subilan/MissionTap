@@ -19,12 +19,12 @@ public final class MissionTap extends JavaPlugin {
         @SuppressWarnings("unused")
         BukkitTask timer = new Timer(this).runTaskTimer(this, 0, 20);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
-        log(Logger.SUCCESS + "The plugin has been &aenabled&r.");
+        log(Logger.SUCCESS + "插件已&a启用&r。");
     }
 
     @Override
     public void onDisable() {
-        log(Logger.SUCCESS + "The plugin has been &cdisabled&r.");
+        log(Logger.SUCCESS + "插件已&c禁用&r。");
     }
 
     public void log(String message) {

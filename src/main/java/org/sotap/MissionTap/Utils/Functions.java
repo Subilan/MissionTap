@@ -50,12 +50,12 @@ public final class Functions {
     public static void initMissions(MissionTap plugin) {
         if (Files.isEmptyConfiguration(Files.DailyMissions)) {
             plugin.log(
-                    Logger.INFO + "No &edaily&r missions were found, trying to regenerate them...");
+                    Logger.INFO + "找不到存在的&e每日&r任务，正在尝试重新生成...");
             generateMissions("daily", plugin);
         }
         if (Files.isEmptyConfiguration(Files.WeeklyMissions)) {
             plugin.log(Logger.INFO
-                    + "No &eweekly&r missions were found, trying to regenerate them...");
+                    + "找不到存在的&e每周&r任务，正在尝试重新生成...");
             generateMissions("weekly", plugin);
         }
     }
@@ -63,13 +63,13 @@ public final class Functions {
     public static void refreshMissions(MissionTap plugin) {
         if (!Files.isEmptyConfiguration(Files.DailyMissions)) {
             if (Files.DailyMissions.getLong("next-gen") <= Calendars.getNow()) {
-                plugin.log(Logger.INFO + "Regenerating &edaily&r missions...");
+                plugin.log(Logger.INFO + "正在刷新&e每日&r任务...");
                 generateMissions("daily", plugin);
             }
         }
         if (!Files.isEmptyConfiguration(Files.WeeklyMissions)) {
             if (Files.WeeklyMissions.getLong("next-gen") <= Calendars.getNow()) {
-                plugin.log(Logger.INFO + "Regenerating &eweekly&r missions...");
+                plugin.log(Logger.INFO + "正在刷新&e每周&r任务...");
                 generateMissions("weekly", plugin);
             }
         }
@@ -99,12 +99,12 @@ public final class Functions {
         target.set("last-gen", Calendars.getNow());
         target.set("next-gen", nextRefresh);
         Files.save(target, "./generated/" + type + "-missions.yml");
-        plugin.log(Logger.SUCCESS + "Regeneration done. The next regeneration will be on &a"
-                + Calendars.stampToString(nextRefresh) + "&r.");
+        plugin.log(Logger.SUCCESS + "刷新成功。下次刷新日期为 &a"
+                + Calendars.stampToString(nextRefresh) + "&r。");
         if (!Files.config.getBoolean("require-acceptance")) {
-            plugin.log(Logger.INFO + "Writting generated missions to playerdata...");
+            plugin.log(Logger.INFO + "正在向玩家档案写入任务数据...");
             acceptGlobalMission(type);
-            plugin.log(Logger.SUCCESS + "Writting process done.");
+            plugin.log(Logger.SUCCESS + "写入成功。");
         }
     }
 
@@ -158,10 +158,10 @@ public final class Functions {
             m.destory(u);
         }
         p.sendMessage(Logger.translateColor(Logger.SUCCESS
-                + "&bCongratulations!&r You've finished the mission \"&a" + m.getName() + "&r\"!"));
+                + "&e恭喜！&r你成功完成了任务 \"&a" + m.getName() + "&r\"！"));
         if (!m.reward(p)) {
             p.sendMessage(
-                    Logger.translateColor(Logger.WARN + "&cNo rewards&r found for this mission!"));
+                    Logger.translateColor(Logger.WARN + "这个任务&c没有给予任何奖励&r。"));
         }
     }
 }

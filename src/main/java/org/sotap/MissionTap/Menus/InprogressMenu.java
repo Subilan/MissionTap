@@ -29,7 +29,7 @@ public final class InprogressMenu implements Listener {
     public MissionTap plugin;
 
     public InprogressMenu(MissionTap plugin) {
-        this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Inprogress");
+        this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "任务清单");
         this.missions = new ArrayList<>();
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -58,7 +58,7 @@ public final class InprogressMenu implements Listener {
         init(p.getUniqueId());
         if (inventory.firstEmpty() == 0) {
             p.sendMessage(Logger
-                    .translateColor(Logger.INFO + "You don't have any accepted mission now."));
+                    .translateColor(Logger.INFO + "你还没有接受任何任务。"));
             return;
         }
         p.openInventory(inventory);
@@ -81,19 +81,19 @@ public final class InprogressMenu implements Listener {
         p.closeInventory();
         if (clickedMission.isExpired(u)) {
             p.sendMessage(
-                    Logger.translateColor(Logger.WARN + "The mission is already &cexpired&r."));
+                    Logger.translateColor(Logger.WARN + "这个任务已经&c过期&r了。"));
             return;
         }
         if (e.getClick() == ClickType.SHIFT_LEFT) {
             if (!Files.config.getBoolean("allow-cancelling")
                     || !Files.config.getBoolean("require-acceptance")) {
                 p.sendMessage(
-                        Logger.translateColor(Logger.FAILED + "You can't cancel the mission now."));
+                        Logger.translateColor(Logger.FAILED + "你现在不能取消任务。"));
                 return;
             }
             clickedMission.destory(u);
             p.sendMessage(Logger.translateColor(Logger.SUCCESS
-                    + "Successfully removed the mission from your current working-on list."));
+                    + "成功取消该任务，你可以前往任务列表重新接受。"));
             return;
         }
         if (e.getClick() == ClickType.LEFT) {
@@ -101,7 +101,7 @@ public final class InprogressMenu implements Listener {
                 Functions.finishMission(clickedMission, p);
             } else {
                 p.sendMessage(Logger
-                        .translateColor(Logger.FAILED + "You haven't finished the mission yet!"));
+                        .translateColor(Logger.FAILED + "你还没有完成这个任务。"));
             }
             return;
         }

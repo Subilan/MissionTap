@@ -50,7 +50,7 @@ public final class CommandHandler implements CommandExecutor {
                 }
 
                 case "init": {
-                    sender.sendMessage(Logger.translateColor(Logger.INFO + "Initializing for current settings..."));
+                    sender.sendMessage(Logger.translateColor(Logger.INFO + "正在初始化当前设定所需数据..."));
                     Functions.reloadPlugin(plugin);                    
                     if (!Files.config.getBoolean("require-acceptance")) {
                         GlobalMission globalDailyMission = new GlobalMission("daily");
@@ -58,13 +58,13 @@ public final class CommandHandler implements CommandExecutor {
                         globalDailyMission.accept();
                         globalWeeklyMission.accept();
                     }
-                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "Initialization done."));
+                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "初始化完成。"));
                     break;
                 }
 
                 case "player": {
                     if (args.length < 3) {
-                        sender.sendMessage(Logger.translateColor(Logger.FAILED + "Not enough arguments."));
+                        sender.sendMessage(Logger.translateColor(Logger.FAILED + "参数不足。"));
                         break;
                     }
                     Player pl = Bukkit.getPlayer(args[1]);
@@ -76,13 +76,13 @@ public final class CommandHandler implements CommandExecutor {
                                 if (args.length >= 4) {
                                     if (List.of("daily", "weekly").contains(args[3])) {
                                         playerdata.set("submitted-list." + args[3], null);
-                                        sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "Successfully cleared &a" + pl.getName() + "&r's &e" + args[3] + " &rmission submittion history."));
+                                        sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功清除 &a" + pl.getName() + " &r的任务提交记录。"));
                                     } else {
                                         sender.sendMessage(Logger.translateColor(Logger.FAILED + "Invalid argument."));
                                     }
                                 } else {
                                     playerdata.set("submitted-list", null);
-                                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "Successfully cleared all of &a" + pl.getName() + "&r's mission submittion history."));
+                                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。"));
                                 }
                                 Files.savePlayer(playerdata, u);
                                 
@@ -90,23 +90,23 @@ public final class CommandHandler implements CommandExecutor {
                             }
 
                             default: {
-                                sender.sendMessage(Logger.translateColor(Logger.FAILED + "Invalid option."));
+                                sender.sendMessage(Logger.translateColor(Logger.FAILED + "无效参数。"));
                             }
                         }
                     } else {
-                        sender.sendMessage(Logger.translateColor(Logger.FAILED + "The player specified is not &conline&r or &cdoes not exist&r."));
+                        sender.sendMessage(Logger.translateColor(Logger.FAILED + "指定的玩家&c不在线&r或者&c不存在&r。"));
                     }
                     break;
                 }
 
                 case "reload": {
                     Functions.reloadPlugin(plugin);
-                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "Successfully reloaded the plugin."));
+                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功重载配置文件。"));
                     break;
                 }
 
                 default: {
-                    sender.sendMessage(Logger.translateColor(Logger.FAILED + "Invalid argument."));
+                    sender.sendMessage(Logger.translateColor(Logger.FAILED + "无效参数。"));
                 }
             }
 

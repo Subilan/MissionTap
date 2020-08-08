@@ -19,7 +19,7 @@ public final class MainMenu implements Listener {
     private final Inventory inventory;
 
     public MainMenu(MissionTap plugin) {
-        this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Main Menu");
+        this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "主菜单");
         Bukkit.getPluginManager().registerEvents(this, plugin);
         init();
     }

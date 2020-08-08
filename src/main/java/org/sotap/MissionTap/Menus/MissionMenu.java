@@ -32,7 +32,7 @@ public final class MissionMenu implements Listener {
         this.plugin = plugin;
         this.objects = type != null ? Files.getGeneratedMissions(type)
                 : null;
-        this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "Missions");
+        this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "任务列表");
         this.missions = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         init();
@@ -56,7 +56,7 @@ public final class MissionMenu implements Listener {
     public void open(final Player p) {
         if (!Files.config.getBoolean("require-acceptance")) {
             p.sendMessage(Logger.translateColor(
-                    Logger.INFO + "You don't need to accept the missions manually now."));
+                    Logger.INFO + "你现在不需要手动接受任务。"));
             return;
         }
         p.openInventory(inventory);
@@ -79,19 +79,19 @@ public final class MissionMenu implements Listener {
         p.closeInventory();
         if (clickedMission.isAccepted(u)) {
             p.sendMessage(Logger.translateColor(
-                    Logger.FAILED + "You cannot accept a mission that is already accepted!"));
+                    Logger.FAILED + "你不能接受进行中的任务。"));
             return;
         }
         if (!Files.config.getBoolean("allow-multiple-acceptance")) {
             if (clickedMission.isSubmitted(u)) {
-                p.sendMessage(Logger.translateColor(Logger.WARN + "You cannot accept the mission that you've &ealready finished before&r!"));
+                p.sendMessage(Logger.translateColor(Logger.WARN + "你不能接受先前&e已完成的&r任务！"));
                 clickedMission.destory(u);
                 return;
             }
         }
         clickedMission.accept(u);
-        p.sendMessage(Logger.translateColor(Logger.SUCCESS + "Successfully accepted the mission &a"
-                + clickedMission.getName() + "&r!"));
+        p.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功接受任务 &a"
+                + clickedMission.getName() + "&r！"));
     }
 
     @EventHandler
