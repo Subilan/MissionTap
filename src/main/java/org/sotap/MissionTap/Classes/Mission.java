@@ -24,7 +24,7 @@ public final class Mission {
     public final ConfigurationSection missions;
     public final ConfigurationSection object;
     public static String[] missionTypes = { "daily", "weekly", "special" };
-    public static String[] missionDataType = { "blockbreak", "collecting", "breeding", "trading" };
+    public static String[] missionDataTypes = { "blockbreak", "collecting", "breeding", "trading" };
 
     public Mission(String type, String key) {
         this.type = type;
@@ -94,14 +94,14 @@ public final class Mission {
 
     public boolean isFinished(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String missionType : missionDataType) {
-            if (object.getConfigurationSection(missionType) == null)
+        for (String dataType : missionDataTypes) {
+            if (object.getConfigurationSection(dataType) == null)
                 continue;
-            if (playerdata.getConfigurationSection(type + "." + key + "." + missionType + "-data") == null)
+            if (playerdata.getConfigurationSection(type + "." + key + "." + dataType + "-data") == null)
                 return false;
-            Map<String, Object> requirement = object.getConfigurationSection(missionType).getValues(false);
+            Map<String, Object> requirement = object.getConfigurationSection(dataType).getValues(false);
             Map<String, Object> progress = playerdata
-                    .getConfigurationSection(type + "." + key + "." + missionType + "-data").getValues(false);
+                    .getConfigurationSection(type + "." + key + "." + dataType + "-data").getValues(false);
             for (String reqKey : requirement.keySet()) {
                 if (progress.get(reqKey) == null)
                     return false;
@@ -155,25 +155,25 @@ public final class Mission {
 
     public void clearData(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String missionType : missionDataType) {
-            playerdata.set(type + "." + key + "." + missionType + "-data", null);
+        for (String dataType : missionDataTypes) {
+            playerdata.set(type + "." + key + "." + dataType + "-data", null);
         }
     }
 
     public void clearDataWithRequirement(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
         Integer result;
-        for (String missionType : missionDataType) {
-            if (object.getConfigurationSection(missionType) == null
-                    || playerdata.getConfigurationSection(type + "." + key + "." + missionType + "-data") == null)
+        for (String dataType : missionDataTypes) {
+            if (object.getConfigurationSection(dataType) == null
+                    || playerdata.getConfigurationSection(type + "." + key + "." + dataType + "-data") == null)
                 continue;
-            Map<String, Object> requirement = object.getConfigurationSection(missionType).getValues(false);
+            Map<String, Object> requirement = object.getConfigurationSection(dataType).getValues(false);
             Map<String, Object> progress = playerdata
-                    .getConfigurationSection(type + "." + key + "." + missionType + "-data").getValues(false);
+                    .getConfigurationSection(type + "." + key + "." + dataType + "-data").getValues(false);
             for (String reqKey : requirement.keySet()) {
                 // if is finished, the former value should be greater than the latter value.
                 result = (Integer) progress.get(reqKey) - (Integer) requirement.get(reqKey);
-                playerdata.set(type + "." + key + "." + missionType + "-data." + reqKey, result < 0 ? 0 : result);
+                playerdata.set(type + "." + key + "." + dataType + "-data." + reqKey, result < 0 ? 0 : result);
             }
         }
         Files.savePlayer(playerdata, u);
