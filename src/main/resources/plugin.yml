@@ -30,16 +30,16 @@ permissions:
       missiontap.reload: true
   missiontap.daily:
     description: Show daily mission menu.
-    default: default
+    default: true
   missiontap.weekly:
     description: Show weekly mission menu.
-    default: default
+    default: true
   missiontap.inprogress:
     description: Show inprogress menu.
-    default: default
+    default: true
   missiontap.special:
     description: Show special mission menu.
-    default: default
+    default: true
   missiontap.init:
     description: Initialize required data.
     default: op
