@@ -27,6 +27,7 @@ public final class GlobalMission {
     }
 
     public void clearExpiredMissions(UUID u) {
+        if (type == "special") return;
         ConfigurationSection section = Files.loadPlayer(u).getConfigurationSection(type);
         if (Files.isEmptyConfiguration(section)) return;
         for (String key : section.getValues(false).keySet()) {
