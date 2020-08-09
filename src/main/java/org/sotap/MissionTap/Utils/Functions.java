@@ -138,6 +138,14 @@ public final class Functions {
     public static void initDataForPlayer(UUID u) {
         @SuppressWarnings("unused")
         FileConfiguration playerdata = Files.loadPlayer(u);
+        if (!Files.config.getBoolean("require-acceptance")) {
+            if (Files.isEmptyConfiguration(playerdata)) {
+                GlobalMission dailyGlobalMission = new GlobalMission("daily");
+                GlobalMission weeklyGlobalMission = new GlobalMission("weekly");
+                dailyGlobalMission.acceptAllFor(u);
+                weeklyGlobalMission.acceptAllFor(u);
+            }
+        }
     }
 
     public static void finishMission(Mission m, Player p) {

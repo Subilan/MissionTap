@@ -17,12 +17,20 @@ public final class GlobalMission {
 
     public void accept() {
         List<UUID> uuids = Files.getAllPlayerUUID();
+        if (uuids == null) return;
         for (String key : missions.getValues(false).keySet()) {
             for (UUID u : uuids) {
                 clearExpiredMissions(u);
                 Mission m = new Mission(type, key);
                 m.accept(u);
             }
+        }
+    }
+
+    public void acceptAllFor(UUID u) {
+        for (String key : missions.getValues(false).keySet()) {
+            Mission m = new Mission(type, key);
+            m.accept(u);
         }
     }
 
