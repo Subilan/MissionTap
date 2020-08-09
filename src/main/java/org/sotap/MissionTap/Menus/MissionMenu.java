@@ -30,8 +30,7 @@ public final class MissionMenu implements Listener {
     public MissionMenu(String type, MissionTap plugin) {
         this.type = type;
         this.plugin = plugin;
-        this.objects = type != null ? Files.getGeneratedMissions(type)
-                : null;
+        this.objects = type != null ? Files.getGeneratedMissions(type) : null;
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "任务列表");
         this.missions = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -55,8 +54,11 @@ public final class MissionMenu implements Listener {
 
     public void open(final Player p) {
         if (!Files.config.getBoolean("require-acceptance")) {
-            p.sendMessage(Logger.translateColor(
-                    Logger.INFO + "你现在不需要手动接受任务。"));
+            p.sendMessage(Logger.translateColor(Logger.INFO + "你现在不需要手动接受任务。"));
+            return;
+        }
+        if (!Files.config.getBoolean("special-missions") && type == "special") {
+            p.sendMessage(Logger.translateColor(Logger.INFO + "当前特殊任务尚未开放。"));
             return;
         }
         p.openInventory(inventory);
@@ -78,8 +80,7 @@ public final class MissionMenu implements Listener {
         final Mission clickedMission = missions.get(slot);
         p.closeInventory();
         if (clickedMission.isAccepted(u)) {
-            p.sendMessage(Logger.translateColor(
-                    Logger.FAILED + "你不能接受进行中的任务。"));
+            p.sendMessage(Logger.translateColor(Logger.FAILED + "你不能接受进行中的任务。"));
             return;
         }
         if (!Files.config.getBoolean("allow-multiple-acceptance")) {
@@ -90,8 +91,7 @@ public final class MissionMenu implements Listener {
             }
         }
         clickedMission.accept(u);
-        p.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功接受任务 &a"
-                + clickedMission.getName() + "&r！"));
+        p.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功接受任务 &a" + clickedMission.getName() + "&r！"));
     }
 
     @EventHandler
