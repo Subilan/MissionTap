@@ -23,13 +23,11 @@ import org.sotap.MissionTap.Utils.LogUtil;
 public final class MissionMenu implements Listener {
     private final Inventory inventory;
     private final String type;
-    private final MissionTap plugin;
     private final ConfigurationSection objects;
     private List<Mission> missions;
 
     public MissionMenu(String type, MissionTap plugin) {
         this.type = type;
-        this.plugin = plugin;
         this.objects = type != null ? Files.getGeneratedMissions(type) : null;
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "任务列表");
         this.missions = new ArrayList<>();
@@ -39,7 +37,7 @@ public final class MissionMenu implements Listener {
 
     private void init() {
         if (Files.isEmptyConfiguration(objects)) {
-            plugin.log(LogUtil.WARN + "No &e" + type + "&r missions were found.");
+            LogUtil.warn("No &e" + type + "&r missions were found.");
             return;
         }
         Map<String, Object> missionObjects = objects.getValues(false);
@@ -54,11 +52,11 @@ public final class MissionMenu implements Listener {
 
     public void open(final Player p) {
         if (!Files.config.getBoolean("require-acceptance")) {
-            p.sendMessage(LogUtil.translateColor(LogUtil.INFO + "你现在不需要手动接受任务。"));
+            p.sendMessage(LogUtil.info_("你现在不需要手动接受任务。"));
             return;
         }
         if (!Files.config.getBoolean("special-missions") && type == "special") {
-            p.sendMessage(LogUtil.translateColor(LogUtil.INFO + "当前特殊任务尚未开放。"));
+            p.sendMessage(LogUtil.info_("当前特殊任务尚未开放。"));
             return;
         }
         p.openInventory(inventory);
@@ -80,18 +78,18 @@ public final class MissionMenu implements Listener {
         final Mission clickedMission = missions.get(slot);
         p.closeInventory();
         if (clickedMission.isAccepted(u)) {
-            p.sendMessage(LogUtil.translateColor(LogUtil.FAILED + "你不能接受进行中的任务。"));
+            p.sendMessage(LogUtil.failed_("你不能接受进行中的任务。"));
             return;
         }
         if (!Files.config.getBoolean("allow-multiple-acceptance")) {
             if (clickedMission.isSubmitted(u)) {
-                p.sendMessage(LogUtil.translateColor(LogUtil.WARN + "你不能接受先前&e已完成的&r任务！"));
+                p.sendMessage(LogUtil.warn_("你不能接受先前&e已完成的&r任务！"));
                 clickedMission.destory(u);
                 return;
             }
         }
         clickedMission.accept(u);
-        p.sendMessage(LogUtil.translateColor(LogUtil.SUCCESS + "成功接受任务 &a" + clickedMission.getName() + "&r！"));
+        p.sendMessage(LogUtil.success_("成功接受任务 &a" + clickedMission.getName() + "&r！"));
     }
 
     @EventHandler

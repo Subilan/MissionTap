@@ -26,11 +26,11 @@ public final class MainMenu implements Listener {
 
     private void init() {
         inventory.setItem(10,
-                Functions.createItemStack("&e&lDaily", Material.ENCHANTED_BOOK, null));
+                Functions.createItemStack("&e&l每日任务", Material.ENCHANTED_BOOK, null));
         inventory.setItem(12,
-                Functions.createItemStack("&a&lWeekly", Material.ENCHANTED_BOOK, null));
+                Functions.createItemStack("&a&l每周任务", Material.ENCHANTED_BOOK, null));
         inventory.setItem(14,
-                Functions.createItemStack("&cS&6p&ee&ac&3i&9a&1l", Material.ENCHANTED_BOOK, null));
+                Functions.createItemStack("&c特&6别&e任&a务&3哦&9！&1！", Material.ENCHANTED_BOOK, null));
         inventory.setItem(16, Functions.createItemStack("&b&lInprogress", Material.FEATHER, null));
     }
 
