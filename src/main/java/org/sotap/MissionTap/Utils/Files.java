@@ -112,9 +112,13 @@ public final class Files {
 
     public static List<UUID> getAllPlayerUUID() {
         List<UUID> result = new ArrayList<>();
-        for (File f : getSubfileList(new File(cwd + "/playerdata"))) {
-            result.add(UUID.fromString(f.getName().replace(".yml", "")));
+        try {
+            for (File f : getSubfileList(new File(cwd + "/playerdata"))) {
+                result.add(UUID.fromString(f.getName().replace(".yml", "")));
+            }
+            return result;
+        } catch (NullPointerException e) {
+            return null;
         }
-        return result;
     }
 }
