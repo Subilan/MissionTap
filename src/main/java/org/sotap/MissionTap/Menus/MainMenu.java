@@ -65,7 +65,7 @@ public final class MainMenu implements Listener {
             }
 
             case 14: {
-                // TBC
+                Menus.specialMissionMenu.open(p);
                 return;
             }
 
