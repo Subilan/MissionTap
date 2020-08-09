@@ -136,7 +136,6 @@ public final class Functions {
     }
 
     public static void initDataForPlayer(UUID u) {
-        @SuppressWarnings("unused")
         FileConfiguration playerdata = Files.loadPlayer(u);
         if (!Files.config.getBoolean("require-acceptance")) {
             if (Files.isEmptyConfiguration(playerdata)) {
