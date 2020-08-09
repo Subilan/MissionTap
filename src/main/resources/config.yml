@@ -19,3 +19,5 @@ allow-cancelling: false
 allow-multiple-acceptance: true
 # 再次接受同一任务的冷却时间，若不需要冷却则设为 0
 multiple-acceptance-cooldown: 0
+# 手动开关：是否显示特殊任务
+special-missions: false
