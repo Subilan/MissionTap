@@ -56,6 +56,9 @@ public final class Functions {
             plugin.log(Logger.INFO + "找不到存在的&e每周&r任务，正在尝试重新生成...");
             generateMissions("weekly", plugin);
         }
+        if (Files.isEmptyConfiguration(Files.SpecialMissions) && Files.config.getBoolean("special-missions")) {
+            plugin.log(Logger.WARN + "特殊任务已被设置为启用状态，但找不到存在的&e特殊&r任务。");
+        }
     }
 
     public static void refreshMissions(MissionTap plugin) {
