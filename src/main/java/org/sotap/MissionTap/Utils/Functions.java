@@ -36,6 +36,7 @@ public final class Functions {
         Files.SpecialMissions = Files.load(".", "special-missions.yml");
         Files.DailyMissions = Files.load("./generated", "daily-missions.yml");
         Files.WeeklyMissions = Files.load("./generated", "weekly-missions.yml");
+        LogUtil.origin = plugin.getLogger();
     }
 
     public static void initMenus(MissionTap plugin) {
