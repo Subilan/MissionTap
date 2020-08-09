@@ -23,9 +23,8 @@ public final class Functions {
     public static void dispatchCommands(Player p, List<String> commands) {
         CommandSender sender = Bukkit.getConsoleSender();
         for (String cmd : commands) {
-            Bukkit.dispatchCommand(sender,
-                    Logger.translateColor(cmd.replace("%playername%", p.getName()).replace("%uuid%",
-                            p.getUniqueId().toString())));
+            Bukkit.dispatchCommand(sender, Logger.translateColor(
+                    cmd.replace("%playername%", p.getName()).replace("%uuid%", p.getUniqueId().toString())));
         }
     }
 
@@ -88,8 +87,8 @@ public final class Functions {
         Map<String, Object> results = new HashMap<>();
         String randomKey;
         Integer amount = Files.config.getInt(type + "-mission-amount");
-        while (results.size() < (amount == 0 ? (type == "daily" ? 2 : 4)
-                : (keys.size() >= amount ? amount : keys.size()))) {
+        while (results
+                .size() < (amount == 0 ? (type == "daily" ? 2 : 4) : (keys.size() >= amount ? amount : keys.size()))) {
             randomKey = keys.get(gen.nextInt(keys.size()));
             if (results.containsKey(randomKey))
                 continue;
@@ -101,8 +100,7 @@ public final class Functions {
         target.set("last-gen", Calendars.getNow());
         target.set("next-gen", nextRefresh);
         Files.save(target, "./generated/" + type + "-missions.yml");
-        plugin.log(
-                Logger.SUCCESS + "刷新成功。下次刷新日期为 &a" + Calendars.stampToString(nextRefresh) + "&r。");
+        plugin.log(Logger.SUCCESS + "刷新成功。下次刷新日期为 &a" + Calendars.stampToString(nextRefresh) + "&r。");
         if (!Files.config.getBoolean("require-acceptance")) {
             plugin.log(Logger.INFO + "正在向玩家档案写入任务数据...");
             acceptGlobalMission(type);
@@ -110,8 +108,7 @@ public final class Functions {
         }
     }
 
-    public static ItemStack createItemStack(final String name, final Material material,
-            final List<String> lore) {
+    public static ItemStack createItemStack(final String name, final Material material, final List<String> lore) {
         final ItemStack item = new ItemStack(material);
         final ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.AQUA + name);
@@ -125,9 +122,9 @@ public final class Functions {
         initUtils(plugin);
         initMissions(plugin);
         if (Files.config.getBoolean("special-missions")) {
-            Mission.missionTypes = new String[] {"daily", "weekly", "special"};
+            Mission.missionTypes = new String[] { "daily", "weekly", "special" };
         } else {
-            Mission.missionTypes = new String[] {"daily", "weekly"};
+            Mission.missionTypes = new String[] { "daily", "weekly" };
         }
         // not reloading menu
         // not reloading event
@@ -145,8 +142,7 @@ public final class Functions {
 
     public static void finishMission(Mission m, Player p) {
         UUID u = p.getUniqueId();
-        if (Files.config.getBoolean("require-acceptance")
-                && !Files.config.getBoolean("allow-multiple-acceptance")) {
+        if (Files.config.getBoolean("require-acceptance") && !Files.config.getBoolean("allow-multiple-acceptance")) {
             m.setSubmitted(u);
             m.destory(u);
         } else if (!Files.config.getBoolean("require-acceptance")
@@ -155,8 +151,7 @@ public final class Functions {
         } else {
             m.destory(u);
         }
-        p.sendMessage(Logger
-                .translateColor(Logger.SUCCESS + "&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！"));
+        p.sendMessage(Logger.translateColor(Logger.SUCCESS + "&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！"));
         if (!m.reward(p)) {
             p.sendMessage(Logger.translateColor(Logger.WARN + "这个任务&c没有给予任何奖励&r。"));
         }
