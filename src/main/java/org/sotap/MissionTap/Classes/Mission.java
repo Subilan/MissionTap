@@ -158,6 +158,7 @@ public final class Mission {
         for (String dataType : missionDataTypes) {
             playerdata.set(type + "." + key + "." + dataType + "-data", null);
         }
+        Files.savePlayer(playerdata, u);
     }
 
     public void clearDataWithRequirement(UUID u) {
