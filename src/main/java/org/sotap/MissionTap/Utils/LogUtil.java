@@ -3,6 +3,7 @@ package org.sotap.MissionTap.Utils;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 public final class LogUtil {
     public final static String SUCCESS = "&r[&a成功&r] ";
@@ -15,35 +16,35 @@ public final class LogUtil {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static void success(String message) {
+    public static void success(String message, Player... p) {
+        if (p.length > 0) {
+            p[0].sendMessage(translateColor(SUCCESS + message));
+            return;
+        }
         origin.info(translateColor(SUCCESS + message));
     }
 
-    public static void warn(String message) {
+    public static void warn(String message, Player... p) {
+        if (p.length > 0) {
+            p[0].sendMessage(translateColor(WARN + message));
+            return;
+        }
         origin.info(translateColor(WARN + message));
     }
 
-    public static void failed(String message) {
+    public static void failed(String message, Player... p) {
+        if (p.length > 0) {
+            p[0].sendMessage(translateColor(FAILED + message));
+            return;
+        }
         origin.info(translateColor(FAILED + message));
     }
 
-    public static void info(String message) {
+    public static void info(String message, Player... p) {
+        if (p.length > 0) {
+            p[0].sendMessage(translateColor(INFO + message));
+            return;
+        }
         origin.info(translateColor(INFO + message));
-    }
-
-    public static String success_(String message) {
-        return translateColor(SUCCESS + message);
-    }
-
-    public static String warn_(String message) {
-        return translateColor(WARN + message);
-    }
-
-    public static String failed_(String message) {
-        return translateColor(FAILED + message);
-    }
-
-    public static String info_(String message) {
-        return translateColor(INFO + message);
     }
 }
