@@ -23,7 +23,7 @@ public final class Mission {
     public final FileConfiguration missionFile;
     public final ConfigurationSection missions;
     public final ConfigurationSection object;
-    public static String[] missionType = { "daily", "weekly", "special" };
+    public static String[] missionTypes = { "daily", "weekly", "special" };
     public static String[] missionDataType = { "blockbreak", "collecting", "breeding", "trading" };
 
     public Mission(String type, String key) {

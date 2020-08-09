@@ -37,7 +37,7 @@ public final class InprogressMenu implements Listener {
 
     public void init(UUID u) {
         int index = 0;
-        for (String type : Mission.missionType) {
+        for (String type : Mission.missionTypes) {
             ConfigurationSection objects = Files.loadPlayer(u).getConfigurationSection(type);
             if (Files.isEmptyConfiguration(objects))
                 continue;

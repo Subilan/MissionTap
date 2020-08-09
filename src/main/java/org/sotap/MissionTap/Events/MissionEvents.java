@@ -30,7 +30,7 @@ public final class MissionEvents implements Listener {
 
     public static void updateData(UUID u, String missionType, String dataName) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String type : Mission.missionType ) {
+        for (String type : Mission.missionTypes ) {
             ConfigurationSection section = playerdata.getConfigurationSection(type);
             if (section == null || Files.isEmptyConfiguration(section)) continue;
             Map<String,Object> data = section.getValues(false);
@@ -48,7 +48,7 @@ public final class MissionEvents implements Listener {
         if (Files.config.getBoolean("require-submittion")) return;
         UUID u = p.getUniqueId();
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String type : Mission.missionType ) {
+        for (String type : Mission.missionTypes ) {
             ConfigurationSection section = playerdata.getConfigurationSection(type);
             if (section == null || Files.isEmptyConfiguration(section)) continue;
             for (String key : section.getKeys(false)) {

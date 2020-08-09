@@ -125,9 +125,9 @@ public final class Functions {
         initUtils(plugin);
         initMissions(plugin);
         if (Files.config.getBoolean("special-missions")) {
-            Mission.missionType = new String[] {"daily", "weekly", "special"};
+            Mission.missionTypes = new String[] {"daily", "weekly", "special"};
         } else {
-            Mission.missionType = new String[] {"daily", "weekly"};
+            Mission.missionTypes = new String[] {"daily", "weekly"};
         }
         // not reloading menu
         // not reloading event
