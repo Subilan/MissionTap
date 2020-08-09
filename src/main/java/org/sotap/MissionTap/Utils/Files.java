@@ -14,11 +14,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public final class Files {
     public static String cwd;
     public static FileConfiguration config;
-    public static FileConfiguration speicalMissions;
     public static FileConfiguration dailyMissions;
     public static FileConfiguration weeklyMissions;
     public static FileConfiguration DailyMissions;
     public static FileConfiguration WeeklyMissions;
+    public static FileConfiguration SpecialMissions;
 
     public static File getFile(File folder, String name) {
         File file = new File(folder, name);
@@ -36,9 +36,8 @@ public final class Files {
     }
 
     public static FileConfiguration load(String path, String name) {
-        return YamlConfiguration
-                .loadConfiguration(getFile(new File(path.replace(path.length() == 1 ? "." : "./",
-                        path.length() == 1 ? cwd : cwd + "/")), name));
+        return YamlConfiguration.loadConfiguration(getFile(
+                new File(path.replace(path.length() == 1 ? "." : "./", path.length() == 1 ? cwd : cwd + "/")), name));
     }
 
     public static boolean isEmptyConfiguration(ConfigurationSection config) {
@@ -69,6 +68,8 @@ public final class Files {
                 return DailyMissions.getConfigurationSection("daily");
             case "weekly":
                 return WeeklyMissions.getConfigurationSection("weekly");
+            case "special":
+                return SpecialMissions;
             default:
                 return null;
         }
@@ -80,6 +81,8 @@ public final class Files {
                 return DailyMissions;
             case "weekly":
                 return WeeklyMissions;
+            case "special":
+                return SpecialMissions;
             default:
                 return null;
         }

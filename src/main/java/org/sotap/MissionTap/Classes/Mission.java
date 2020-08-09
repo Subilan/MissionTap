@@ -28,7 +28,7 @@ public final class Mission {
         this.type = type;
         this.key = key;
         this.missionFile = Files.getGeneratedMissionFile(type);
-        this.missions = missionFile.getConfigurationSection(type);
+        this.missions = Files.getGeneratedMissions(type);
         this.object = missions.getConfigurationSection(key);
     }
 
@@ -46,12 +46,12 @@ public final class Mission {
             finalLore.add(ChatColor.WHITE + Logger.translateColor(text));
         }
         finalLore.add("");
-        finalLore.add(Logger.translateColor("&8"
-                + (u != null ? Calendars.stampToString(expiration) : Calendars.stampToString(refresh))));
+        if (type != "special") {
+            finalLore.add(Logger.translateColor(
+                    "&8" + (u != null ? Calendars.stampToString(expiration) : Calendars.stampToString(refresh))));
+        }
         return Functions.createItemStack(object.getString("name"),
-                u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK)
-                        : Material.BOOK,
-                finalLore);
+                u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK) : Material.BOOK, finalLore);
     }
 
     public void accept(UUID u) {
@@ -59,7 +59,9 @@ public final class Mission {
         Map<String, Object> missionContent = new HashMap<>();
         missionContent.put("name", object.getString("name"));
         missionContent.put("acceptance", Calendars.getNow());
-        missionContent.put("expiration", Calendars.getMissionExpiration(type));
+        if (type != "special") {
+            missionContent.put("expiration", Calendars.getMissionExpiration(type));
+        }
         playerdata.createSection(type + "." + key, missionContent);
         Files.savePlayer(playerdata, u);
     }
@@ -78,6 +80,7 @@ public final class Mission {
     }
 
     public boolean isExpired(UUID u) {
+        if (type == "special") return false;
         FileConfiguration playerdata = Files.loadPlayer(u);
         try {
             return playerdata.getLong(type + "." + key + ".expiration") <= Calendars.getNow();
@@ -88,18 +91,14 @@ public final class Mission {
 
     public boolean isFinished(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String missionType : new String[] {"blockbreak", "collecting", "breeding",
-                "trading"}) {
+        for (String missionType : new String[] { "blockbreak", "collecting", "breeding", "trading" }) {
             if (object.getConfigurationSection(missionType) == null)
                 continue;
-            if (playerdata.getConfigurationSection(
-                    type + "." + key + "." + missionType + "-data") == null)
+            if (playerdata.getConfigurationSection(type + "." + key + "." + missionType + "-data") == null)
                 return false;
-            Map<String, Object> requirement =
-                    object.getConfigurationSection(missionType).getValues(false);
+            Map<String, Object> requirement = object.getConfigurationSection(missionType).getValues(false);
             Map<String, Object> progress = playerdata
-                    .getConfigurationSection(type + "." + key + "." + missionType + "-data")
-                    .getValues(false);
+                    .getConfigurationSection(type + "." + key + "." + missionType + "-data").getValues(false);
             for (String reqKey : requirement.keySet()) {
                 if (progress.get(reqKey) == null)
                     return false;
@@ -124,8 +123,7 @@ public final class Mission {
         Functions.dispatchCommands(p, commands);
         try {
             AgeingAPI.api.updateExperience(ageExp, p.getName());
-            p.sendMessage(
-                    Logger.translateColor(Logger.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
+            p.sendMessage(Logger.translateColor(Logger.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
         } catch (AgeingAPIException e) {
             p.sendMessage(Logger.translateColor(Logger.WARN + "在更新 Ageing 数据时出现问题。"));
         }
@@ -152,8 +150,7 @@ public final class Mission {
 
     public void clearData(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String missionType : new String[] {"blockbreak", "collecting", "breeding",
-                "trading"}) {
+        for (String missionType : new String[] { "blockbreak", "collecting", "breeding", "trading" }) {
             playerdata.set(type + "." + key + "." + missionType + "-data", null);
         }
     }
@@ -161,22 +158,17 @@ public final class Mission {
     public void clearDataWithRequirement(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
         Integer result;
-        for (String missionType : new String[] {"blockbreak", "collecting", "breeding",
-                "trading"}) {
+        for (String missionType : new String[] { "blockbreak", "collecting", "breeding", "trading" }) {
             if (object.getConfigurationSection(missionType) == null
-                    || playerdata.getConfigurationSection(
-                            type + "." + key + "." + missionType + "-data") == null)
+                    || playerdata.getConfigurationSection(type + "." + key + "." + missionType + "-data") == null)
                 continue;
-            Map<String, Object> requirement =
-                    object.getConfigurationSection(missionType).getValues(false);
+            Map<String, Object> requirement = object.getConfigurationSection(missionType).getValues(false);
             Map<String, Object> progress = playerdata
-                    .getConfigurationSection(type + "." + key + "." + missionType + "-data")
-                    .getValues(false);
+                    .getConfigurationSection(type + "." + key + "." + missionType + "-data").getValues(false);
             for (String reqKey : requirement.keySet()) {
                 // if is finished, the former value should be greater than the latter value.
                 result = (Integer) progress.get(reqKey) - (Integer) requirement.get(reqKey);
-                playerdata.set(type + "." + key + "." + missionType + "-data." + reqKey,
-                        result < 0 ? 0 : result);
+                playerdata.set(type + "." + key + "." + missionType + "-data." + reqKey, result < 0 ? 0 : result);
             }
         }
         Files.savePlayer(playerdata, u);

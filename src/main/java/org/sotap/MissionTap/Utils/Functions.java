@@ -34,7 +34,7 @@ public final class Functions {
         Files.config = plugin.getConfig();
         Files.dailyMissions = Files.load(".", "daily-missions.yml");
         Files.weeklyMissions = Files.load(".", "weekly-missions.yml");
-        Files.speicalMissions = Files.load(".", "special-missions.yml");
+        Files.SpecialMissions = Files.load(".", "special-missions.yml");
         Files.DailyMissions = Files.load("./generated", "daily-missions.yml");
         Files.WeeklyMissions = Files.load("./generated", "weekly-missions.yml");
     }

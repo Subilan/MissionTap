@@ -49,6 +49,12 @@ public final class CommandHandler implements CommandExecutor {
                     break;
                 }
 
+                case "special":
+                case "s": {
+                    Menus.specialMissionMenu.open(p);
+                    break;
+                }
+
                 case "init": {
                     sender.sendMessage(Logger.translateColor(Logger.INFO + "正在初始化当前设定所需数据..."));
                     Functions.reloadPlugin(plugin);                    

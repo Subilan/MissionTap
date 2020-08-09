@@ -8,12 +8,14 @@ import org.sotap.MissionTap.Menus.MissionMenu;
 public final class Menus {
     public static MissionMenu dailyMissionMenu;
     public static MissionMenu weeklyMissionMenu;
+    public static MissionMenu specialMissionMenu;
     public static MainMenu mainMenu;
     public static InprogressMenu inprogressMenu;
 
     public static void refresh(MissionTap plugin) {
         dailyMissionMenu = new MissionMenu("daily", plugin);
         weeklyMissionMenu = new MissionMenu("weekly", plugin);
+        specialMissionMenu = new MissionMenu("special", plugin);
         mainMenu = new MainMenu(plugin);
         inprogressMenu = new InprogressMenu(plugin);
     }
