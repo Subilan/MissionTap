@@ -62,7 +62,7 @@ public final class CommandHandler implements CommandExecutor {
 
                 case "init": {
                     if (!p.hasPermission("missiontap.init")) return false;
-                    sender.sendMessage(LogUtil.info_("正在初始化当前设定所需数据..."));
+                    LogUtil.info("正在初始化当前设定所需数据...", p);
                     Functions.reloadPlugin(plugin);                    
                     if (!Files.config.getBoolean("require-acceptance")) {
                         GlobalMission globalDailyMission = new GlobalMission("daily");
@@ -70,14 +70,14 @@ public final class CommandHandler implements CommandExecutor {
                         globalDailyMission.accept();
                         globalWeeklyMission.accept();
                     }
-                    sender.sendMessage(LogUtil.success_("初始化完成。"));
+                    LogUtil.success("初始化完成。", p);
                     break;
                 }
 
                 case "player": {
                     if (!p.hasPermission("missiontap.player")) return false;
                     if (args.length < 3) {
-                        sender.sendMessage(LogUtil.failed_("参数不足。"));
+                        LogUtil.failed("参数不足。", p);
                         break;
                     }
                     Player pl = Bukkit.getPlayer(args[1]);
@@ -89,13 +89,13 @@ public final class CommandHandler implements CommandExecutor {
                                 if (args.length >= 4) {
                                     if (List.of("daily", "weekly").contains(args[3])) {
                                         playerdata.set("submitted-list." + args[3], null);
-                                        sender.sendMessage(LogUtil.success_("成功清除 &a" + pl.getName() + " &r的任务提交记录。"));
+                                        LogUtil.success("成功清除 &a" + pl.getName() + " &r的任务提交记录。", p);
                                     } else {
-                                        sender.sendMessage(LogUtil.failed_("Invalid argument."));
+                                        LogUtil.failed("Invalid argument.", p);
                                     }
                                 } else {
                                     playerdata.set("submitted-list", null);
-                                    sender.sendMessage(LogUtil.success_("成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。"));
+                                    LogUtil.success("成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。", p);
                                 }
                                 Files.savePlayer(playerdata, u);
                                 
@@ -103,11 +103,11 @@ public final class CommandHandler implements CommandExecutor {
                             }
 
                             default: {
-                                sender.sendMessage(LogUtil.failed_("无效参数。"));
+                                LogUtil.failed("无效参数。", p);
                             }
                         }
                     } else {
-                        sender.sendMessage(LogUtil.failed_("指定的玩家&c不在线&r或者&c不存在&r。"));
+                        LogUtil.failed("指定的玩家&c不在线&r或者&c不存在&r。", p);
                     }
                     break;
                 }
@@ -115,7 +115,7 @@ public final class CommandHandler implements CommandExecutor {
                 case "reload": {
                     if (!p.hasPermission("missiontap.reload")) return false;
                     Functions.reloadPlugin(plugin);
-                    sender.sendMessage(LogUtil.success_("成功重载配置文件。"));
+                    LogUtil.success("成功重载配置文件。", p);
                     break;
                 }
 
@@ -128,7 +128,7 @@ public final class CommandHandler implements CommandExecutor {
                 }
 
                 default: {
-                    sender.sendMessage(LogUtil.failed_("无效参数。"));
+                    LogUtil.failed("无效参数。", p);
                 }
             }
 

@@ -157,9 +157,9 @@ public final class Functions {
         } else {
             m.destory(u);
         }
-        p.sendMessage(LogUtil.success_("&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！"));
+        LogUtil.success("&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！", p);
         if (!m.reward(p)) {
-            p.sendMessage(LogUtil.warn_("这个任务&c没有给予任何奖励&r。"));
+            LogUtil.warn("这个任务&c没有给予任何奖励&r。", p);
         }
     }
 }

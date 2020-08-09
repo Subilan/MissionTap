@@ -57,7 +57,7 @@ public final class InprogressMenu implements Listener {
     public void open(final Player p) {
         init(p.getUniqueId());
         if (inventory.firstEmpty() == 0) {
-            p.sendMessage(LogUtil.info_("你还没有接受任何任务。"));
+            LogUtil.info("你还没有接受任何任务。", p);
             return;
         }
         p.openInventory(inventory);
@@ -80,25 +80,24 @@ public final class InprogressMenu implements Listener {
         Mission clickedMission = missions.get(slot);
         p.closeInventory();
         if (clickedMission.isExpired(u)) {
-            p.sendMessage(LogUtil.warn_("这个任务已经&c过期&r了。"));
+            LogUtil.warn("这个任务已经&c过期&r了。", p);
             return;
         }
         if (e.getClick() == ClickType.SHIFT_LEFT) {
             if (!Files.config.getBoolean("allow-cancelling")
                     || !Files.config.getBoolean("require-acceptance")) {
-                p.sendMessage(
-                        LogUtil.failed_("你现在不能取消任务。"));
+                LogUtil.failed("你现在不能取消任务。", p);
                 return;
             }
             clickedMission.destory(u);
-            p.sendMessage(LogUtil.success_("成功取消该任务，你可以前往任务列表重新接受。"));
+            LogUtil.success("成功取消该任务，你可以前往任务列表重新接受。", p);
             return;
         }
         if (e.getClick() == ClickType.LEFT) {
             if (clickedMission.isFinished(u)) {
                 Functions.finishMission(clickedMission, p);
             } else {
-                p.sendMessage(LogUtil.failed_("你还没有完成这个任务。"));
+                LogUtil.failed("你还没有完成这个任务。", p);
             }
             return;
         }

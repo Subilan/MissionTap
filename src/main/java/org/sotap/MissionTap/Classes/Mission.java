@@ -127,9 +127,9 @@ public final class Mission {
         if (ageExp > 0) {
             try {
                 AgeingAPI.api.updateExperience(ageExp, p.getName());
-                p.sendMessage(LogUtil.info_("向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
+                LogUtil.info("向您的 Ageing 账户中添加了 " + ageExp + " 点经验。", p);
             } catch (AgeingAPIException e) {
-                p.sendMessage(LogUtil.warn_("在更新 Ageing 数据时出现问题。"));
+                LogUtil.warn("在更新 Ageing 数据时出现问题。", p);
             }
         }
         return true;
