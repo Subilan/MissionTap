@@ -23,7 +23,7 @@ public final class Functions {
     public static void dispatchCommands(Player p, List<String> commands) {
         CommandSender sender = Bukkit.getConsoleSender();
         for (String cmd : commands) {
-            Bukkit.dispatchCommand(sender, Logger.translateColor(
+            Bukkit.dispatchCommand(sender, LogUtil.translateColor(
                     cmd.replace("%playername%", p.getName()).replace("%uuid%", p.getUniqueId().toString())));
         }
     }
@@ -48,28 +48,28 @@ public final class Functions {
 
     public static void initMissions(MissionTap plugin) {
         if (Files.isEmptyConfiguration(Files.DailyMissions)) {
-            plugin.log(Logger.INFO + "找不到存在的&e每日&r任务，正在尝试重新生成...");
+            plugin.log(LogUtil.INFO + "找不到存在的&e每日&r任务，正在尝试重新生成...");
             generateMissions("daily", plugin);
         }
         if (Files.isEmptyConfiguration(Files.WeeklyMissions)) {
-            plugin.log(Logger.INFO + "找不到存在的&e每周&r任务，正在尝试重新生成...");
+            plugin.log(LogUtil.INFO + "找不到存在的&e每周&r任务，正在尝试重新生成...");
             generateMissions("weekly", plugin);
         }
         if (Files.isEmptyConfiguration(Files.SpecialMissions) && Files.config.getBoolean("special-missions")) {
-            plugin.log(Logger.WARN + "特殊任务已被设置为启用状态，但找不到存在的&e特殊&r任务。");
+            plugin.log(LogUtil.WARN + "特殊任务已被设置为启用状态，但找不到存在的&e特殊&r任务。");
         }
     }
 
     public static void refreshMissions(MissionTap plugin) {
         if (!Files.isEmptyConfiguration(Files.DailyMissions)) {
             if (Files.DailyMissions.getLong("next-gen") <= Calendars.getNow()) {
-                plugin.log(Logger.INFO + "正在刷新&e每日&r任务...");
+                plugin.log(LogUtil.INFO + "正在刷新&e每日&r任务...");
                 generateMissions("daily", plugin);
             }
         }
         if (!Files.isEmptyConfiguration(Files.WeeklyMissions)) {
             if (Files.WeeklyMissions.getLong("next-gen") <= Calendars.getNow()) {
-                plugin.log(Logger.INFO + "正在刷新&e每周&r任务...");
+                plugin.log(LogUtil.INFO + "正在刷新&e每周&r任务...");
                 generateMissions("weekly", plugin);
             }
         }
@@ -100,11 +100,11 @@ public final class Functions {
         target.set("last-gen", Calendars.getNow());
         target.set("next-gen", nextRefresh);
         Files.save(target, "./generated/" + type + "-missions.yml");
-        plugin.log(Logger.SUCCESS + "刷新成功。下次刷新日期为 &a" + Calendars.stampToString(nextRefresh) + "&r。");
+        plugin.log(LogUtil.SUCCESS + "刷新成功。下次刷新日期为 &a" + Calendars.stampToString(nextRefresh) + "&r。");
         if (!Files.config.getBoolean("require-acceptance")) {
-            plugin.log(Logger.INFO + "正在向玩家档案写入任务数据...");
+            plugin.log(LogUtil.INFO + "正在向玩家档案写入任务数据...");
             acceptGlobalMission(type);
-            plugin.log(Logger.SUCCESS + "写入成功。");
+            plugin.log(LogUtil.SUCCESS + "写入成功。");
         }
     }
 
@@ -126,8 +126,6 @@ public final class Functions {
         } else {
             Mission.missionTypes = new String[] { "daily", "weekly" };
         }
-        // not reloading menu
-        // not reloading event
     }
 
     public static void acceptGlobalMission(String type) {
@@ -158,9 +156,9 @@ public final class Functions {
         } else {
             m.destory(u);
         }
-        p.sendMessage(Logger.translateColor(Logger.SUCCESS + "&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！"));
+        p.sendMessage(LogUtil.translateColor(LogUtil.SUCCESS + "&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！"));
         if (!m.reward(p)) {
-            p.sendMessage(Logger.translateColor(Logger.WARN + "这个任务&c没有给予任何奖励&r。"));
+            p.sendMessage(LogUtil.translateColor(LogUtil.WARN + "这个任务&c没有给予任何奖励&r。"));
         }
     }
 }

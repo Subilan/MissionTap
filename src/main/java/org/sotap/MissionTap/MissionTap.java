@@ -5,7 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.sotap.MissionTap.Classes.AgeingAPI;
 import org.sotap.MissionTap.Utils.Functions;
-import org.sotap.MissionTap.Utils.Logger;
+import org.sotap.MissionTap.Utils.LogUtil;
 
 public final class MissionTap extends JavaPlugin {
 
@@ -22,18 +22,18 @@ public final class MissionTap extends JavaPlugin {
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         AgeingAPI.load();
         if (!AgeingAPI.isAvailable()) {
-            log(Logger.FAILED + "找不到必要的依赖 &eAgeing&r。");
+            log(LogUtil.FAILED + "找不到必要的依赖 &eAgeing&r。");
         }
-        log(Logger.SUCCESS + "插件已&a启用&r。");
+        log(LogUtil.SUCCESS + "插件已&a启用&r。");
     }
 
     @Override
     public void onDisable() {
-        log(Logger.SUCCESS + "插件已&c禁用&r。");
+        log(LogUtil.SUCCESS + "插件已&c禁用&r。");
     }
 
     public void log(String message) {
-        this.getLogger().info(Logger.translateColor(message));
+        this.getLogger().info(LogUtil.translateColor(message));
     }
 
     public void reload() {

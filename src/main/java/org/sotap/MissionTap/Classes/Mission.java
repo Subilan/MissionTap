@@ -14,7 +14,7 @@ import org.sotap.Ageing.Exception.AgeingAPIException;
 import org.sotap.MissionTap.Utils.Calendars;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
-import org.sotap.MissionTap.Utils.Logger;
+import org.sotap.MissionTap.Utils.LogUtil;
 import net.md_5.bungee.api.ChatColor;
 
 public final class Mission {
@@ -41,15 +41,15 @@ public final class Mission {
         Long refresh = missionFile.getLong("next-gen");
         if (u != null) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
-            finalLore.add(Logger.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
+            finalLore.add(LogUtil.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
             finalLore.add("");
         }
         for (String text : lore) {
-            finalLore.add(ChatColor.WHITE + Logger.translateColor(text));
+            finalLore.add(ChatColor.WHITE + LogUtil.translateColor(text));
         }
         finalLore.add("");
         if (type != "special") {
-            finalLore.add(Logger.translateColor(
+            finalLore.add(LogUtil.translateColor(
                     "&8" + (u != null ? Calendars.stampToString(expiration) : Calendars.stampToString(refresh))));
         }
         return Functions.createItemStack(object.getString("name"),
@@ -127,9 +127,9 @@ public final class Mission {
         if (ageExp > 0) {
             try {
                 AgeingAPI.api.updateExperience(ageExp, p.getName());
-                p.sendMessage(Logger.translateColor(Logger.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
+                p.sendMessage(LogUtil.translateColor(LogUtil.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
             } catch (AgeingAPIException e) {
-                p.sendMessage(Logger.translateColor(Logger.WARN + "在更新 Ageing 数据时出现问题。"));
+                p.sendMessage(LogUtil.translateColor(LogUtil.WARN + "在更新 Ageing 数据时出现问题。"));
             }
         }
         return true;

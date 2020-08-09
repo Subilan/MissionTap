@@ -21,7 +21,7 @@ import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
-import org.sotap.MissionTap.Utils.Logger;
+import org.sotap.MissionTap.Utils.LogUtil;
 
 public final class InprogressMenu implements Listener {
     private final Inventory inventory;
@@ -57,8 +57,8 @@ public final class InprogressMenu implements Listener {
     public void open(final Player p) {
         init(p.getUniqueId());
         if (inventory.firstEmpty() == 0) {
-            p.sendMessage(Logger
-                    .translateColor(Logger.INFO + "你还没有接受任何任务。"));
+            p.sendMessage(LogUtil
+                    .translateColor(LogUtil.INFO + "你还没有接受任何任务。"));
             return;
         }
         p.openInventory(inventory);
@@ -82,18 +82,18 @@ public final class InprogressMenu implements Listener {
         p.closeInventory();
         if (clickedMission.isExpired(u)) {
             p.sendMessage(
-                    Logger.translateColor(Logger.WARN + "这个任务已经&c过期&r了。"));
+                    LogUtil.translateColor(LogUtil.WARN + "这个任务已经&c过期&r了。"));
             return;
         }
         if (e.getClick() == ClickType.SHIFT_LEFT) {
             if (!Files.config.getBoolean("allow-cancelling")
                     || !Files.config.getBoolean("require-acceptance")) {
                 p.sendMessage(
-                        Logger.translateColor(Logger.FAILED + "你现在不能取消任务。"));
+                        LogUtil.translateColor(LogUtil.FAILED + "你现在不能取消任务。"));
                 return;
             }
             clickedMission.destory(u);
-            p.sendMessage(Logger.translateColor(Logger.SUCCESS
+            p.sendMessage(LogUtil.translateColor(LogUtil.SUCCESS
                     + "成功取消该任务，你可以前往任务列表重新接受。"));
             return;
         }
@@ -101,8 +101,8 @@ public final class InprogressMenu implements Listener {
             if (clickedMission.isFinished(u)) {
                 Functions.finishMission(clickedMission, p);
             } else {
-                p.sendMessage(Logger
-                        .translateColor(Logger.FAILED + "你还没有完成这个任务。"));
+                p.sendMessage(LogUtil
+                        .translateColor(LogUtil.FAILED + "你还没有完成这个任务。"));
             }
             return;
         }

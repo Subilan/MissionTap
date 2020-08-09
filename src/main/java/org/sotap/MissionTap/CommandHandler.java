@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.sotap.MissionTap.Classes.GlobalMission;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
-import org.sotap.MissionTap.Utils.Logger;
+import org.sotap.MissionTap.Utils.LogUtil;
 import org.sotap.MissionTap.Utils.Menus;
 
 public final class CommandHandler implements CommandExecutor {
@@ -61,7 +61,7 @@ public final class CommandHandler implements CommandExecutor {
 
                 case "init": {
                     if (!p.hasPermission("missiontap.init")) return false;
-                    sender.sendMessage(Logger.translateColor(Logger.INFO + "正在初始化当前设定所需数据..."));
+                    sender.sendMessage(LogUtil.translateColor(LogUtil.INFO + "正在初始化当前设定所需数据..."));
                     Functions.reloadPlugin(plugin);                    
                     if (!Files.config.getBoolean("require-acceptance")) {
                         GlobalMission globalDailyMission = new GlobalMission("daily");
@@ -69,14 +69,14 @@ public final class CommandHandler implements CommandExecutor {
                         globalDailyMission.accept();
                         globalWeeklyMission.accept();
                     }
-                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "初始化完成。"));
+                    sender.sendMessage(LogUtil.translateColor(LogUtil.SUCCESS + "初始化完成。"));
                     break;
                 }
 
                 case "player": {
                     if (!p.hasPermission("missiontap.player")) return false;
                     if (args.length < 3) {
-                        sender.sendMessage(Logger.translateColor(Logger.FAILED + "参数不足。"));
+                        sender.sendMessage(LogUtil.translateColor(LogUtil.FAILED + "参数不足。"));
                         break;
                     }
                     Player pl = Bukkit.getPlayer(args[1]);
@@ -88,13 +88,13 @@ public final class CommandHandler implements CommandExecutor {
                                 if (args.length >= 4) {
                                     if (List.of("daily", "weekly").contains(args[3])) {
                                         playerdata.set("submitted-list." + args[3], null);
-                                        sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功清除 &a" + pl.getName() + " &r的任务提交记录。"));
+                                        sender.sendMessage(LogUtil.translateColor(LogUtil.SUCCESS + "成功清除 &a" + pl.getName() + " &r的任务提交记录。"));
                                     } else {
-                                        sender.sendMessage(Logger.translateColor(Logger.FAILED + "Invalid argument."));
+                                        sender.sendMessage(LogUtil.translateColor(LogUtil.FAILED + "Invalid argument."));
                                     }
                                 } else {
                                     playerdata.set("submitted-list", null);
-                                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。"));
+                                    sender.sendMessage(LogUtil.translateColor(LogUtil.SUCCESS + "成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。"));
                                 }
                                 Files.savePlayer(playerdata, u);
                                 
@@ -102,11 +102,11 @@ public final class CommandHandler implements CommandExecutor {
                             }
 
                             default: {
-                                sender.sendMessage(Logger.translateColor(Logger.FAILED + "无效参数。"));
+                                sender.sendMessage(LogUtil.translateColor(LogUtil.FAILED + "无效参数。"));
                             }
                         }
                     } else {
-                        sender.sendMessage(Logger.translateColor(Logger.FAILED + "指定的玩家&c不在线&r或者&c不存在&r。"));
+                        sender.sendMessage(LogUtil.translateColor(LogUtil.FAILED + "指定的玩家&c不在线&r或者&c不存在&r。"));
                     }
                     break;
                 }
@@ -114,20 +114,20 @@ public final class CommandHandler implements CommandExecutor {
                 case "reload": {
                     if (!p.hasPermission("missiontap.reload")) return false;
                     Functions.reloadPlugin(plugin);
-                    sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功重载配置文件。"));
+                    sender.sendMessage(LogUtil.translateColor(LogUtil.SUCCESS + "成功重载配置文件。"));
                     break;
                 }
 
                 case "about": {
-                    sender.sendMessage(Logger.translateColor("&e# 关于 MissionTap"));
-                    sender.sendMessage(Logger.translateColor("&bMissionTap&r 是 SoTap 独立开发的第一个玩法性插件，如有问题请见谅 >_<!"));
-                    sender.sendMessage(Logger.translateColor("如果您对 MissionTap 有什么想说的，可以在讨论群内联系管理组，畅所欲言~"));
-                    sender.sendMessage(Logger.translateColor("GitHub: &a&nhttps://github.com/sotapmc/MissionTap"));
+                    sender.sendMessage(LogUtil.translateColor("&e# 关于 MissionTap"));
+                    sender.sendMessage(LogUtil.translateColor("&bMissionTap&r 是 SoTap 独立开发的第一个玩法性插件，如有问题请见谅 >_<!"));
+                    sender.sendMessage(LogUtil.translateColor("如果您对 MissionTap 有什么想说的，可以在讨论群内联系管理组，畅所欲言~"));
+                    sender.sendMessage(LogUtil.translateColor("GitHub: &a&nhttps://github.com/sotapmc/MissionTap"));
                     break;
                 }
 
                 default: {
-                    sender.sendMessage(Logger.translateColor(Logger.FAILED + "无效参数。"));
+                    sender.sendMessage(LogUtil.translateColor(LogUtil.FAILED + "无效参数。"));
                 }
             }
 
