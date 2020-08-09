@@ -69,6 +69,7 @@ public final class InprogressMenu implements Listener {
         if (e.getInventory() != inventory)
             return;
         e.setCancelled(true);
+        if (!Files.config.getBoolean("require-submittion")) return;
         ItemStack clicked = e.getCurrentItem();
         if (clicked == null)
             return;
