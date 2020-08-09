@@ -23,6 +23,8 @@ public final class Mission {
     public final FileConfiguration missionFile;
     public final ConfigurationSection missions;
     public final ConfigurationSection object;
+    public final static String[] missionType = {"daily", "weekly", "special"};
+    public final static String[] missionDataType = {"blockbreak", "collecting", "breeding", "trading"};
 
     public Mission(String type, String key) {
         this.type = type;
@@ -91,7 +93,7 @@ public final class Mission {
 
     public boolean isFinished(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String missionType : new String[] { "blockbreak", "collecting", "breeding", "trading" }) {
+        for (String missionType : missionDataType) {
             if (object.getConfigurationSection(missionType) == null)
                 continue;
             if (playerdata.getConfigurationSection(type + "." + key + "." + missionType + "-data") == null)
@@ -150,7 +152,7 @@ public final class Mission {
 
     public void clearData(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
-        for (String missionType : new String[] { "blockbreak", "collecting", "breeding", "trading" }) {
+        for (String missionType : missionDataType) {
             playerdata.set(type + "." + key + "." + missionType + "-data", null);
         }
     }
@@ -158,7 +160,7 @@ public final class Mission {
     public void clearDataWithRequirement(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
         Integer result;
-        for (String missionType : new String[] { "blockbreak", "collecting", "breeding", "trading" }) {
+        for (String missionType : missionDataType) {
             if (object.getConfigurationSection(missionType) == null
                     || playerdata.getConfigurationSection(type + "." + key + "." + missionType + "-data") == null)
                 continue;
