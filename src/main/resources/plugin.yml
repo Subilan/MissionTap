@@ -15,8 +15,37 @@ commands:
     description: The main command of MissionTap.
     permission: missiontap.command
     permission-message: "You do not have the permission to use the command."
-    usage: /mt <options>
+    usage: The command is invalid or you don't have the permission to use it.
 permissions:
-  missiontap.*:
-    description: The super permission node for MissionTap.
+  missiontap.admin:
+    description: Admin node for the plugin.
+    default: op
+    children:
+      missiontap.daily: true
+      missiontap.weekly: true
+      missiontap.inprogress: true
+      missiontap.special: true
+      missiontap.init: true
+      missiontap.player: true
+      missiontap.reload: true
+  missiontap.daily:
+    description: Show daily mission menu.
+    default: default
+  missiontap.weekly:
+    description: Show weekly mission menu.
+    default: default
+  missiontap.inprogress:
+    description: Show inprogress menu.
+    default: default
+  missiontap.special:
+    description: Show special mission menu.
+    default: default
+  missiontap.init:
+    description: Initialize required data.
+    default: op
+  missiontap.player:
+    description: Controls player.
+    default: op
+  missiontap.reload:
+    description: Reloads plugin.
     default: op

@@ -33,29 +33,34 @@ public final class CommandHandler implements CommandExecutor {
             switch (args[0]) {
                 case "daily":
                 case "d": {
+                    if (!p.hasPermission("missiontap.daily")) return false;
                     Menus.dailyMissionMenu.open(p);
                     break;
                 }
 
                 case "weekly":
                 case "w": {
+                    if (!p.hasPermission("missiontap.weekly")) return false;
                     Menus.weeklyMissionMenu.open(p);
                     break;
                 }
 
                 case "inprogress":
                 case "i": {
+                    if (!p.hasPermission("missiontap.inprogress")) return false;
                     Menus.inprogressMenu.open(p);
                     break;
                 }
 
                 case "special":
                 case "s": {
+                    if (!p.hasPermission("missiontap.special")) return false;
                     Menus.specialMissionMenu.open(p);
                     break;
                 }
 
                 case "init": {
+                    if (!p.hasPermission("missiontap.init")) return false;
                     sender.sendMessage(Logger.translateColor(Logger.INFO + "正在初始化当前设定所需数据..."));
                     Functions.reloadPlugin(plugin);                    
                     if (!Files.config.getBoolean("require-acceptance")) {
@@ -69,6 +74,7 @@ public final class CommandHandler implements CommandExecutor {
                 }
 
                 case "player": {
+                    if (!p.hasPermission("missiontap.player")) return false;
                     if (args.length < 3) {
                         sender.sendMessage(Logger.translateColor(Logger.FAILED + "参数不足。"));
                         break;
@@ -106,6 +112,7 @@ public final class CommandHandler implements CommandExecutor {
                 }
 
                 case "reload": {
+                    if (!p.hasPermission("missiontap.reload")) return false;
                     Functions.reloadPlugin(plugin);
                     sender.sendMessage(Logger.translateColor(Logger.SUCCESS + "成功重载配置文件。"));
                     break;
