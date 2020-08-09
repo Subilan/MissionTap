@@ -23,8 +23,8 @@ public final class Mission {
     public final FileConfiguration missionFile;
     public final ConfigurationSection missions;
     public final ConfigurationSection object;
-    public final static String[] missionType = {"daily", "weekly", "special"};
-    public final static String[] missionDataType = {"blockbreak", "collecting", "breeding", "trading"};
+    public static String[] missionType = { "daily", "weekly", "special" };
+    public static String[] missionDataType = { "blockbreak", "collecting", "breeding", "trading" };
 
     public Mission(String type, String key) {
         this.type = type;
@@ -82,7 +82,8 @@ public final class Mission {
     }
 
     public boolean isExpired(UUID u) {
-        if (type == "special") return false;
+        if (type == "special")
+            return false;
         FileConfiguration playerdata = Files.loadPlayer(u);
         try {
             return playerdata.getLong(type + "." + key + ".expiration") <= Calendars.getNow();
@@ -123,11 +124,13 @@ public final class Mission {
         if (commands.size() == 0 && ageExp == 0)
             return false;
         Functions.dispatchCommands(p, commands);
-        try {
-            AgeingAPI.api.updateExperience(ageExp, p.getName());
-            p.sendMessage(Logger.translateColor(Logger.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
-        } catch (AgeingAPIException e) {
-            p.sendMessage(Logger.translateColor(Logger.WARN + "在更新 Ageing 数据时出现问题。"));
+        if (ageExp > 0) {
+            try {
+                AgeingAPI.api.updateExperience(ageExp, p.getName());
+                p.sendMessage(Logger.translateColor(Logger.INFO + "向您的 Ageing 账户中添加了 " + ageExp + " 点经验。"));
+            } catch (AgeingAPIException e) {
+                p.sendMessage(Logger.translateColor(Logger.WARN + "在更新 Ageing 数据时出现问题。"));
+            }
         }
         return true;
     }
