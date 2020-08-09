@@ -13,11 +13,11 @@ allow-tarriance: false
 require-acceptance: false
 # 是否需要玩家提交后才会获得奖励
 require-submittion: false
-# 是否允许用户取消任务
+# 是否允许玩家取消任务
 allow-cancelling: false
 # 是否允许重复接受同一任务
 allow-multiple-acceptance: true
-# 再次接受同一任务的冷却时间，若不需要冷却则设为 0
+# 再次接受同一任务的冷却时间，若不需要冷却则设为 0，单位秒
 multiple-acceptance-cooldown: 0
 # 手动开关：是否显示特殊任务
 special-missions: false
