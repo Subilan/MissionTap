@@ -23,18 +23,14 @@ public final class MissionTap extends JavaPlugin {
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         AgeingAPI.load();
         if (!AgeingAPI.isAvailable()) {
-            log(LogUtil.FAILED + "找不到必要的依赖 &eAgeing&r。");
+            LogUtil.failed("找不到必要的依赖 &eAgeing&r。");
         }
-        log(LogUtil.SUCCESS + "插件已&a启用&r。");
+        LogUtil.success("插件已&a启用&r。");
     }
 
     @Override
     public void onDisable() {
-        log(LogUtil.SUCCESS + "插件已&c禁用&r。");
-    }
-
-    public void log(String message) {
-        this.getLogger().info(LogUtil.translateColor(message));
+        LogUtil.success("插件已&c禁用&r。");
     }
 
     public void reload() {
