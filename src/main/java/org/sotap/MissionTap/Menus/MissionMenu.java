@@ -37,7 +37,7 @@ public final class MissionMenu implements Listener {
 
     private void init() {
         if (Files.isEmptyConfiguration(objects)) {
-            LogUtil.warn("No &e" + type + "&r missions were found.");
+            LogUtil.warn("由于数据为空，无法加载 GUI。");
             return;
         }
         Map<String, Object> missionObjects = objects.getValues(false);
