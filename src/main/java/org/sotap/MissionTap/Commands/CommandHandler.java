@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.GlobalMission;
@@ -105,7 +104,6 @@ public final class CommandHandler implements CommandExecutor {
                     Player pl = Bukkit.getPlayer(args[1]);
                     if (pl != null) {
                         UUID u = pl.getUniqueId();
-                        FileConfiguration playerdata = Files.loadPlayer(u);
                         switch (args[2]) {
                             case "clear-submittion": {
                                 if (args.length >= 4) {
@@ -121,8 +119,24 @@ public final class CommandHandler implements CommandExecutor {
                                     LogUtil.success("成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。",
                                             p);
                                 }
-                                Files.savePlayer(playerdata, u);
+                                break;
+                            }
 
+                            case "clear-progress": {
+                                if (args.length >= 4) {
+                                    if (List.of("all", "daily", "weekly", "special").contains(args[3])) {
+                                        if (args[3] == "all") {
+                                            Functions.clearAllMissionsFor(u);
+                                        } else {
+                                            Functions.clearMission(u, args[3]);
+                                        }
+                                    } else {
+                                        LogUtil.failed("无效参数", p);
+                                    }
+                                } else {
+                                    LogUtil.failed("参数不足。", p);
+                                    break;
+                                }
                                 break;
                             }
 
@@ -150,6 +164,45 @@ public final class CommandHandler implements CommandExecutor {
                             LogUtil.translateColor("如果您对 MissionTap 有什么想说的，可以在讨论群内联系管理组，畅所欲言~"));
                     sender.sendMessage(LogUtil
                             .translateColor("GitHub: &a&nhttps://github.com/sotapmc/MissionTap"));
+                    break;
+                }
+
+                case "enable": {
+                    if (args.length < 2) {
+                        LogUtil.failed("参数不足。", p);
+                        break;
+                    }
+                    switch (args[1]) {
+                        case "special": {
+                            Files.config.set("special-missions", true);
+                            LogUtil.success("成功启用特殊任务。", p);
+                            break;
+                        }
+
+                        default: {
+                            LogUtil.failed("操作不存在。", p);
+                        }
+                    }
+                    break;
+                }
+
+                case "disable": {
+                    if (args.length < 2) {
+                        LogUtil.failed("参数不足。", p);
+                        break;
+                    }
+                    switch (args[1]) {
+                        case "special": {
+                            Files.config.set("special-missions", false);
+                            Functions.clearAllMissions("special");
+                            LogUtil.success("成功禁用特殊任务并清除所有玩家的特殊任务数据。", p);
+                            break;
+                        }
+
+                        default: {
+                            LogUtil.failed("操作不存在。", p);
+                        }
+                    }
                     break;
                 }
 
