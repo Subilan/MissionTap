@@ -85,6 +85,7 @@ public final class Mission {
      */
     public String getDuplicatedNameSuffix(UUID u, FileConfiguration playerdata) {
         ConfigurationSection section = playerdata.getConfigurationSection(type);
+        if (Files.isEmptyConfiguration(section)) return "";
         List<String> match = new ArrayList<>();
         for (String objectKey : section.getKeys(false)) {
             if (!objectKey.startsWith(key))
