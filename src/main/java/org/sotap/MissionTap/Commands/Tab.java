@@ -13,8 +13,8 @@ import org.bukkit.util.StringUtil;
 public final class Tab implements TabCompleter {
     private static final String[] BASE = { "daily", "weekly", "inprogress", "special", "about", "init", "player",
             "reload", "enable", "disable" };
-    private static final String[] PLAYER_OPTIONS = {"clear-submittions", "clear-missions"};
-    private static final String[] ENABLE_DISABLE_OPTIONS = {"special"};
+    private static final String[] PLAYER_OPTIONS = { "clear-submittions", "clear-missions" };
+    private static final String[] ENABLE_DISABLE_OPTIONS = { "special" };
 
     public Tab() {
     }
@@ -59,11 +59,9 @@ public final class Tab implements TabCompleter {
                     }
                     break;
                 }
-
-                default: {
-                    result = null;
-                }
             }
+            if (result.size() == 0)
+                result = null;
         }
         return result;
     }
