@@ -73,8 +73,8 @@ public final class Mission {
     }
 
     /**
-     * NOTE: The duplicated missions will only appears when
-     * the tarriance mode is on and player has not finished the mission last week,
+     * NOTE: The duplicated missions will only appears in the scope of weekly missions when
+     * the tarriance mode is on, require-acceptance is off and player has not finished the mission last week,
      * and the missions of the same object key are automatically given to the player.
      * 
      * This feature will be removed in the future when the custom mission is done.
