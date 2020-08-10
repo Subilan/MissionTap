@@ -28,24 +28,23 @@ permissions:
       missiontap.init: true
       missiontap.player: true
       missiontap.reload: true
+      missiontap.enable: true
+      missiontap.disable: true
   missiontap.daily:
-    description: Show daily mission menu.
     default: true
   missiontap.weekly:
-    description: Show weekly mission menu.
     default: true
   missiontap.inprogress:
-    description: Show inprogress menu.
     default: true
   missiontap.special:
-    description: Show special mission menu.
     default: true
   missiontap.init:
-    description: Initialize required data.
     default: op
   missiontap.player:
-    description: Controls player.
     default: op
   missiontap.reload:
-    description: Reloads plugin.
+    default: op
+  missiontap.enable:
+    default: op
+  missiontap.disable:
     default: op
