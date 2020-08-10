@@ -37,31 +37,29 @@ public final class Tab implements TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] arguments) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> result = new ArrayList<>();
         if (command.getName().equalsIgnoreCase("missiontap")) {
-            switch (arguments.length) {
-                case 1: {
-                    result = getResult(arguments[0], getAvailableCommands((Player) sender));
+            switch (args[0]) {
+                case "enable":
+                case "disable": {
+                    result = getResult(args[1], Arrays.asList(ENABLE_DISABLE_OPTIONS));
                     break;
                 }
 
-                case 2: {
-                    if (arguments[0] == "enable" || arguments[0] == "disable") {
-                        result = getResult(arguments[1], Arrays.asList(ENABLE_DISABLE_OPTIONS));
-                    }
+                case "player": {
+                    result = getResult(args[2], Arrays.asList(PLAYER_OPTIONS));
                     break;
                 }
 
-                case 3: {
-                    if (arguments[0] == "player") {
-                        result = getResult(arguments[0], Arrays.asList(PLAYER_OPTIONS));
+                default: {
+                    if (args.length == 1) {
+                        result = getResult(args[0], getAvailableCommands((Player) sender));
+                    } else{
+                        result = null;
                     }
-                    break;
                 }
             }
-            if (result.size() == 0)
-                result = null;
         }
         return result;
     }
