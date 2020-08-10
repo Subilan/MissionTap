@@ -62,6 +62,10 @@ public final class Files {
         save(data, "./playerdata/" + u.toString() + ".yml");
     }
 
+    public static void saveConfig() {
+        save(config, "./config.yml");
+    }
+
     public static ConfigurationSection getGeneratedMissions(String type) {
         switch (type) {
             case "daily":

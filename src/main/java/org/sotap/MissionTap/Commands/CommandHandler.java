@@ -175,6 +175,7 @@ public final class CommandHandler implements CommandExecutor {
                     switch (args[1]) {
                         case "special": {
                             Files.config.set("special-missions", true);
+                            Files.saveConfig();
                             LogUtil.success("成功启用特殊任务。", p);
                             break;
                         }
@@ -195,6 +196,7 @@ public final class CommandHandler implements CommandExecutor {
                         case "special": {
                             Files.config.set("special-missions", false);
                             Functions.clearAllMissions("special");
+                            Files.saveConfig();
                             LogUtil.success("成功禁用特殊任务并清除所有玩家的特殊任务数据。", p);
                             break;
                         }
