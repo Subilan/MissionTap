@@ -64,12 +64,14 @@ public final class Functions {
     public static void refreshMissions() {
         if (!Files.isEmptyConfiguration(Files.DailyMissions)) {
             if (Files.DailyMissions.getLong("next-gen") <= Calendars.getNow()) {
+                clearAllSubmittionsForAll("daily");
                 LogUtil.info("正在刷新&e每日&r任务...");
                 generateMissions("daily");
             }
         }
         if (!Files.isEmptyConfiguration(Files.WeeklyMissions)) {
             if (Files.WeeklyMissions.getLong("next-gen") <= Calendars.getNow()) {
+                clearAllSubmittionsForAll("weekly");
                 LogUtil.info("正在刷新&e每周&r任务...");
                 generateMissions("weekly");
             }
@@ -160,6 +162,30 @@ public final class Functions {
         LogUtil.success("&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！", p);
         if (!m.reward(p)) {
             LogUtil.warn("这个任务&c没有给予任何奖励&r。", p);
+        }
+    }
+
+    public static void clearSubmittion(UUID u, String type) {
+        if (!List.of("weekly", "daily").contains(type)) return;
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        playerdata.set("submittion-list." + type, null);
+        Files.savePlayer(playerdata, u);
+    }
+
+    public static void clearAllSubmittions(UUID u) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        playerdata.set("submittion-list", null);
+        Files.savePlayer(playerdata, u);
+    }
+
+    public static void clearAllSubmittionsForAll(String... type) {
+        String typeStr = type.length > 0 ? type[0] : null;
+        for (UUID u : Files.getAllPlayerUUID()) {
+            if (typeStr != null) {
+                clearSubmittion(u, typeStr);
+            } else {
+                clearAllSubmittions(u);
+            }
         }
     }
 }
