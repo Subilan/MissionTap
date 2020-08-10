@@ -1,11 +1,14 @@
 package org.sotap.MissionTap.Classes;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -29,7 +32,7 @@ public final class Mission {
 
     public Mission(String type, String key) {
         this.type = type;
-        this.key = key;
+        this.key = removeAllSuffix(key);
         this.missionFile = Files.getGeneratedMissionFile(type);
         this.missions = Files.getGeneratedMissions(type);
         this.object = missions.getConfigurationSection(key);
@@ -65,8 +68,25 @@ public final class Mission {
         if (type != "special") {
             missionContent.put("expiration", Calendars.getMissionExpiration(type));
         }
-        playerdata.createSection(type + "." + key, missionContent);
+        playerdata.createSection(type + "." + key + getDuplicatedNameSuffix(u, playerdata), missionContent);
         Files.savePlayer(playerdata, u);
+    }
+
+    public String getDuplicatedNameSuffix(UUID u, FileConfiguration playerdata) {
+        ConfigurationSection section = playerdata.getConfigurationSection(type);
+        List<String> match = new ArrayList<>();
+        for (String objectKey : section.getKeys(false)) {
+            if (!objectKey.startsWith(key))
+                continue;
+            match.add(objectKey);
+        }
+        String largestKey = Collections.max(match, Comparator.comparing(String::length));
+        int underlineCount = StringUtils.countMatches(largestKey, "_");
+        return "_".repeat(underlineCount + 1);
+    }
+
+    public String removeAllSuffix(String target) {
+        return StringUtils.remove(target, "_");
     }
 
     public String getName() {
