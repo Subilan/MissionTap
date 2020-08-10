@@ -110,14 +110,14 @@ public final class CommandHandler implements CommandExecutor {
                             case "clear-submittion": {
                                 if (args.length >= 4) {
                                     if (List.of("daily", "weekly").contains(args[3])) {
-                                        playerdata.set("submitted-list." + args[3], null);
-                                        LogUtil.success("成功清除 &a" + pl.getName() + " &r的任务提交记录。",
+                                        Functions.clearSubmittion(u, args[3]);
+                                        LogUtil.success("成功清除 &a" + pl.getName() + " &r该类型的任务提交记录。",
                                                 p);
                                     } else {
-                                        LogUtil.failed("Invalid argument.", p);
+                                        LogUtil.failed("无效参数。", p);
                                     }
                                 } else {
-                                    playerdata.set("submitted-list", null);
+                                    Functions.clearAllSubmittions(u);
                                     LogUtil.success("成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。",
                                             p);
                                 }
