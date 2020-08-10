@@ -72,6 +72,17 @@ public final class Mission {
         Files.savePlayer(playerdata, u);
     }
 
+    /**
+     * NOTE: The duplicated missions will only appears when
+     * the tarriance mode is on and player has not finished the mission last week,
+     * and the missions of the same object key are automatically given to the player.
+     * 
+     * This feature will be removed in the future when the custom mission is done.
+     * Player will have their own different acceptable mission list,
+     * and the system will check if the player already has the mission,
+     * if true, then it will be skipped. When player accept all the mission shown in
+     * the mission list, and has not finished them all, their won't be any new mission.
+     */
     public String getDuplicatedNameSuffix(UUID u, FileConfiguration playerdata) {
         ConfigurationSection section = playerdata.getConfigurationSection(type);
         List<String> match = new ArrayList<>();
