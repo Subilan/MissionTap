@@ -22,6 +22,27 @@ public final class CommandHandler implements CommandExecutor {
         this.plugin = plugin;
     }
 
+    public static void noPermission(Player p) {
+        LogUtil.warn("你没有执行该指令的权限。", p);
+    }
+
+    public static String getPermissionNode(String arg) {
+        if (arg == null)
+            return "";
+        switch (arg) {
+            case "d":
+                return "daily";
+            case "w":
+                return "weekly";
+            case "s":
+                return "special";
+            case "i":
+                return "inprogress";
+            default:
+                return arg;
+        }
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("missiontap")) {
@@ -31,39 +52,41 @@ public final class CommandHandler implements CommandExecutor {
                 return true;
             }
 
+            if (!args[0].equalsIgnoreCase("about")) {
+                if (!p.hasPermission("missiontap." + getPermissionNode(args[0]))) {
+                    noPermission(p);
+                    return true;
+                }
+            }
+
             switch (args[0]) {
                 case "daily":
                 case "d": {
-                    if (!p.hasPermission("missiontap.daily")) return false;
                     Menus.dailyMissionMenu.open(p);
                     break;
                 }
 
                 case "weekly":
                 case "w": {
-                    if (!p.hasPermission("missiontap.weekly")) return false;
                     Menus.weeklyMissionMenu.open(p);
                     break;
                 }
 
                 case "inprogress":
                 case "i": {
-                    if (!p.hasPermission("missiontap.inprogress")) return false;
                     Menus.inprogressMenu.open(p);
                     break;
                 }
 
                 case "special":
                 case "s": {
-                    if (!p.hasPermission("missiontap.special")) return false;
                     Menus.specialMissionMenu.open(p);
                     break;
                 }
 
                 case "init": {
-                    if (!p.hasPermission("missiontap.init")) return false;
                     LogUtil.info("正在初始化当前设定所需数据...", p);
-                    Functions.reloadPlugin(plugin);                    
+                    Functions.reloadPlugin(plugin);
                     if (!Files.config.getBoolean("require-acceptance")) {
                         GlobalMission globalDailyMission = new GlobalMission("daily");
                         GlobalMission globalWeeklyMission = new GlobalMission("weekly");
@@ -75,7 +98,6 @@ public final class CommandHandler implements CommandExecutor {
                 }
 
                 case "player": {
-                    if (!p.hasPermission("missiontap.player")) return false;
                     if (args.length < 3) {
                         LogUtil.failed("参数不足。", p);
                         break;
@@ -89,16 +111,18 @@ public final class CommandHandler implements CommandExecutor {
                                 if (args.length >= 4) {
                                     if (List.of("daily", "weekly").contains(args[3])) {
                                         playerdata.set("submitted-list." + args[3], null);
-                                        LogUtil.success("成功清除 &a" + pl.getName() + " &r的任务提交记录。", p);
+                                        LogUtil.success("成功清除 &a" + pl.getName() + " &r的任务提交记录。",
+                                                p);
                                     } else {
                                         LogUtil.failed("Invalid argument.", p);
                                     }
                                 } else {
                                     playerdata.set("submitted-list", null);
-                                    LogUtil.success("成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。", p);
+                                    LogUtil.success("成功清除 &a" + pl.getName() + "&r 的&e所有&r任务提交记录。",
+                                            p);
                                 }
                                 Files.savePlayer(playerdata, u);
-                                
+
                                 break;
                             }
 
@@ -113,7 +137,6 @@ public final class CommandHandler implements CommandExecutor {
                 }
 
                 case "reload": {
-                    if (!p.hasPermission("missiontap.reload")) return false;
                     Functions.reloadPlugin(plugin);
                     LogUtil.success("成功重载配置文件。", p);
                     break;
@@ -121,9 +144,12 @@ public final class CommandHandler implements CommandExecutor {
 
                 case "about": {
                     sender.sendMessage(LogUtil.translateColor("&e# 关于 MissionTap"));
-                    sender.sendMessage(LogUtil.translateColor("&bMissionTap&r 是 SoTap 独立开发的第一个玩法性插件，如有问题请见谅 >_<!"));
-                    sender.sendMessage(LogUtil.translateColor("如果您对 MissionTap 有什么想说的，可以在讨论群内联系管理组，畅所欲言~"));
-                    sender.sendMessage(LogUtil.translateColor("GitHub: &a&nhttps://github.com/sotapmc/MissionTap"));
+                    sender.sendMessage(LogUtil
+                            .translateColor("&bMissionTap&r 是 SoTap 独立开发的第一个玩法性插件，如有问题请见谅 >_<!"));
+                    sender.sendMessage(
+                            LogUtil.translateColor("如果您对 MissionTap 有什么想说的，可以在讨论群内联系管理组，畅所欲言~"));
+                    sender.sendMessage(LogUtil
+                            .translateColor("GitHub: &a&nhttps://github.com/sotapmc/MissionTap"));
                     break;
                 }
 
@@ -131,9 +157,7 @@ public final class CommandHandler implements CommandExecutor {
                     LogUtil.failed("无效参数。", p);
                 }
             }
-
-            return true;
         }
-        return false;
+        return true;
     }
 }
