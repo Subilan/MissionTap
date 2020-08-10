@@ -122,7 +122,7 @@ public final class CommandHandler implements CommandExecutor {
                                 break;
                             }
 
-                            case "clear-progress": {
+                            case "clear-missions": {
                                 if (args.length >= 4) {
                                     if (List.of("all", "daily", "weekly", "special").contains(args[3])) {
                                         if (args[3] == "all") {
