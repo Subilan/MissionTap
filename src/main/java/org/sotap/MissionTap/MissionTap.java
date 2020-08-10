@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.sotap.MissionTap.Classes.AgeingAPI;
 import org.sotap.MissionTap.Commands.CommandHandler;
+import org.sotap.MissionTap.Commands.Tab;
 import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.LogUtil;
 
@@ -21,6 +22,7 @@ public final class MissionTap extends JavaPlugin {
         @SuppressWarnings("unused")
         BukkitTask timer = new Timer().runTaskTimer(this, 0, 20);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
+        Bukkit.getPluginCommand("missiontap").setTabCompleter(new Tab());
         AgeingAPI.load();
         if (!AgeingAPI.isAvailable()) {
             LogUtil.failed("找不到必要的依赖 &eAgeing&r。");
