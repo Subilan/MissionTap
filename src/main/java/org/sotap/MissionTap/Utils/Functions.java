@@ -165,6 +165,11 @@ public final class Functions {
         }
     }
 
+    /**
+     * 删除指定玩家的任务提交记录
+     * @param u UUID
+     * @param type 类型
+     */
     public static void clearSubmittion(UUID u, String type) {
         if (!List.of("weekly", "daily").contains(type)) return;
         FileConfiguration playerdata = Files.loadPlayer(u);
@@ -172,12 +177,20 @@ public final class Functions {
         Files.savePlayer(playerdata, u);
     }
 
+    /**
+     * 删除指定玩家的所有任务提交记录
+     * @param u UUID
+     */
     public static void clearAllSubmittions(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
         playerdata.set("submittion-list", null);
         Files.savePlayer(playerdata, u);
     }
 
+    /**
+     * 删除所有玩家的指定类型的提交记录，若类型为空，则删除所有玩家的所有任务提交记录
+     * @param type
+     */
     public static void clearAllSubmittionsForAll(String... type) {
         String typeStr = type.length > 0 ? type[0] : null;
         for (UUID u : Files.getAllPlayerUUID()) {
@@ -187,5 +200,39 @@ public final class Functions {
                 clearAllSubmittions(u);
             }
         }
+    }
+
+    /**
+     * 删除指定玩家数据中指定类型的所有任务
+     * @param u UUID
+     * @param type 任务类型
+     */
+    public static void clearMission(UUID u, String type) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        playerdata.set(type, null);
+        Files.savePlayer(playerdata, u);
+    }
+
+    /**
+     * 删除所有玩家数据中指定类型的所有任务
+     * @param type 任务类型
+     */
+    public static void clearAllMissions(String type) {
+        for (UUID u : Files.getAllPlayerUUID()) {
+            clearMission(u, type);
+        }
+    }
+
+    /**
+     * 删除指定玩家数据中的所有任务
+     * @param u UUID
+     */
+    public static void clearAllMissionsFor(UUID u) {
+        FileConfiguration playerdata = Files.loadPlayer(u);
+        // NOTE: There must be three elements to work.
+        for (String type : new String[] {"daily", "weekly", "special"}) {
+            playerdata.set(type, null);
+        }
+        Files.savePlayer(playerdata, u);
     }
 }
