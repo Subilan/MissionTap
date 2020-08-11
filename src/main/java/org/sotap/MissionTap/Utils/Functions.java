@@ -235,4 +235,8 @@ public final class Functions {
         }
         Files.savePlayer(playerdata, u);
     }
+
+    public static boolean isEmptyItemStack( ItemStack i) {
+        return i == null || i.getType().equals(Material.AIR);
+    }
 }
