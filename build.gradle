@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT"
-    compileOnly "me.clip:PlaceholderAPI:$papiVersion"
+    compileOnly "me.clip:placeholderapi:$papiVersion"
     compile files("lib/Ageing-1.0-SNAPSHOT.jar")
     testImplementation 'junit:junit:4.13'
     testImplementation 'com.google.code.findbugs:jsr305:3.0.2'
