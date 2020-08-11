@@ -24,9 +24,10 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v2
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
       with:
         name: MissionTap-latest
-        path: .
+        path: build/libs/*.jar
+        if-no-files-found: warn
 
