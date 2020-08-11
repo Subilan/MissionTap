@@ -1,5 +1,6 @@
 # 📕 MissionTap
 
+![Java CI with Gradle](https://github.com/sotapmc/MissionTap/workflows/Java%20CI%20with%20Gradle/badge.svg)
 ![](https://img.shields.io/badge/11-brown?logo=java)
 ![](https://img.shields.io/badge/poweredby-sotapmc-blue)
 ![](https://img.shields.io/badge/API-1.16.1--R0.1-orange)
