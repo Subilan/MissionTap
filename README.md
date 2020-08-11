@@ -20,11 +20,19 @@
 
 同时，你还可以通过改变配置文件中不同的项目，来搭配出与众不同的任务模式。关于这一点，可查看我们的[开发文档](//book.sotap.org/#/missiontap/index)。
 
-## 版本适配
+## 关于和下载
+
+#### 版本适配
 
 采用 `Spigot-API 1.16.1-R0.1-SNAPSHOT` 开发。由于没有动用特殊的 API，理论上支持所有 `1.13` 以上的服务器运行（未测试）。推荐使用 `1.16.1` 运行。
 
-## 鸣谢
+#### 下载
+
+请注意，本项目的 Release 仅用作里程碑，只有下载 Actions 中的最新构建，才能确保最少 Bug、最新内容体验。
+
+- [GitHub Actions](https://github.com/sotapmc/MissionTap/actions?query=workflow%3A%22Java+CI+with+Gradle%22)
+
+#### 鸣谢
 
 - Sapherise，提供主要创意
 - 内群里的伙伴们
