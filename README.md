@@ -31,6 +31,7 @@
 请注意，本项目的 Release 仅用作里程碑，只有下载 Actions 中的最新构建，才能确保最少 Bug、最新内容体验。
 
 - [GitHub Actions](https://github.com/sotapmc/MissionTap/actions?query=workflow%3A%22Java+CI+with+Gradle%22)
+- 或下载源代码后自行编译，直接 `gradle build` 即可。
 
 #### 鸣谢
 
