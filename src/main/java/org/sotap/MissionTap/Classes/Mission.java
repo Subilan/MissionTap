@@ -1,14 +1,11 @@
 package org.sotap.MissionTap.Classes;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,28 +24,33 @@ public final class Mission {
     public final FileConfiguration missionFile;
     public final ConfigurationSection missions;
     public final ConfigurationSection object;
+    public final FileConfiguration playerdata;
+    public final UUID u;
     public static String[] missionTypes = {"daily", "weekly", "special"};
     public static String[] missionDataTypes =
             {"blockbreak", "collecting", "breeding", "combat", "crafting"};
 
     public Mission(UUID u, String type, String key) {
         this.type = type;
-        this.key = removeAllSuffix(key);
+        this.key = key;
         this.missionFile = Files.getPlayerMissions(u);
         this.missions = missionFile.getConfigurationSection(type);
         this.object = missions.getConfigurationSection(key);
+        this.playerdata = Files.loadPlayer(u);
+        this.u = u;
     }
 
-    public ItemStack getItemStack(UUID u) {
+    public ItemStack getItemStack(boolean... global) {
+        final boolean finalGlobal = global.length == 0 ? false : global[0];
         List<String> lore = object.getStringList("lore");
         List<String> finalLore = new ArrayList<>();
         Long expiration = 0L;
         Long refresh = missionFile.getLong("next-gen");
-        if (u != null) {
+        if (!finalGlobal) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
             if (Files.config.getBoolean("require-submittion")) {
                 finalLore.add(
-                        LogUtil.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
+                        LogUtil.translateColor(isFinished() ? "&a&lFinished" : "&c&lUnfinished"));
                 finalLore.add("");
             }
         }
@@ -58,70 +60,32 @@ public final class Mission {
         finalLore.add("");
         if (type != "special") {
             finalLore.add(
-                    LogUtil.translateColor("&8" + (u != null ? Calendars.stampToString(expiration)
+                    LogUtil.translateColor("&8" + ((!finalGlobal) ? Calendars.stampToString(expiration)
                             : Calendars.stampToString(refresh))));
         }
         return Functions.createItemStack(object.getString("name"),
-                u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK)
+                (!finalGlobal) ? (isFinished() ? Material.ENCHANTED_BOOK : Material.BOOK)
                         : Material.BOOK,
                 finalLore);
     }
 
-    public void accept(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
+    public void accept() {
         Map<String, Object> missionContent = new HashMap<>();
         missionContent.put("name", object.getString("name"));
         missionContent.put("acceptance", Calendars.getNow());
         if (type != "special") {
             missionContent.put("expiration", Calendars.getMissionExpiration(type));
         }
-        playerdata.createSection(type + "." + key + getDuplicatedNameSuffix(u, playerdata),
+        playerdata.createSection(type + "." + key,
                 missionContent);
         Files.savePlayer(playerdata, u);
-    }
-
-    /**
-     * NOTE: The duplicated missions will only appears in the scope of weekly missions when the
-     * tarriance mode is on, require-acceptance is off and player has not finished the mission last
-     * week, and the missions of the same object key are automatically given to the player.
-     * 
-     * This feature will be removed in the future when the custom mission is done. Player will have
-     * their own different acceptable mission list, and the system will check if the player already
-     * has the mission, if true, then it will be skipped. When player accept all the mission shown
-     * in the mission list, and has not finished them all, their won't be any new mission.
-     */
-    public String getDuplicatedNameSuffix(UUID u, FileConfiguration playerdata) {
-        ConfigurationSection section = playerdata.getConfigurationSection(type);
-        if (Files.isEmptyConfiguration(section))
-            return "";
-        List<String> match = new ArrayList<>();
-        for (String objectKey : section.getKeys(false)) {
-            if (!objectKey.startsWith(key))
-                continue;
-            match.add(objectKey);
-        }
-        String largestKey;
-        if (match.size() == 0)
-            return "";
-        if (match.size() > 1) {
-            largestKey = Collections.max(match, Comparator.comparing(String::length));
-        } else {
-            largestKey = match.get(0);
-        }
-        int underlineCount = StringUtils.countMatches(largestKey, "_");
-        return "_".repeat(underlineCount + 1);
-    }
-
-    public String removeAllSuffix(String target) {
-        return StringUtils.remove(target, "_");
     }
 
     public String getName() {
         return object.getString("name");
     }
 
-    public boolean isAccepted(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
+    public boolean isAccepted() {
         try {
             return playerdata.getConfigurationSection(type).getKeys(false).contains(key);
         } catch (NullPointerException e) {
@@ -129,10 +93,9 @@ public final class Mission {
         }
     }
 
-    public boolean isExpired(UUID u) {
+    public boolean isExpired() {
         if (type == "special")
             return false;
-        FileConfiguration playerdata = Files.loadPlayer(u);
         try {
             return playerdata.getLong(type + "." + key + ".expiration") <= Calendars.getNow();
         } catch (NullPointerException e) {
@@ -140,8 +103,7 @@ public final class Mission {
         }
     }
 
-    public boolean isFinished(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
+    public boolean isFinished() {
         for (String dataType : missionDataTypes) {
             if (object.getConfigurationSection(dataType) == null) {
                 Integer anyRequirement = object.getInt(dataType);
@@ -181,8 +143,7 @@ public final class Mission {
         return true;
     }
 
-    public void destory(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
+    public void destory() {
         playerdata.set(type + "." + key, null);
         Files.savePlayer(playerdata, u);
     }
@@ -204,8 +165,7 @@ public final class Mission {
         return true;
     }
 
-    public void setSubmitted(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
+    public void setSubmitted() {
         List<String> submittedList = playerdata.getStringList("submitted-list." + type);
         submittedList = submittedList == null ? new ArrayList<>() : submittedList;
         submittedList.add(key);
@@ -213,8 +173,7 @@ public final class Mission {
         Files.savePlayer(playerdata, u);
     }
 
-    public boolean isSubmitted(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
+    public boolean isSubmitted() {
         List<String> submittedList = playerdata.getStringList("submitted-list." + type);
         if (submittedList != null) {
             return submittedList.contains(key);
@@ -222,16 +181,14 @@ public final class Mission {
         return false;
     }
 
-    public void clearData(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
+    public void clearData() {
         for (String dataType : missionDataTypes) {
             playerdata.set(type + "." + key + "." + dataType + "-data", null);
         }
         Files.savePlayer(playerdata, u);
     }
 
-    public void clearDataWithRequirement(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
+    public void clearDataWithRequirement() {
         Integer result;
         for (String dataType : missionDataTypes) {
             if (object.getConfigurationSection(dataType) == null || playerdata
