@@ -33,8 +33,13 @@ public final class Mission {
     public Mission(UUID u, String type, String key) {
         this.type = type;
         this.key = key;
-        this.missionFile = Files.getPlayerMissions(u);
-        this.missions = missionFile.getConfigurationSection(type);
+        if (type != "special") {
+            this.missionFile = Files.getPlayerMissions(u);
+            this.missions = missionFile.getConfigurationSection(type);
+        } else {
+            this.missionFile = Files.specialMissions;
+            this.missions = Files.specialMissions;
+        }
         this.object = missions.getConfigurationSection(key);
         this.playerdata = Files.loadPlayer(u);
         this.u = u;
