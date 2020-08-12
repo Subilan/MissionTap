@@ -134,14 +134,11 @@ public final class MissionEvents implements Listener {
             ItemStack[] contents = e.getView().getPlayer().getInventory().getContents();
             for (int i = 0; i < 36; i++) {
                 ItemStack item = contents[i];
-                System.out.println(Functions.isEmptyItemStack(item) ? "air" : item.getType().toString() + ":" + item.getAmount());
                 if (Functions.isEmptyItemStack(item)) {
-                    System.out.println("ADD " + e.getRecipe().getResult().getMaxStackSize());
                     spaceLeft += e.getRecipe().getResult().getMaxStackSize();
                     continue;
                 }
                 if (item.isSimilar(e.getRecipe().getResult())) {
-                    System.out.println("ADD " + (item.getMaxStackSize() - item.getAmount()));
                     spaceLeft += item.getMaxStackSize() - item.getAmount();
                 }
             }
