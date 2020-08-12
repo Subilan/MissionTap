@@ -27,8 +27,9 @@ public final class Mission {
     public final FileConfiguration missionFile;
     public final ConfigurationSection missions;
     public final ConfigurationSection object;
-    public static String[] missionTypes = { "daily", "weekly", "special" };
-    public static String[] missionDataTypes = { "blockbreak", "collecting", "breeding", "combat", "crafting" };
+    public static String[] missionTypes = {"daily", "weekly", "special"};
+    public static String[] missionDataTypes =
+            {"blockbreak", "collecting", "breeding", "combat", "crafting"};
 
     public Mission(String type, String key) {
         this.type = type;
@@ -45,7 +46,8 @@ public final class Mission {
         Long refresh = missionFile.getLong("next-gen");
         if (u != null) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
-            finalLore.add(LogUtil.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
+            finalLore
+                    .add(LogUtil.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
             finalLore.add("");
         }
         for (String text : lore) {
@@ -53,11 +55,14 @@ public final class Mission {
         }
         finalLore.add("");
         if (type != "special") {
-            finalLore.add(LogUtil.translateColor(
-                    "&8" + (u != null ? Calendars.stampToString(expiration) : Calendars.stampToString(refresh))));
+            finalLore.add(
+                    LogUtil.translateColor("&8" + (u != null ? Calendars.stampToString(expiration)
+                            : Calendars.stampToString(refresh))));
         }
         return Functions.createItemStack(object.getString("name"),
-                u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK) : Material.BOOK, finalLore);
+                u != null ? (isFinished(u) ? Material.ENCHANTED_BOOK : Material.BOOK)
+                        : Material.BOOK,
+                finalLore);
     }
 
     public void accept(UUID u) {
@@ -68,31 +73,38 @@ public final class Mission {
         if (type != "special") {
             missionContent.put("expiration", Calendars.getMissionExpiration(type));
         }
-        playerdata.createSection(type + "." + key + getDuplicatedNameSuffix(u, playerdata), missionContent);
+        playerdata.createSection(type + "." + key + getDuplicatedNameSuffix(u, playerdata),
+                missionContent);
         Files.savePlayer(playerdata, u);
     }
 
     /**
-     * NOTE: The duplicated missions will only appears in the scope of weekly missions when
-     * the tarriance mode is on, require-acceptance is off and player has not finished the mission last week,
-     * and the missions of the same object key are automatically given to the player.
+     * NOTE: The duplicated missions will only appears in the scope of weekly missions when the
+     * tarriance mode is on, require-acceptance is off and player has not finished the mission last
+     * week, and the missions of the same object key are automatically given to the player.
      * 
-     * This feature will be removed in the future when the custom mission is done.
-     * Player will have their own different acceptable mission list,
-     * and the system will check if the player already has the mission,
-     * if true, then it will be skipped. When player accept all the mission shown in
-     * the mission list, and has not finished them all, their won't be any new mission.
+     * This feature will be removed in the future when the custom mission is done. Player will have
+     * their own different acceptable mission list, and the system will check if the player already
+     * has the mission, if true, then it will be skipped. When player accept all the mission shown
+     * in the mission list, and has not finished them all, their won't be any new mission.
      */
     public String getDuplicatedNameSuffix(UUID u, FileConfiguration playerdata) {
         ConfigurationSection section = playerdata.getConfigurationSection(type);
-        if (Files.isEmptyConfiguration(section)) return "";
+        if (Files.isEmptyConfiguration(section))
+            return "";
         List<String> match = new ArrayList<>();
         for (String objectKey : section.getKeys(false)) {
             if (!objectKey.startsWith(key))
                 continue;
             match.add(objectKey);
         }
-        String largestKey = Collections.max(match, Comparator.comparing(String::length));
+        String largestKey;
+        if (match.size() == 0) return "";
+        if (match.size() > 1) {
+            largestKey = Collections.max(match, Comparator.comparing(String::length));
+        } else {
+            largestKey = match.get(0);
+        }
         int underlineCount = StringUtils.countMatches(largestKey, "_");
         return "_".repeat(underlineCount + 1);
     }
