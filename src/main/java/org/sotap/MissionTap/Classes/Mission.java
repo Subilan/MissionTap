@@ -99,7 +99,8 @@ public final class Mission {
             match.add(objectKey);
         }
         String largestKey;
-        if (match.size() == 0) return "";
+        if (match.size() == 0)
+            return "";
         if (match.size() > 1) {
             largestKey = Collections.max(match, Comparator.comparing(String::length));
         } else {
@@ -140,18 +141,41 @@ public final class Mission {
     public boolean isFinished(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
         for (String dataType : missionDataTypes) {
-            if (object.getConfigurationSection(dataType) == null)
-                continue;
-            if (playerdata.getConfigurationSection(type + "." + key + "." + dataType + "-data") == null)
-                return false;
-            Map<String, Object> requirement = object.getConfigurationSection(dataType).getValues(false);
-            Map<String, Object> progress = playerdata
-                    .getConfigurationSection(type + "." + key + "." + dataType + "-data").getValues(false);
-            for (String reqKey : requirement.keySet()) {
-                if (progress.get(reqKey) == null)
+            System.out.println("_" + dataType);
+            if (object.getConfigurationSection(dataType) == null) {
+                Integer anyRequirement = object.getInt(dataType);
+                if (anyRequirement == 0) {
+                    continue;
+                }
+                if (playerdata.getConfigurationSection(
+                        type + "." + key + "." + dataType + "-data") == null)
                     return false;
-                if ((Integer) progress.get(reqKey) < (Integer) requirement.get(reqKey))
+                Map<String, Object> progress = playerdata
+                        .getConfigurationSection(type + "." + key + "." + dataType + "-data")
+                        .getValues(false);
+                Integer total = 0;
+                for (String progKey : progress.keySet()) {
+                    total += (Integer) progress.get(progKey);
+                }
+                System.out.println(dataType + ":" + anyRequirement + "," + total);
+                if (anyRequirement > total) {
                     return false;
+                }
+            } else {
+                if (playerdata.getConfigurationSection(
+                        type + "." + key + "." + dataType + "-data") == null)
+                    return false;
+                Map<String, Object> progress = playerdata
+                        .getConfigurationSection(type + "." + key + "." + dataType + "-data")
+                        .getValues(false);
+                Map<String, Object> requirement =
+                        object.getConfigurationSection(dataType).getValues(false);
+                for (String reqKey : requirement.keySet()) {
+                    if (progress.get(reqKey) == null)
+                        return false;
+                    if ((Integer) progress.get(reqKey) < (Integer) requirement.get(reqKey))
+                        return false;
+                }
             }
         }
         return true;
@@ -210,16 +234,19 @@ public final class Mission {
         FileConfiguration playerdata = Files.loadPlayer(u);
         Integer result;
         for (String dataType : missionDataTypes) {
-            if (object.getConfigurationSection(dataType) == null
-                    || playerdata.getConfigurationSection(type + "." + key + "." + dataType + "-data") == null)
+            if (object.getConfigurationSection(dataType) == null || playerdata
+                    .getConfigurationSection(type + "." + key + "." + dataType + "-data") == null)
                 continue;
-            Map<String, Object> requirement = object.getConfigurationSection(dataType).getValues(false);
-            Map<String, Object> progress = playerdata
-                    .getConfigurationSection(type + "." + key + "." + dataType + "-data").getValues(false);
+            Map<String, Object> requirement =
+                    object.getConfigurationSection(dataType).getValues(false);
+            Map<String, Object> progress =
+                    playerdata.getConfigurationSection(type + "." + key + "." + dataType + "-data")
+                            .getValues(false);
             for (String reqKey : requirement.keySet()) {
                 // if is finished, the former value should be greater than the latter value.
                 result = (Integer) progress.get(reqKey) - (Integer) requirement.get(reqKey);
-                playerdata.set(type + "." + key + "." + dataType + "-data." + reqKey, result < 0 ? 0 : result);
+                playerdata.set(type + "." + key + "." + dataType + "-data." + reqKey,
+                        result < 0 ? 0 : result);
             }
         }
         Files.savePlayer(playerdata, u);
