@@ -23,19 +23,18 @@ import org.sotap.MissionTap.Utils.LogUtil;
 public final class MissionMenu implements Listener {
     private final Inventory inventory;
     private final String type;
-    private final ConfigurationSection objects;
+    private ConfigurationSection objects;
     private List<Mission> missions;
 
     public MissionMenu(String type, MissionTap plugin) {
         this.type = type;
-        this.objects = type != null ? Files.getGeneratedMissions(type) : null;
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "任务列表");
         this.missions = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        init();
     }
 
-    private void init() {
+    private void init(UUID u) {
+        this.objects = type != null ? Files.getPlayerMissions(u).getConfigurationSection(type) : null;
         if (Files.isEmptyConfiguration(objects)) {
             LogUtil.warn("由于数据为空，无法加载 GUI。");
             return;
@@ -43,7 +42,7 @@ public final class MissionMenu implements Listener {
         Map<String, Object> missionObjects = objects.getValues(false);
         int index = 0;
         for (String key : missionObjects.keySet()) {
-            Mission m = new Mission(type, key);
+            Mission m = new Mission(u, type, key);
             inventory.setItem(index, m.getItemStack(null));
             missions.add(m);
             index++;
@@ -59,6 +58,7 @@ public final class MissionMenu implements Listener {
             LogUtil.info("当前特殊任务尚未开放。", p);
             return;
         }
+        init(p.getUniqueId());
         p.openInventory(inventory);
     }
 

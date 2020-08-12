@@ -16,9 +16,7 @@ public final class Files {
     public static FileConfiguration config;
     public static FileConfiguration dailyMissions;
     public static FileConfiguration weeklyMissions;
-    public static FileConfiguration DailyMissions;
-    public static FileConfiguration WeeklyMissions;
-    public static FileConfiguration SpecialMissions;
+    public static FileConfiguration specialMissions;
     public static FileConfiguration meta;
 
     public static File getFile(File folder, String name) {
@@ -90,34 +88,6 @@ public final class Files {
                 return dailyMissions;
             case "weekly":
                 return weeklyMissions;
-            case "special":
-                return SpecialMissions;
-            default:
-                return null;
-        }
-    }
-    
-    public static ConfigurationSection getGeneratedMissions(String type) {
-        switch (type) {
-            case "daily":
-                return DailyMissions.getConfigurationSection("daily");
-            case "weekly":
-                return WeeklyMissions.getConfigurationSection("weekly");
-            case "special":
-                return SpecialMissions;
-            default:
-                return null;
-        }
-    }
-
-    public static FileConfiguration getGeneratedMissionFile(String type) {
-        switch (type) {
-            case "daily":
-                return DailyMissions;
-            case "weekly":
-                return WeeklyMissions;
-            case "special":
-                return SpecialMissions;
             default:
                 return null;
         }

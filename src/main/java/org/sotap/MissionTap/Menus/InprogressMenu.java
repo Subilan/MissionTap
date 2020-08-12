@@ -43,7 +43,7 @@ public final class InprogressMenu implements Listener {
                 continue;
             Map<String, Object> objectMap = objects.getValues(false);
             for (String key : objectMap.keySet()) {
-                Mission m = new Mission(type, key);
+                Mission m = new Mission(u, type, key);
                 if (m.isExpired(u)) {
                     continue;
                 }

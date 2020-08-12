@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.MissionTap;
-import org.sotap.MissionTap.Classes.GlobalMission;
 import org.sotap.MissionTap.Classes.Mission;
 import net.md_5.bungee.api.ChatColor;
 
@@ -34,9 +33,6 @@ public final class Functions {
         Files.config = plugin.getConfig();
         Files.dailyMissions = Files.load(".", "daily-missions.yml");
         Files.weeklyMissions = Files.load(".", "weekly-missions.yml");
-        Files.SpecialMissions = Files.load(".", "special-missions.yml");
-        Files.DailyMissions = Files.load("./generated", "daily-missions.yml");
-        Files.WeeklyMissions = Files.load("./generated", "weekly-missions.yml");
         LogUtil.origin = plugin.getLogger();
     }
 
@@ -46,38 +42,6 @@ public final class Functions {
 
     public static void initEvents(MissionTap plugin) {
         Events.refresh(plugin);
-    }
-
-    public static void initMissions() {
-        if (Files.isEmptyConfiguration(Files.DailyMissions)) {
-            LogUtil.info("找不到存在的&e每日&r任务，正在尝试重新生成...");
-            generateMissions("daily");
-        }
-        if (Files.isEmptyConfiguration(Files.WeeklyMissions)) {
-            LogUtil.info("找不到存在的&e每周&r任务，正在尝试重新生成...");
-            generateMissions("weekly");
-        }
-        if (Files.isEmptyConfiguration(Files.SpecialMissions)
-                && Files.config.getBoolean("special-missions")) {
-            LogUtil.warn("特殊任务已被设置为启用状态，但找不到存在的&e特殊&r任务。");
-        }
-    }
-
-    public static void refreshMissions() {
-        if (!Files.isEmptyConfiguration(Files.DailyMissions)) {
-            if (Files.DailyMissions.getLong("next-gen") <= Calendars.getNow()) {
-                clearAllSubmittionsForAll("daily");
-                LogUtil.info("正在刷新&e每日&r任务...");
-                generateMissions("daily");
-            }
-        }
-        if (!Files.isEmptyConfiguration(Files.WeeklyMissions)) {
-            if (Files.WeeklyMissions.getLong("next-gen") <= Calendars.getNow()) {
-                clearAllSubmittionsForAll("weekly");
-                LogUtil.info("正在刷新&e每周&r任务...");
-                generateMissions("weekly");
-            }
-        }
     }
 
     /**
@@ -156,28 +120,10 @@ public final class Functions {
     public static void reloadPlugin(MissionTap plugin) {
         plugin.reloadConfig();
         initUtils(plugin);
-        initMissions();
         if (Files.config.getBoolean("special-missions")) {
             Mission.missionTypes = new String[] {"daily", "weekly", "special"};
         } else {
             Mission.missionTypes = new String[] {"daily", "weekly"};
-        }
-    }
-
-    public static void acceptGlobalMission(String type) {
-        GlobalMission mission = new GlobalMission(type);
-        mission.accept();
-    }
-
-    public static void initDataForPlayer(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
-        if (!Files.config.getBoolean("require-acceptance")) {
-            if (Files.isEmptyConfiguration(playerdata)) {
-                GlobalMission dailyGlobalMission = new GlobalMission("daily");
-                GlobalMission weeklyGlobalMission = new GlobalMission("weekly");
-                dailyGlobalMission.acceptAllFor(u);
-                weeklyGlobalMission.acceptAllFor(u);
-            }
         }
     }
 

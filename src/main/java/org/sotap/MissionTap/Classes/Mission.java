@@ -31,11 +31,11 @@ public final class Mission {
     public static String[] missionDataTypes =
             {"blockbreak", "collecting", "breeding", "combat", "crafting"};
 
-    public Mission(String type, String key) {
+    public Mission(UUID u, String type, String key) {
         this.type = type;
         this.key = removeAllSuffix(key);
-        this.missionFile = Files.getGeneratedMissionFile(type);
-        this.missions = Files.getGeneratedMissions(type);
+        this.missionFile = Files.getPlayerMissions(u);
+        this.missions = missionFile.getConfigurationSection(type);
         this.object = missions.getConfigurationSection(key);
     }
 
