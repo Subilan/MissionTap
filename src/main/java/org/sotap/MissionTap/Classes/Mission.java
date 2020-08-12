@@ -50,7 +50,7 @@ public final class Mission {
         List<String> lore = object.getStringList("lore");
         List<String> finalLore = new ArrayList<>();
         Long expiration = 0L;
-        Long refresh = missionFile.getLong("next-gen");
+        Long refresh = Files.meta.getLong("next-gen");
         if (!finalGlobal) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
             if (Files.config.getBoolean("require-submittion")) {
@@ -64,8 +64,8 @@ public final class Mission {
         }
         finalLore.add("");
         if (type != "special") {
-            finalLore.add(
-                    LogUtil.translateColor("&8" + ((!finalGlobal) ? Calendars.stampToString(expiration)
+            finalLore.add(LogUtil
+                    .translateColor("&8" + ((!finalGlobal) ? Calendars.stampToString(expiration)
                             : Calendars.stampToString(refresh))));
         }
         return Functions.createItemStack(object.getString("name"),
@@ -81,8 +81,7 @@ public final class Mission {
         if (type != "special") {
             missionContent.put("expiration", Calendars.getMissionExpiration(type));
         }
-        playerdata.createSection(type + "." + key,
-                missionContent);
+        playerdata.createSection(type + "." + key, missionContent);
         Files.savePlayer(playerdata, u);
     }
 
