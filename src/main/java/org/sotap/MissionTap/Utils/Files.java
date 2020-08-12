@@ -19,6 +19,7 @@ public final class Files {
     public static FileConfiguration DailyMissions;
     public static FileConfiguration WeeklyMissions;
     public static FileConfiguration SpecialMissions;
+    public static FileConfiguration meta;
 
     public static File getFile(File folder, String name) {
         File file = new File(folder, name);
@@ -50,6 +51,10 @@ public final class Files {
         return load("./playerdata", u.toString() + ".yml");
     }
 
+    public static FileConfiguration loadMissionFor(UUID u) {
+        return load("./generated/player", u.toString() + ".yml");
+    }
+
     public static void save(FileConfiguration data, String targetFile) {
         try {
             data.save(targetFile.replace("./", cwd + "/"));
@@ -66,6 +71,32 @@ public final class Files {
         save(config, "./config.yml");
     }
 
+    public static void savePlayerMission(FileConfiguration data, UUID u) {
+        save(data, "./generated/player/" + u.toString() + ".yml");
+    }
+
+    public static void saveMeta() {
+        save(meta, "./generated/meta.yml");
+    }
+
+    /**
+     * 获取指定类型的任务源文件
+     * @param type 类型
+     * @return 源文件的 FC 实例
+     */
+    public static FileConfiguration getMissions(String type) {
+        switch (type) {
+            case "daily":
+                return dailyMissions;
+            case "weekly":
+                return weeklyMissions;
+            case "special":
+                return SpecialMissions;
+            default:
+                return null;
+        }
+    }
+    
     public static ConfigurationSection getGeneratedMissions(String type) {
         switch (type) {
             case "daily":
@@ -106,14 +137,22 @@ public final class Files {
         return files;
     }
 
+    /**
+     * 获取有记录的所有玩家的 UUID 和其对应的 FC 实例所组成的 Map
+     * @return Map(String,FC)
+     */
     public static Map<String, FileConfiguration> getAllPlayerdata() {
         Map<String, FileConfiguration> result = new HashMap<>();
         for (File f : getSubfileList(new File(cwd + "/playerdata"))) {
-            result.put(f.getName(), YamlConfiguration.loadConfiguration(f));
+            result.put(f.getName().replace(".yml", ""), YamlConfiguration.loadConfiguration(f));
         }
         return result;
     }
 
+    /**
+     * 获取有记录的所有玩家的 UUID
+     * @return UUID 的 List
+     */
     public static List<UUID> getAllPlayerUUID() {
         List<UUID> result = new ArrayList<>();
         try {
@@ -124,5 +163,17 @@ public final class Files {
         } catch (NullPointerException e) {
             return null;
         }
+    }
+
+    public static FileConfiguration getPlayerMissions(UUID u) {
+        return load("./generated/player", u.toString() + ".yml");
+    }
+
+    public static Map<String, FileConfiguration> getAllPlayerMissions() {
+        Map<String, FileConfiguration> result = new HashMap<>();
+        for (File f : getSubfileList(new File(cwd + "/generated/player"))) {
+            result.put(f.getName().replace(".yml", ""), YamlConfiguration.loadConfiguration(f));
+        }
+        return result;
     }
 }
