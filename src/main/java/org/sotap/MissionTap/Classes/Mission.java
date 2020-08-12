@@ -141,7 +141,6 @@ public final class Mission {
     public boolean isFinished(UUID u) {
         FileConfiguration playerdata = Files.loadPlayer(u);
         for (String dataType : missionDataTypes) {
-            System.out.println("_" + dataType);
             if (object.getConfigurationSection(dataType) == null) {
                 Integer anyRequirement = object.getInt(dataType);
                 if (anyRequirement == 0) {
@@ -157,7 +156,6 @@ public final class Mission {
                 for (String progKey : progress.keySet()) {
                     total += (Integer) progress.get(progKey);
                 }
-                System.out.println(dataType + ":" + anyRequirement + "," + total);
                 if (anyRequirement > total) {
                     return false;
                 }
