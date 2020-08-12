@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -224,5 +225,38 @@ public final class Functions {
 
     public static boolean isEmptyItemStack(ItemStack i) {
         return i == null || i.getType().equals(Material.AIR);
+    }
+
+    public static boolean isMissionExpired(String type) {
+        return Calendars.getNow() >= Files.meta.getLong(type + ".next-gen");
+    }
+
+    public static void handleMissionRefresh() {
+        if (isMissionExpired("daily")) {
+            generateMissions("daily");
+        }
+        if (isMissionExpired("weekly")) {
+            generateMissions("weekly");
+        }
+    }
+
+    public static void initPlayer(Player p) {
+        if (!p.hasPlayedBefore()) {
+            generateMissionsFor(p.getUniqueId(), "daily");
+            generateMissionsFor(p.getUniqueId(), "weekly");
+        }
+        if (!Files.config.getBoolean("require-acceptance")) {
+            UUID u = p.getUniqueId();
+            // auto acceptance
+            FileConfiguration playermission = Files.getPlayerMissions(u);
+            ConfigurationSection missions;
+            for (String type : new String[] {"daily", "weekly"}) {
+                missions = playermission.getConfigurationSection(type);
+                for (String key : missions.getKeys(false)) {
+                    Mission m = new Mission(u, type, key);
+                    m.accept();
+                }
+            }
+        }
     }
 }
