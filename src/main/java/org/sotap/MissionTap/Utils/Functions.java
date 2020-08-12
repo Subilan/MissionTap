@@ -214,15 +214,15 @@ public final class Functions {
         return i == null || i.getType().equals(Material.AIR);
     }
 
-    public static boolean isMissionExpired(String type) {
+    public static boolean isTimeForRefreshFor(String type) {
         return Calendars.getNow() >= Files.meta.getLong(type + ".next-gen");
     }
 
     public static void handleMissionRefresh() {
-        if (isMissionExpired("daily")) {
+        if (isTimeForRefreshFor("daily")) {
             generateMissions("daily");
         }
-        if (isMissionExpired("weekly")) {
+        if (isTimeForRefreshFor("weekly")) {
             generateMissions("weekly");
         }
     }
