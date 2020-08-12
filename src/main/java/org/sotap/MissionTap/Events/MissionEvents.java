@@ -63,7 +63,7 @@ public final class MissionEvents implements Listener {
                 continue;
             for (String key : section.getKeys(false)) {
                 Mission m = new Mission(u, type, key);
-                if (m.isFinished(u)) {
+                if (m.isFinished()) {
                     Functions.finishMission(m, p);
                 }
             }

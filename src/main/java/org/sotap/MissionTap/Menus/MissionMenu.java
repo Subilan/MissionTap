@@ -43,7 +43,7 @@ public final class MissionMenu implements Listener {
         int index = 0;
         for (String key : missionObjects.keySet()) {
             Mission m = new Mission(u, type, key);
-            inventory.setItem(index, m.getItemStack(null));
+            inventory.setItem(index, m.getItemStack(false));
             missions.add(m);
             index++;
         }
@@ -73,22 +73,21 @@ public final class MissionMenu implements Listener {
         if (clicked.getType() == Material.AIR)
             return;
         final Player p = (Player) e.getWhoClicked();
-        final UUID u = p.getUniqueId();
         final Integer slot = e.getSlot();
         final Mission clickedMission = missions.get(slot);
         p.closeInventory();
-        if (clickedMission.isAccepted(u)) {
+        if (clickedMission.isAccepted()) {
             LogUtil.failed("你不能接受进行中的任务。", p);
             return;
         }
         if (!Files.config.getBoolean("allow-multiple-acceptance")) {
-            if (clickedMission.isSubmitted(u)) {
+            if (clickedMission.isSubmitted()) {
                 LogUtil.warn("你不能接受先前&e已完成的&r任务！", p);
-                clickedMission.destory(u);
+                clickedMission.destory();
                 return;
             }
         }
-        clickedMission.accept(u);
+        clickedMission.accept();
         LogUtil.success("成功接受任务 &a" + clickedMission.getName() + "&r！", p);
     }
 
