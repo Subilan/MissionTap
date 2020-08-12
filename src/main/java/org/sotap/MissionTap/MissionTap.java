@@ -14,9 +14,7 @@ public final class MissionTap extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        Functions.initUtils(this);
-        Functions.initMenus(this);
-        Functions.initEvents(this);
+        Functions.reloadPlugin(this);
         @SuppressWarnings("unused")
         BukkitTask timer = new GlobalTasks().runTaskTimer(this, 0, 20);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
@@ -31,9 +29,5 @@ public final class MissionTap extends JavaPlugin {
     @Override
     public void onDisable() {
         LogUtil.success("插件已&c禁用&r。");
-    }
-
-    public void reload() {
-        Functions.initUtils(this);
     }
 }
