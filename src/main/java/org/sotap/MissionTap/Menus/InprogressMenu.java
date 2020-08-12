@@ -68,7 +68,6 @@ public final class InprogressMenu implements Listener {
         if (e.getInventory() != inventory)
             return;
         e.setCancelled(true);
-        if (!Files.config.getBoolean("require-submittion")) return;
         ItemStack clicked = e.getCurrentItem();
         if (clicked == null)
             return;
@@ -94,6 +93,10 @@ public final class InprogressMenu implements Listener {
             return;
         }
         if (e.getClick() == ClickType.LEFT) {
+            if (!Files.config.getBoolean("require-submittion")) {
+                LogUtil.info("你现在不需要手动提交任务。", p);
+                return;
+            }
             if (clickedMission.isFinished(u)) {
                 Functions.finishMission(clickedMission, p);
             } else {
