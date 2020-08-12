@@ -128,16 +128,15 @@ public final class Functions {
     }
 
     public static void finishMission(Mission m, Player p) {
-        UUID u = p.getUniqueId();
         if (Files.config.getBoolean("require-acceptance")
                 && !Files.config.getBoolean("allow-multiple-acceptance")) {
-            m.setSubmitted(u);
-            m.destory(u);
+            m.setSubmitted();
+            m.destory();
         } else if (!Files.config.getBoolean("require-acceptance")
                 && Files.config.getBoolean("allow-multiple-acceptance")) {
-            m.clearData(u);
+            m.clearData();
         } else {
-            m.destory(u);
+            m.destory();
         }
         LogUtil.success("&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！", p);
         if (!m.reward(p)) {
