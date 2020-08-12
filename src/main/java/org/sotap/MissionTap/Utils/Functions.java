@@ -29,22 +29,6 @@ public final class Functions {
         }
     }
 
-    public static void initUtils(MissionTap plugin) {
-        Files.cwd = plugin.getDataFolder().getPath();
-        Files.config = plugin.getConfig();
-        Files.dailyMissions = Files.load(".", "daily-missions.yml");
-        Files.weeklyMissions = Files.load(".", "weekly-missions.yml");
-        LogUtil.origin = plugin.getLogger();
-    }
-
-    public static void initMenus(MissionTap plugin) {
-        Menus.refresh(plugin);
-    }
-
-    public static void initEvents(MissionTap plugin) {
-        Events.refresh(plugin);
-    }
-
     /**
      * 获取一份随机生成的任务，返回的值是 Map，需要通过 createConfigurationSection 使用
      * @param type 任务类型
@@ -120,7 +104,10 @@ public final class Functions {
 
     public static void reloadPlugin(MissionTap plugin) {
         plugin.reloadConfig();
-        initUtils(plugin);
+        Files.init(plugin);
+        LogUtil.init(plugin);
+        Menus.init(plugin);
+        Events.init(plugin);
         if (Files.config.getBoolean("special-missions")) {
             Mission.missionTypes = new String[] {"daily", "weekly", "special"};
         } else {
