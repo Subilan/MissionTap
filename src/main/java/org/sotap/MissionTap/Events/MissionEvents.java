@@ -32,7 +32,8 @@ public final class MissionEvents implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    public static void updateData(UUID u, String missionType, String dataName, Integer... addend) {
+    public static void updateData(Player p, String missionType, String dataName, Integer... addend) {
+        UUID u = p.getUniqueId();
         final Integer finalAddend = addend.length == 0 ? 1 : addend[0];
         FileConfiguration playerdata = Files.loadPlayer(u);
         for (String type : Mission.missionTypes) {
@@ -48,6 +49,7 @@ public final class MissionEvents implements Listener {
             }
         }
         Files.savePlayer(playerdata, u);
+        handleAutoSubmittion(p);
     }
 
     public static void handleAutoSubmittion(Player p) {
@@ -81,8 +83,7 @@ public final class MissionEvents implements Listener {
         if (droppedItem.contains(e.getItem().getUniqueId()))
             return;
         Player p = (Player) e.getEntity();
-        updateData(p.getUniqueId(), "collecting", e.getItem().getItemStack().getType().toString());
-        handleAutoSubmittion(p);
+        updateData(p, "collecting", e.getItem().getItemStack().getType().toString());
     }
 
     @EventHandler
@@ -90,15 +91,13 @@ public final class MissionEvents implements Listener {
         if (e.getBreeder().getType() != EntityType.PLAYER)
             return;
         Player p = (Player) e.getBreeder();
-        updateData(p.getUniqueId(), "breeding", e.getEntity().getType().toString());
-        handleAutoSubmittion(p);
+        updateData(p, "breeding", e.getEntity().getType().toString());
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
-        updateData(p.getUniqueId(), "blockbreak", e.getBlock().getType().toString());
-        handleAutoSubmittion(p);
+        updateData(p, "blockbreak", e.getBlock().getType().toString());
     }
 
     @EventHandler
@@ -106,8 +105,7 @@ public final class MissionEvents implements Listener {
         if (e.getEntity().getKiller() == null)
             return;
         Player p = e.getEntity().getKiller();
-        updateData(p.getUniqueId(), "combat", e.getEntity().getType().toString());
-        handleAutoSubmittion(p);
+        updateData(p, "combat", e.getEntity().getType().toString());
     }
 
     @EventHandler
@@ -143,9 +141,9 @@ public final class MissionEvents implements Listener {
                 }
             }
             Integer realResult = spaceLeft >= rawResult ? rawResult : spaceLeft;
-            updateData(p.getUniqueId(), "crafting", e.getInventory().getResult().getType().toString(), realResult);
+            updateData(p, "crafting", e.getInventory().getResult().getType().toString(), realResult);
         } else {
-            updateData(p.getUniqueId(), "crafting", e.getInventory().getResult().getType().toString(),
+            updateData(p, "crafting", e.getInventory().getResult().getType().toString(),
                 e.getInventory().getResult().getAmount());
         }
     }
