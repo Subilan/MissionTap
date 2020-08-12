@@ -22,5 +22,3 @@ allow-multiple-acceptance: true
 multiple-acceptance-cooldown: 0
 # 手动开关：是否显示特殊任务
 special-missions: false
-# 是否提供给每个玩家独立的随机任务
-personal-missions: false
