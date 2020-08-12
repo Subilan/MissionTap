@@ -8,7 +8,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.sotap.MissionTap.MissionTap;
-import org.sotap.MissionTap.Classes.GlobalMission;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.LogUtil;
@@ -84,15 +83,6 @@ public final class CommandHandler implements CommandExecutor {
                 }
 
                 case "init": {
-                    LogUtil.info("正在初始化当前设定所需数据...", p);
-                    Functions.reloadPlugin(plugin);
-                    if (!Files.config.getBoolean("require-acceptance")) {
-                        GlobalMission globalDailyMission = new GlobalMission("daily");
-                        GlobalMission globalWeeklyMission = new GlobalMission("weekly");
-                        globalDailyMission.accept();
-                        globalWeeklyMission.accept();
-                    }
-                    LogUtil.success("初始化完成。", p);
                     break;
                 }
 
