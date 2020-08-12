@@ -18,7 +18,7 @@ public final class MissionTap extends JavaPlugin {
         Functions.initMenus(this);
         Functions.initEvents(this);
         @SuppressWarnings("unused")
-        BukkitTask timer = new Timer().runTaskTimer(this, 0, 20);
+        BukkitTask timer = new GlobalTasks().runTaskTimer(this, 0, 20);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
         Bukkit.getPluginCommand("missiontap").setTabCompleter(new Tab());
         AgeingAPI.load();
