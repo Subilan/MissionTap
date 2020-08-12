@@ -28,7 +28,7 @@ public final class Mission {
     public final ConfigurationSection missions;
     public final ConfigurationSection object;
     public static String[] missionTypes = { "daily", "weekly", "special" };
-    public static String[] missionDataTypes = { "blockbreak", "collecting", "breeding", "trading" };
+    public static String[] missionDataTypes = { "blockbreak", "collecting", "breeding", "combat", "crafting" };
 
     public Mission(String type, String key) {
         this.type = type;
