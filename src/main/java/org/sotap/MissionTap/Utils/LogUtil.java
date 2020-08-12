@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.sotap.MissionTap.MissionTap;
 
 public final class LogUtil {
     public final static String SUCCESS = "&r[&a成功&r] ";
@@ -11,6 +12,10 @@ public final class LogUtil {
     public final static String FAILED = "&r[&c失败&r] ";
     public final static String INFO = "&r[&b提示&r] ";
     public static Logger origin;
+
+    public static void init(MissionTap plugin) {
+        LogUtil.origin = plugin.getLogger();
+    }
 
     public static String translateColor(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);

@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.sotap.MissionTap.MissionTap;
 
 public final class Files {
     public static String cwd;
@@ -18,6 +19,15 @@ public final class Files {
     public static FileConfiguration weeklyMissions;
     public static FileConfiguration specialMissions;
     public static FileConfiguration meta;
+
+    public static void init(MissionTap plugin) {
+        cwd = plugin.getDataFolder().getPath();
+        config = plugin.getConfig();
+        dailyMissions = Files.load(".", "daily-missions.yml");
+        weeklyMissions = Files.load(".", "weekly-missions.yml");
+        specialMissions = Files.load(".", "special-missions.yml");
+        meta = Files.load("./generated", "meta.yml");
+    }
 
     public static File getFile(File folder, String name) {
         File file = new File(folder, name);
