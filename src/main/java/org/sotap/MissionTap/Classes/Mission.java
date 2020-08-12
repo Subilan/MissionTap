@@ -46,9 +46,11 @@ public final class Mission {
         Long refresh = missionFile.getLong("next-gen");
         if (u != null) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
-            finalLore
-                    .add(LogUtil.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
-            finalLore.add("");
+            if (Files.config.getBoolean("require-submittion")) {
+                finalLore.add(
+                        LogUtil.translateColor(isFinished(u) ? "&a&lFinished" : "&c&lUnfinished"));
+                finalLore.add("");
+            }
         }
         for (String text : lore) {
             finalLore.add(ChatColor.WHITE + LogUtil.translateColor(text));
