@@ -66,7 +66,7 @@ public final class Description {
             if (data == null) continue;
             for (String itemKey : data.getKeys(false)) {
                 Integer amountLeft = getAmountLeft(dataType, itemKey, data);
-                result.add((amountLeft == 0 ? "&m" : "") + getDataTypeName(dataType) + " &e" + amountLeft + "&r " + getQuantifier(dataType) + Files.translations.getString(itemKey));
+                result.add((amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType) + " &e" + amountLeft + "&r " + getQuantifier(dataType) + Files.translations.getString(itemKey));
             }
         }
         return result;
