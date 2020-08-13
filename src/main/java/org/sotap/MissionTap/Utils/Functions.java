@@ -272,7 +272,7 @@ public final class Functions {
      * @return
      */
     public static boolean isTimeForRefreshFor(String type) {
-        return Calendars.getNow() >= Files.meta.getLong(type + ".next-gen");
+        return Calendars.getNow() >= Files.meta.getLong(type + ".next-regen");
     }
 
     /**
