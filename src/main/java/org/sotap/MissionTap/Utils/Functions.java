@@ -231,19 +231,20 @@ public final class Functions {
         if (!p.hasPlayedBefore()) {
             generateMissionsFor(p.getUniqueId(), "daily");
             generateMissionsFor(p.getUniqueId(), "weekly");
-        }
-        if (!Files.config.getBoolean("require-acceptance")) {
-            UUID u = p.getUniqueId();
-            // auto acceptance
-            FileConfiguration playermission = Files.getPlayerMissions(u);
-            ConfigurationSection missions;
-            for (String type : new String[] {"daily", "weekly"}) {
-                missions = playermission.getConfigurationSection(type);
-                for (String key : missions.getKeys(false)) {
-                    Mission m = new Mission(u, type, key);
-                    m.accept();
-                }
+            if (!Files.config.getBoolean("require-acceptance")) {
+                acceptMissionsFor("daily", p.getUniqueId()); 
+                acceptMissionsFor("weekly", p.getUniqueId());
             }
+        }
+    }
+
+    public static void acceptMissionsFor(String type, UUID u) {
+        if (!List.of("weekly", "daily").contains(type)) return;
+        FileConfiguration playermission = Files.getPlayerMissions(u);
+        ConfigurationSection missions = playermission.getConfigurationSection(type);
+        for (String key : missions.getKeys(false)) {
+            Mission m = new Mission(u, type, key);
+            m.accept();
         }
     }
 }
