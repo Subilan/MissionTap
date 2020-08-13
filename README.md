@@ -5,7 +5,7 @@
 ![](https://img.shields.io/badge/poweredby-sotapmc-blue)
 ![](https://img.shields.io/badge/API-1.16.1--R0.1-orange)
 
-**MissionTap** 是一个简单的 Minecraft 游戏内任务系统。目前，该系统一共有三种任务类型。借助本插件，你可以实现
+**MissionTap** 是一个简单的 Minecraft 游戏内任务系统。该系统共有五种任务类型。借助本插件，你可以实现
 
 - 每隔*一定*的时间从事先写好的任务列表中随机抽取*一定数量*的任务，随机分配到每个玩家的任务列表中，玩家可从任务列表中选取任务
 - 配置每个任务所需要收集的物品数量、触发的事件数量。当前仅支持
