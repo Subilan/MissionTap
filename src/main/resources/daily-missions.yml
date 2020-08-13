@@ -1,35 +1,20 @@
-mission1:
-  name: "Mission 1"
+example-mission:
+  name: Example
   description:
     - "Line 1"
     - "Line 2"
     - "Line 3"
     - "Line 4"
     - "Line 5"
-  contents:
-    blockbreak:
-      STONE: 20
-      DIRT: 50
-    breeding:
-      SHEEP: 2
-    collecting:
-      WHEAT: 20
-      APPLE: 50
-    trading: 999
-  expires: inherit
-mission2:
-  name: "Mission 2"
-  description:
-    - "Line 1"
-    - "Line 2"
-    - "Line 3"
-    - "Line 4"
-    - "Line 5"
-  contents:
-    blockbreak:
-      STONE: 10
-      DIRT: 5
-    breeding:
-      SHEEP: 21
-      HORSE: 15
-  expires: 5
+  blockbreak:
+    STONE: 20
+    DIRT: 50
+  breeding:
+    SHEEP: 2
+  collecting:
+    WHEAT: 20
+    APPLE: 50
+  combat:
+    ZOMBIE: 10
+  crafting:
+    CAKE: 50
