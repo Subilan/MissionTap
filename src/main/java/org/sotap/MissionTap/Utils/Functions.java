@@ -296,15 +296,19 @@ public final class Functions {
      * 
      * @param p 玩家对象
      */
-    public static void initPlayer(Player p) {
-        if (!p.hasPlayedBefore()) {
-            generateMissionsFor(p.getUniqueId(), "daily");
-            generateMissionsFor(p.getUniqueId(), "weekly");
+    public static void initPlayer(UUID u) {
+        if (!hasMissions(u)) {
+            generateMissionsFor(u, "daily");
+            generateMissionsFor(u, "weekly");
             if (!Files.config.getBoolean("require-acceptance")) {
-                acceptMissionsFor("daily", p.getUniqueId());
-                acceptMissionsFor("weekly", p.getUniqueId());
+                acceptMissionsFor("daily", u);
+                acceptMissionsFor("weekly", u);
             }
         }
+    }
+
+    public static boolean hasMissions(UUID u) {
+       return !Files.isEmptyConfiguration(Files.getPlayerMissions(u));
     }
 
     /**
