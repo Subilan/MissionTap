@@ -61,7 +61,7 @@ public final class Functions {
      * 为所有有记录玩家重新生成一份任务
      * @param type 任务类型
      */
-    public static void generateMissions(String type) {
+    public static void generateMissionsForAll(String type) {
         Map<String, FileConfiguration> playermissions = Files.getAllPlayerMissions();
         FileConfiguration playermission;
         for (String key : playermissions.keySet()) {
@@ -244,7 +244,7 @@ public final class Functions {
         for (String type : new String[] {"daily", "weekly"}) {
             if (isTimeForRefreshFor(type)) {
                 clearAllExpiredMissions();
-                generateMissions(type);
+                generateMissionsForAll(type);
                 if (!Files.config.getBoolean("require-acceptance")) {
                     acceptMissionsForAll(type);
                 }
