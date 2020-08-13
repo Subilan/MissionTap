@@ -242,9 +242,20 @@ public final class Functions {
         if (!List.of("weekly", "daily").contains(type)) return;
         FileConfiguration playermission = Files.getPlayerMissions(u);
         ConfigurationSection missions = playermission.getConfigurationSection(type);
+        if (missions == null) {
+            LogUtil.warn("未找到 &e" + u.toString() + "&r 的任务列表。");
+            return;
+        }
         for (String key : missions.getKeys(false)) {
             Mission m = new Mission(u, type, key);
             m.accept();
+        }
+    }
+
+    public static void acceptMissionsForAll(String type) {
+        if (!List.of("weekly", "daily").contains(type)) return;
+        for (UUID u : Files.getAllPlayerUUID()) {
+            acceptMissionsFor(type, u);
         }
     }
 }
