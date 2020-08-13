@@ -197,6 +197,28 @@ public final class Functions {
     }
 
     /**
+     * 清除所有玩家存在的任何类型的过期任务
+     */
+    public static void clearAllExpiredMissions() {
+        for (String type : new String[] {"daily", "weekly"}) {
+            Map<UUID,FileConfiguration> playerdatas = Files.getAllPlayerdata();
+            FileConfiguration playerdata;
+            ConfigurationSection inprogMissions;
+            for (UUID u : playerdatas.keySet()) {
+                playerdata = playerdatas.get(u);
+                inprogMissions = playerdata.getConfigurationSection(type);
+                if (inprogMissions == null) continue;
+                for (String key : inprogMissions.getKeys(false)) {
+                    Mission m = new Mission(u, type, key);
+                    if (m.isExpired()) {
+                        m.destory();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * 删除指定玩家数据中的所有任务
      * 
      * @param u UUID
@@ -219,11 +241,14 @@ public final class Functions {
     }
 
     public static void handleMissionRefresh() {
-        if (isTimeForRefreshFor("daily")) {
-            generateMissions("daily");
-        }
-        if (isTimeForRefreshFor("weekly")) {
-            generateMissions("weekly");
+        for (String type : new String[] {"daily", "weekly"}) {
+            if (isTimeForRefreshFor(type)) {
+                clearAllExpiredMissions();
+                generateMissions(type);
+                if (!Files.config.getBoolean("require-acceptance")) {
+                    acceptMissionsForAll(type);
+                }
+            }
         }
     }
 
