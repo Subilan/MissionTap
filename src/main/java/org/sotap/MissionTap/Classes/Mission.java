@@ -50,7 +50,7 @@ public final class Mission {
         List<String> lore = object.getStringList("lore");
         List<String> finalLore = new ArrayList<>();
         Long expiration = 0L;
-        Long refresh = Files.meta.getLong("next-gen");
+        Long refresh = Files.meta.getLong("next-regen");
         if (!finalGlobal) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
             if (Files.config.getBoolean("require-submittion")) {
