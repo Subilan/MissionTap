@@ -45,6 +45,11 @@ public final class Mission {
         this.u = u;
     }
 
+    /**
+     * 获取该任务的 ItemStack 图标，参数中的全局内容是指是否显示在 MainMenu 类菜单中，若不填则为 false
+     * @param global 是否为全局内容
+     * @return
+     */
     public ItemStack getItemStack(boolean... global) {
         final boolean finalGlobal = global.length == 0 ? false : global[0];
         List<String> lore = object.getStringList("lore");
