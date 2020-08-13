@@ -23,19 +23,18 @@ import org.sotap.MissionTap.Utils.LogUtil;
 public final class MissionMenu implements Listener {
     private final Inventory inventory;
     private final String type;
-    private final ConfigurationSection objects;
+    private ConfigurationSection objects;
     private List<Mission> missions;
 
     public MissionMenu(String type, MissionTap plugin) {
         this.type = type;
-        this.objects = type != null ? Files.getGeneratedMissions(type) : null;
         this.inventory = Bukkit.createInventory(null, InventoryType.CHEST, "任务列表");
         this.missions = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, plugin);
-        init();
     }
 
-    private void init() {
+    private void init(UUID u) {
+        this.objects = type != null ? Files.getPlayerMissions(u).getConfigurationSection(type) : null;
         if (Files.isEmptyConfiguration(objects)) {
             LogUtil.warn("由于数据为空，无法加载 GUI。");
             return;
@@ -43,8 +42,8 @@ public final class MissionMenu implements Listener {
         Map<String, Object> missionObjects = objects.getValues(false);
         int index = 0;
         for (String key : missionObjects.keySet()) {
-            Mission m = new Mission(type, key);
-            inventory.setItem(index, m.getItemStack(null));
+            Mission m = new Mission(u, type, key);
+            inventory.setItem(index, m.getItemStack(false));
             missions.add(m);
             index++;
         }
@@ -59,6 +58,7 @@ public final class MissionMenu implements Listener {
             LogUtil.info("当前特殊任务尚未开放。", p);
             return;
         }
+        init(p.getUniqueId());
         p.openInventory(inventory);
     }
 
@@ -73,22 +73,21 @@ public final class MissionMenu implements Listener {
         if (clicked.getType() == Material.AIR)
             return;
         final Player p = (Player) e.getWhoClicked();
-        final UUID u = p.getUniqueId();
         final Integer slot = e.getSlot();
         final Mission clickedMission = missions.get(slot);
         p.closeInventory();
-        if (clickedMission.isAccepted(u)) {
+        if (clickedMission.isAccepted()) {
             LogUtil.failed("你不能接受进行中的任务。", p);
             return;
         }
         if (!Files.config.getBoolean("allow-multiple-acceptance")) {
-            if (clickedMission.isSubmitted(u)) {
+            if (clickedMission.isSubmitted()) {
                 LogUtil.warn("你不能接受先前&e已完成的&r任务！", p);
-                clickedMission.destory(u);
+                clickedMission.destory();
                 return;
             }
         }
-        clickedMission.accept(u);
+        clickedMission.accept();
         LogUtil.success("成功接受任务 &a" + clickedMission.getName() + "&r！", p);
     }
 

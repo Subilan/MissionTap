@@ -8,7 +8,7 @@ public final class Events {
     public static GlobalEvents global;
     public static MissionEvents mission;
 
-    public static void refresh(MissionTap plugin) {
+    public static void init(MissionTap plugin) {
         global = new GlobalEvents(plugin);
         mission = new MissionEvents(plugin);
     }

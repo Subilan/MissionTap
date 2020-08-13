@@ -9,12 +9,12 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.MissionTap;
-import org.sotap.MissionTap.Classes.GlobalMission;
 import org.sotap.MissionTap.Classes.Mission;
 import net.md_5.bungee.api.ChatColor;
 
@@ -23,95 +23,82 @@ public final class Functions {
     public static void dispatchCommands(Player p, List<String> commands) {
         CommandSender sender = Bukkit.getConsoleSender();
         for (String cmd : commands) {
-            Bukkit.dispatchCommand(sender, LogUtil.translateColor(
-                    cmd.replace("%playername%", p.getName()).replace("%uuid%", p.getUniqueId().toString())));
+            Bukkit.dispatchCommand(sender,
+                    LogUtil.translateColor(cmd.replace("%playername%", p.getName())
+                            .replace("%uuid%", p.getUniqueId().toString())));
         }
     }
 
-    public static void initUtils(MissionTap plugin) {
-        Files.cwd = plugin.getDataFolder().getPath();
-        Files.config = plugin.getConfig();
-        Files.dailyMissions = Files.load(".", "daily-missions.yml");
-        Files.weeklyMissions = Files.load(".", "weekly-missions.yml");
-        Files.SpecialMissions = Files.load(".", "special-missions.yml");
-        Files.DailyMissions = Files.load("./generated", "daily-missions.yml");
-        Files.WeeklyMissions = Files.load("./generated", "weekly-missions.yml");
-        LogUtil.origin = plugin.getLogger();
-    }
-
-    public static void initMenus(MissionTap plugin) {
-        Menus.refresh(plugin);
-    }
-
-    public static void initEvents(MissionTap plugin) {
-        Events.refresh(plugin);
-    }
-
-    public static void initMissions() {
-        if (Files.isEmptyConfiguration(Files.DailyMissions)) {
-            LogUtil.info("找不到存在的&e每日&r任务，正在尝试重新生成...");
-            generateMissions("daily");
-        }
-        if (Files.isEmptyConfiguration(Files.WeeklyMissions)) {
-            LogUtil.info("找不到存在的&e每周&r任务，正在尝试重新生成...");
-            generateMissions("weekly");
-        }
-        if (Files.isEmptyConfiguration(Files.SpecialMissions) && Files.config.getBoolean("special-missions")) {
-            LogUtil.warn("特殊任务已被设置为启用状态，但找不到存在的&e特殊&r任务。");
-        }
-    }
-
-    public static void refreshMissions() {
-        if (!Files.isEmptyConfiguration(Files.DailyMissions)) {
-            if (Files.DailyMissions.getLong("next-gen") <= Calendars.getNow()) {
-                clearAllSubmittionsForAll("daily");
-                LogUtil.info("正在刷新&e每日&r任务...");
-                generateMissions("daily");
-            }
-        }
-        if (!Files.isEmptyConfiguration(Files.WeeklyMissions)) {
-            if (Files.WeeklyMissions.getLong("next-gen") <= Calendars.getNow()) {
-                clearAllSubmittionsForAll("weekly");
-                LogUtil.info("正在刷新&e每周&r任务...");
-                generateMissions("weekly");
-            }
-        }
-    }
-
-    public static void generateMissions(String type) {
+    /**
+     * 获取一份随机生成的任务，返回的值是 Map，需要通过 createConfigurationSection 使用
+     * 
+     * @param type 任务类型
+     * @return 随机生成的任务
+     */
+    public static Map<String, Object> getRandomMissions(String type) {
         if (!List.of("daily", "weekly").contains(type)) {
-            return;
+            return null;
         }
-        Random gen = new Random();
-        if (Files.dailyMissions == null || Files.weeklyMissions == null)
-            return;
-        FileConfiguration missions = type == "daily" ? Files.dailyMissions : Files.weeklyMissions;
-        List<String> keys = new ArrayList<>(missions.getKeys(false));
-        Map<String, Object> results = new HashMap<>();
-        String randomKey;
+        Random random = new Random();
+        FileConfiguration pool = Files.getMissions(type);
+        if (pool == null)
+            return null;
+        Map<String, Object> result = new HashMap<>();
+        List<String> keys = new ArrayList<>(pool.getKeys(false));
         Integer amount = Files.config.getInt(type + "-mission-amount");
-        while (results
-                .size() < (amount == 0 ? (type == "daily" ? 2 : 4) : (keys.size() >= amount ? amount : keys.size()))) {
-            randomKey = keys.get(gen.nextInt(keys.size()));
-            if (results.containsKey(randomKey))
+        final Integer finalAmount = amount == 0 ? (type == "daily" ? 2 : 4)
+                : (keys.size() >= amount ? amount : keys.size());
+        String randomKey;
+        while (result.size() < finalAmount) {
+            randomKey = keys.get(random.nextInt(keys.size()));
+            if (result.containsKey(randomKey))
                 continue;
-            results.put(randomKey, missions.get(randomKey));
+            result.put(randomKey, pool.get(randomKey));
         }
-        FileConfiguration target = Files.getGeneratedMissionFile(type);
-        long nextRefresh = Calendars.getNextRefresh(type);
-        target.createSection(type, results);
-        target.set("last-gen", Calendars.getNow());
-        target.set("next-gen", nextRefresh);
-        Files.save(target, "./generated/" + type + "-missions.yml");
-        LogUtil.success("刷新成功。下次刷新日期为 &a" + Calendars.stampToString(nextRefresh) + "&r。");
-        if (!Files.config.getBoolean("require-acceptance")) {
-            LogUtil.info("正在向玩家档案写入任务数据...");
-            acceptGlobalMission(type);
-            LogUtil.success("写入成功。");
-        }
+        return result;
     }
 
-    public static ItemStack createItemStack(final String name, final Material material, final List<String> lore) {
+    /**
+     * 为所有有记录玩家重新生成一份任务
+     * 
+     * @param type 任务类型
+     */
+    public static void generateMissionsForAll(String type) {
+        Map<String, FileConfiguration> playermissions = Files.getAllPlayerMissions();
+        if (playermissions == null) {
+            return;
+        }
+        FileConfiguration playermission;
+        for (String key : playermissions.keySet()) {
+            playermission = playermissions.get(key);
+            playermission.createSection(type, getRandomMissions(type));
+            Files.savePlayerMission(playermission, UUID.fromString(key));
+        }
+        updateNextRefreshTime(type);
+    }
+
+    /**
+     * 为单一玩家单独生成新的任务，本项不属于刷新操作，故不会更新 {@code}last-regen{@code} 或者 {@code}next-regen{@code} 时间。
+     * 
+     * @param u    玩家 UUID
+     * @param type 任务类型
+     */
+    public static void generateMissionsFor(UUID u, String type) {
+        FileConfiguration playermission = Files.getPlayerMissions(u);
+        playermission.createSection(type, getRandomMissions(type));
+        Files.savePlayerMission(playermission, u);
+    }
+
+    /**
+     * 根据所提供的信息创建一个 ItemStack
+     * 
+     * @param name     物品名称
+     * @param material 物品材质
+     * @param lore     介绍部分（lore）
+     * @return 所求 ItemStack
+     */
+    public static ItemStack createItemStack(final String name, final Material material,
+            final List<String> lore) {
         final ItemStack item = new ItemStack(material);
         final ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.AQUA + name);
@@ -120,44 +107,38 @@ public final class Functions {
         return item;
     }
 
+    /**
+     * 重载插件，本项不会重载 Menu 和 Events
+     * 
+     * @param plugin
+     */
     public static void reloadPlugin(MissionTap plugin) {
         plugin.reloadConfig();
-        initUtils(plugin);
-        initMissions();
+        Files.init(plugin);
+        LogUtil.init(plugin);
         if (Files.config.getBoolean("special-missions")) {
-            Mission.missionTypes = new String[] { "daily", "weekly", "special" };
+            Mission.missionTypes = new String[] {"daily", "weekly", "special"};
         } else {
-            Mission.missionTypes = new String[] { "daily", "weekly" };
+            Mission.missionTypes = new String[] {"daily", "weekly"};
         }
     }
 
-    public static void acceptGlobalMission(String type) {
-        GlobalMission mission = new GlobalMission(type);
-        mission.accept();
-    }
-
-    public static void initDataForPlayer(UUID u) {
-        FileConfiguration playerdata = Files.loadPlayer(u);
-        if (!Files.config.getBoolean("require-acceptance")) {
-            if (Files.isEmptyConfiguration(playerdata)) {
-                GlobalMission dailyGlobalMission = new GlobalMission("daily");
-                GlobalMission weeklyGlobalMission = new GlobalMission("weekly");
-                dailyGlobalMission.acceptAllFor(u);
-                weeklyGlobalMission.acceptAllFor(u);
-            }
-        }
-    }
-
+    /**
+     * 处理玩家 {@code}p{@code} 对任务 {@code}m{@code} 的完成操作
+     * 
+     * @param m
+     * @param p
+     */
     public static void finishMission(Mission m, Player p) {
-        UUID u = p.getUniqueId();
-        if (Files.config.getBoolean("require-acceptance") && !Files.config.getBoolean("allow-multiple-acceptance")) {
-            m.setSubmitted(u);
-            m.destory(u);
+        if (Files.config.getBoolean("require-acceptance")
+                && !Files.config.getBoolean("allow-multiple-acceptance")) {
+            m.setSubmitted();
+            m.destory();
         } else if (!Files.config.getBoolean("require-acceptance")
                 && Files.config.getBoolean("allow-multiple-acceptance")) {
-            m.clearData(u);
+            m.clearData();
         } else {
-            m.destory(u);
+            m.destory();
         }
         LogUtil.success("&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！", p);
         if (!m.reward(p)) {
@@ -167,11 +148,13 @@ public final class Functions {
 
     /**
      * 删除指定玩家的任务提交记录
-     * @param u UUID
+     * 
+     * @param u    UUID
      * @param type 类型
      */
     public static void clearSubmittion(UUID u, String type) {
-        if (!List.of("weekly", "daily").contains(type)) return;
+        if (!List.of("weekly", "daily").contains(type))
+            return;
         FileConfiguration playerdata = Files.loadPlayer(u);
         playerdata.set("submittion-list." + type, null);
         Files.savePlayer(playerdata, u);
@@ -179,6 +162,7 @@ public final class Functions {
 
     /**
      * 删除指定玩家的所有任务提交记录
+     * 
      * @param u UUID
      */
     public static void clearAllSubmittions(UUID u) {
@@ -189,11 +173,15 @@ public final class Functions {
 
     /**
      * 删除所有玩家的指定类型的提交记录，若类型为空，则删除所有玩家的所有任务提交记录
+     * 
      * @param type
      */
     public static void clearAllSubmittionsForAll(String... type) {
         String typeStr = type.length > 0 ? type[0] : null;
-        for (UUID u : Files.getAllPlayerUUID()) {
+        List<UUID> uuids = Files.getAllPlayerUUID();
+        if (uuids == null)
+            return;
+        for (UUID u : uuids) {
             if (typeStr != null) {
                 clearSubmittion(u, typeStr);
             } else {
@@ -204,7 +192,8 @@ public final class Functions {
 
     /**
      * 删除指定玩家数据中指定类型的所有任务
-     * @param u UUID
+     * 
+     * @param u    UUID
      * @param type 任务类型
      */
     public static void clearMission(UUID u, String type) {
@@ -215,16 +204,46 @@ public final class Functions {
 
     /**
      * 删除所有玩家数据中指定类型的所有任务
+     * 
      * @param type 任务类型
      */
     public static void clearAllMissions(String type) {
-        for (UUID u : Files.getAllPlayerUUID()) {
+        List<UUID> uuids = Files.getAllPlayerUUID();
+        if (uuids == null)
+            return;
+        for (UUID u : uuids) {
             clearMission(u, type);
         }
     }
 
     /**
+     * 清除所有玩家存在的任何类型的过期任务
+     */
+    public static void clearAllExpiredMissions() {
+        for (String type : new String[] {"daily", "weekly"}) {
+            Map<UUID, FileConfiguration> playerdatas = Files.getAllPlayerdata();
+            if (playerdatas == null)
+                continue;
+            FileConfiguration playerdata;
+            ConfigurationSection inprogMissions;
+            for (UUID u : playerdatas.keySet()) {
+                playerdata = playerdatas.get(u);
+                inprogMissions = playerdata.getConfigurationSection(type);
+                if (inprogMissions == null)
+                    continue;
+                for (String key : inprogMissions.getKeys(false)) {
+                    Mission m = new Mission(u, type, key);
+                    if (m.isExpired()) {
+                        m.destory();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * 删除指定玩家数据中的所有任务
+     * 
      * @param u UUID
      */
     public static void clearAllMissionsFor(UUID u) {
@@ -236,7 +255,108 @@ public final class Functions {
         Files.savePlayer(playerdata, u);
     }
 
-    public static boolean isEmptyItemStack( ItemStack i) {
+    /**
+     * 判断指定 ItemStack 是否为空，即是否为 NULL 或者空气
+     * 
+     * @param i ItemStack
+     * @return
+     */
+    public static boolean isEmptyItemStack(ItemStack i) {
         return i == null || i.getType().equals(Material.AIR);
+    }
+
+    /**
+     * 判断当前时间是否已经为或超过指定类型任务的下次刷新时间
+     * 
+     * @param type 任务类型
+     * @return
+     */
+    public static boolean isTimeForRefreshFor(String type) {
+        return Calendars.getNow() >= Files.meta.getLong(type + ".next-regen");
+    }
+
+    /**
+     * 处理任务刷新的相关逻辑。 先判断是不是满足了刷新时间，如果不是则不执行。 如果是，先清除所有玩家的所有类型的过期任务，然后再生成一份到玩家的任务列表中。
+     * 最后判断如果不需要手动接受就帮玩家自动接受。
+     */
+    public static void handleMissionRefresh() {
+        for (String type : new String[] {"daily", "weekly"}) {
+            if (isTimeForRefreshFor(type)) {
+                clearAllExpiredMissions();
+                generateMissionsForAll(type);
+                if (!Files.config.getBoolean("require-acceptance")) {
+                    acceptMissionsForAll(type);
+                }
+            }
+        }
+    }
+
+    /**
+     * 初始化一名玩家
+     * 
+     * @param p 玩家对象
+     */
+    public static void initPlayer(UUID u) {
+        if (isMissionEmpty(u)) {
+            LogUtil.info("检测到该玩家没有任务数据，初始化中...");
+            generateMissionsFor(u, "daily");
+            generateMissionsFor(u, "weekly");
+            if (!Files.config.getBoolean("require-acceptance")) {
+                acceptMissionsFor("daily", u);
+                acceptMissionsFor("weekly", u);
+            }
+            LogUtil.success("初始化成功。");
+        }
+    }
+
+    public static boolean isMissionEmpty(UUID u) {
+       return Files.isEmptyConfiguration(Files.getPlayerMissions(u));
+    }
+
+    /**
+     * 为指定玩家接受所有指定类型的任务，用于 {@code}require-acceptance=false{@code} 的情形
+     * 
+     * @param type 任务类型
+     * @param u    UUID
+     */
+    public static void acceptMissionsFor(String type, UUID u) {
+        if (!List.of("weekly", "daily").contains(type))
+            return;
+        FileConfiguration playermission = Files.getPlayerMissions(u);
+        ConfigurationSection missions = playermission.getConfigurationSection(type);
+        if (missions == null) {
+            LogUtil.warn("未找到 &e" + u.toString() + "&r 的任务列表。");
+            return;
+        }
+        for (String key : missions.getKeys(false)) {
+            Mission m = new Mission(u, type, key);
+            m.accept();
+        }
+    }
+
+    /**
+     * 为所有玩家接受指定类型的任务，用于 {@code}require-acceptance=false{@code} 的情形
+     * 
+     * @param type
+     */
+    public static void acceptMissionsForAll(String type) {
+        if (!List.of("weekly", "daily").contains(type))
+            return;
+        List<UUID> uuids = Files.getAllPlayerUUID();
+        if (uuids == null)
+            return;
+        for (UUID u : uuids) {
+            acceptMissionsFor(type, u);
+        }
+    }
+
+    /**
+     * 更新指定类型的下次刷新时间，该函数将一并写入执行该函数的时间到 last-regen 项内
+     * @param type 任务类型
+     */
+    public static void updateNextRefreshTime(String type) {
+        Files.meta.set(type + ".last-regen", Calendars.getNow());
+        Files.meta.set(type + ".next-regen", Calendars.getNextRefresh(type));
+        Files.saveMeta();
     }
 }

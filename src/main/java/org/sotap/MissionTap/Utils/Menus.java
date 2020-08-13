@@ -12,7 +12,7 @@ public final class Menus {
     public static MainMenu mainMenu;
     public static InprogressMenu inprogressMenu;
 
-    public static void refresh(MissionTap plugin) {
+    public static void init(MissionTap plugin) {
         dailyMissionMenu = new MissionMenu("daily", plugin);
         weeklyMissionMenu = new MissionMenu("weekly", plugin);
         specialMissionMenu = new MissionMenu("special", plugin);

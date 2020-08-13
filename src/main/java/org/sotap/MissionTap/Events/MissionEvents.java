@@ -62,8 +62,8 @@ public final class MissionEvents implements Listener {
             if (section == null || Files.isEmptyConfiguration(section))
                 continue;
             for (String key : section.getKeys(false)) {
-                Mission m = new Mission(type, key);
-                if (m.isFinished(u)) {
+                Mission m = new Mission(u, type, key);
+                if (m.isFinished()) {
                     Functions.finishMission(m, p);
                 }
             }

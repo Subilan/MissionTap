@@ -1,6 +1,5 @@
 package org.sotap.MissionTap.Events;
 
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +19,6 @@ public final class GlobalEvents implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        UUID u = p.getUniqueId();
-        Functions.initDataForPlayer(u);
+        Functions.initPlayer(p.getUniqueId());
     }
 }

@@ -43,12 +43,12 @@ public final class InprogressMenu implements Listener {
                 continue;
             Map<String, Object> objectMap = objects.getValues(false);
             for (String key : objectMap.keySet()) {
-                Mission m = new Mission(type, key);
-                if (m.isExpired(u)) {
+                Mission m = new Mission(u, type, key);
+                if (m.isExpired()) {
                     continue;
                 }
                 missions.add(m);
-                inventory.setItem(index, m.getItemStack(u));
+                inventory.setItem(index, m.getItemStack(false));
                 index++;
             }
         }
@@ -74,11 +74,10 @@ public final class InprogressMenu implements Listener {
         if (clicked.getType() != Material.BOOK && clicked.getType() != Material.ENCHANTED_BOOK)
             return;
         Player p = (Player) e.getWhoClicked();
-        UUID u = p.getUniqueId();
         Integer slot = e.getSlot();
         Mission clickedMission = missions.get(slot);
         p.closeInventory();
-        if (clickedMission.isExpired(u)) {
+        if (clickedMission.isExpired()) {
             LogUtil.warn("这个任务已经&c过期&r了。", p);
             return;
         }
@@ -88,7 +87,7 @@ public final class InprogressMenu implements Listener {
                 LogUtil.failed("你现在不能取消任务。", p);
                 return;
             }
-            clickedMission.destory(u);
+            clickedMission.destory();
             LogUtil.success("成功取消该任务，你可以前往任务列表重新接受。", p);
             return;
         }
@@ -97,7 +96,7 @@ public final class InprogressMenu implements Listener {
                 LogUtil.info("你现在不需要手动提交任务。", p);
                 return;
             }
-            if (clickedMission.isFinished(u)) {
+            if (clickedMission.isFinished()) {
                 Functions.finishMission(clickedMission, p);
             } else {
                 LogUtil.failed("你还没有完成这个任务。", p);
