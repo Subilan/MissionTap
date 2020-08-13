@@ -48,7 +48,7 @@ public final class InprogressMenu implements Listener {
                     continue;
                 }
                 missions.add(m);
-                inventory.setItem(index, m.getItemStack(true));
+                inventory.setItem(index, m.getItemStack(false));
                 index++;
             }
         }
