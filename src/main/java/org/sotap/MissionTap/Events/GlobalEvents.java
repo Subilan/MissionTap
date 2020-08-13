@@ -19,6 +19,6 @@ public final class GlobalEvents implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        Functions.initPlayer(p);
+        Functions.initPlayer(p.getUniqueId());
     }
 }
