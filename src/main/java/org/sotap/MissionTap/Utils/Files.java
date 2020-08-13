@@ -19,6 +19,7 @@ public final class Files {
     public static FileConfiguration weeklyMissions;
     public static FileConfiguration specialMissions;
     public static FileConfiguration meta;
+    public static FileConfiguration translations;
 
     public static void init(MissionTap plugin) {
         cwd = plugin.getDataFolder().getPath();
@@ -27,6 +28,7 @@ public final class Files {
         weeklyMissions = Files.load(".", "weekly-missions.yml");
         specialMissions = Files.load(".", "special-missions.yml");
         meta = Files.load("./generated", "meta.yml");
+        translations = Files.load(".", "translations.yml");
     }
 
     public static File getFile(File folder, String name) {
