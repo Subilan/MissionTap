@@ -121,10 +121,10 @@ public final class Files {
      * 获取有记录的所有玩家的 UUID 和其对应的 FC 实例所组成的 Map
      * @return Map(String,FC)
      */
-    public static Map<String, FileConfiguration> getAllPlayerdata() {
-        Map<String, FileConfiguration> result = new HashMap<>();
+    public static Map<UUID, FileConfiguration> getAllPlayerdata() {
+        Map<UUID, FileConfiguration> result = new HashMap<>();
         for (File f : getSubfileList(new File(cwd + "/playerdata"))) {
-            result.put(f.getName().replace(".yml", ""), YamlConfiguration.loadConfiguration(f));
+            result.put(UUID.fromString(f.getName().replace(".yml", "")), YamlConfiguration.loadConfiguration(f));
         }
         return result;
     }
