@@ -31,6 +31,7 @@ public final class Functions {
 
     /**
      * 获取一份随机生成的任务，返回的值是 Map，需要通过 createConfigurationSection 使用
+     * 
      * @param type 任务类型
      * @return 随机生成的任务
      */
@@ -59,6 +60,7 @@ public final class Functions {
 
     /**
      * 为所有有记录玩家重新生成一份任务
+     * 
      * @param type 任务类型
      */
     public static void generateMissionsForAll(String type) {
@@ -76,7 +78,8 @@ public final class Functions {
 
     /**
      * 为单一玩家单独生成新的任务，本项不属于刷新操作，故不会更新 {@code}last-regen{@code} 或者 {@code}next-regen{@code} 时间。
-     * @param u 玩家 UUID
+     * 
+     * @param u    玩家 UUID
      * @param type 任务类型
      */
     public static void generateMissionsFor(UUID u, String type) {
@@ -87,9 +90,10 @@ public final class Functions {
 
     /**
      * 根据所提供的信息创建一个 ItemStack
-     * @param name 物品名称
+     * 
+     * @param name     物品名称
      * @param material 物品材质
-     * @param lore 介绍部分（lore）
+     * @param lore     介绍部分（lore）
      * @return 所求 ItemStack
      */
     public static ItemStack createItemStack(final String name, final Material material,
@@ -104,6 +108,7 @@ public final class Functions {
 
     /**
      * 重载插件，本项不会重载 Menu 和 Events
+     * 
      * @param plugin
      */
     public static void reloadPlugin(MissionTap plugin) {
@@ -119,6 +124,7 @@ public final class Functions {
 
     /**
      * 处理玩家 {@code}p{@code} 对任务 {@code}m{@code} 的完成操作
+     * 
      * @param m
      * @param p
      */
@@ -208,13 +214,14 @@ public final class Functions {
      */
     public static void clearAllExpiredMissions() {
         for (String type : new String[] {"daily", "weekly"}) {
-            Map<UUID,FileConfiguration> playerdatas = Files.getAllPlayerdata();
+            Map<UUID, FileConfiguration> playerdatas = Files.getAllPlayerdata();
             FileConfiguration playerdata;
             ConfigurationSection inprogMissions;
             for (UUID u : playerdatas.keySet()) {
                 playerdata = playerdatas.get(u);
                 inprogMissions = playerdata.getConfigurationSection(type);
-                if (inprogMissions == null) continue;
+                if (inprogMissions == null)
+                    continue;
                 for (String key : inprogMissions.getKeys(false)) {
                     Mission m = new Mission(u, type, key);
                     if (m.isExpired()) {
@@ -239,14 +246,32 @@ public final class Functions {
         Files.savePlayer(playerdata, u);
     }
 
+    /**
+     * 判断指定 ItemStack 是否为空，即是否为 NULL 或者空气
+     * 
+     * @param i ItemStack
+     * @return
+     */
     public static boolean isEmptyItemStack(ItemStack i) {
         return i == null || i.getType().equals(Material.AIR);
     }
 
+    /**
+     * 判断当前时间是否已经为或超过指定类型任务的下次刷新时间
+     * 
+     * @param type 任务类型
+     * @return
+     */
     public static boolean isTimeForRefreshFor(String type) {
         return Calendars.getNow() >= Files.meta.getLong(type + ".next-gen");
     }
 
+    /**
+     * 处理任务刷新的相关逻辑。
+     * 先判断是不是满足了刷新时间，如果不是则不执行。
+     * 如果是，先清除所有玩家的所有类型的过期任务，然后再生成一份到玩家的任务列表中。
+     * 最后判断如果不需要手动接受就帮玩家自动接受。
+     */
     public static void handleMissionRefresh() {
         for (String type : new String[] {"daily", "weekly"}) {
             if (isTimeForRefreshFor(type)) {
@@ -258,20 +283,30 @@ public final class Functions {
             }
         }
     }
-
+    
+    /**
+     * 初始化一名玩家
+     * @param p 玩家对象
+     */
     public static void initPlayer(Player p) {
         if (!p.hasPlayedBefore()) {
             generateMissionsFor(p.getUniqueId(), "daily");
             generateMissionsFor(p.getUniqueId(), "weekly");
             if (!Files.config.getBoolean("require-acceptance")) {
-                acceptMissionsFor("daily", p.getUniqueId()); 
+                acceptMissionsFor("daily", p.getUniqueId());
                 acceptMissionsFor("weekly", p.getUniqueId());
             }
         }
     }
 
+    /**
+     * 为指定玩家接受所有指定类型的任务，用于 {@code}require-acceptance=false{@code} 的情形
+     * @param type 任务类型
+     * @param u UUID
+     */
     public static void acceptMissionsFor(String type, UUID u) {
-        if (!List.of("weekly", "daily").contains(type)) return;
+        if (!List.of("weekly", "daily").contains(type))
+            return;
         FileConfiguration playermission = Files.getPlayerMissions(u);
         ConfigurationSection missions = playermission.getConfigurationSection(type);
         if (missions == null) {
@@ -284,8 +319,13 @@ public final class Functions {
         }
     }
 
+    /**
+     * 为所有玩家接受指定类型的任务，用于 {@code}require-acceptance=false{@code} 的情形
+     * @param type
+     */
     public static void acceptMissionsForAll(String type) {
-        if (!List.of("weekly", "daily").contains(type)) return;
+        if (!List.of("weekly", "daily").contains(type))
+            return;
         for (UUID u : Files.getAllPlayerUUID()) {
             acceptMissionsFor(type, u);
         }
