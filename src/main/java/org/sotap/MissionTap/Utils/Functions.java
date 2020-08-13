@@ -106,8 +106,6 @@ public final class Functions {
         plugin.reloadConfig();
         Files.init(plugin);
         LogUtil.init(plugin);
-        Menus.init(plugin);
-        Events.init(plugin);
         if (Files.config.getBoolean("special-missions")) {
             Mission.missionTypes = new String[] {"daily", "weekly", "special"};
         } else {
