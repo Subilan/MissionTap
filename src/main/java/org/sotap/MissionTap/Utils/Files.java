@@ -45,8 +45,9 @@ public final class Files {
     }
 
     public static FileConfiguration load(String path, String name) {
-        return YamlConfiguration.loadConfiguration(getFile(
-                new File(path.replace(path.length() == 1 ? "." : "./", path.length() == 1 ? cwd : cwd + "/")), name));
+        return YamlConfiguration
+                .loadConfiguration(getFile(new File(path.replace(path.length() == 1 ? "." : "./",
+                        path.length() == 1 ? cwd : cwd + "/")), name));
     }
 
     public static boolean isEmptyConfiguration(ConfigurationSection config) {
@@ -89,6 +90,7 @@ public final class Files {
 
     /**
      * 获取指定类型的任务源文件
+     * 
      * @param type 类型
      * @return 源文件的 FC 实例
      */
@@ -119,18 +121,25 @@ public final class Files {
 
     /**
      * 获取有记录的所有玩家的 UUID 和其对应的 FC 实例所组成的 Map
+     * 
      * @return Map(String,FC)
      */
     public static Map<UUID, FileConfiguration> getAllPlayerdata() {
         Map<UUID, FileConfiguration> result = new HashMap<>();
-        for (File f : getSubfileList(new File(cwd + "/playerdata"))) {
-            result.put(UUID.fromString(f.getName().replace(".yml", "")), YamlConfiguration.loadConfiguration(f));
+        try {
+            for (File f : getSubfileList(new File(cwd + "/playerdata"))) {
+                result.put(UUID.fromString(f.getName().replace(".yml", "")),
+                        YamlConfiguration.loadConfiguration(f));
+            }
+            return result;
+        } catch (NullPointerException e) {
+            return null;
         }
-        return result;
     }
 
     /**
      * 获取有记录的所有玩家的 UUID
+     * 
      * @return UUID 的 List
      */
     public static List<UUID> getAllPlayerUUID() {
@@ -151,9 +160,13 @@ public final class Files {
 
     public static Map<String, FileConfiguration> getAllPlayerMissions() {
         Map<String, FileConfiguration> result = new HashMap<>();
-        for (File f : getSubfileList(new File(cwd + "/generated/player"))) {
-            result.put(f.getName().replace(".yml", ""), YamlConfiguration.loadConfiguration(f));
+        try {
+            for (File f : getSubfileList(new File(cwd + "/generated/player"))) {
+                result.put(f.getName().replace(".yml", ""), YamlConfiguration.loadConfiguration(f));
+            }
+            return result;
+        } catch (NullPointerException e) {
+            return null;
         }
-        return result;
     }
 }
