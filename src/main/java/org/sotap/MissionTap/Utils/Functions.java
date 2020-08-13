@@ -177,7 +177,10 @@ public final class Functions {
      */
     public static void clearAllSubmittionsForAll(String... type) {
         String typeStr = type.length > 0 ? type[0] : null;
-        for (UUID u : Files.getAllPlayerUUID()) {
+        List<UUID> uuids = Files.getAllPlayerUUID();
+        if (uuids == null)
+            return;
+        for (UUID u : uuids) {
             if (typeStr != null) {
                 clearSubmittion(u, typeStr);
             } else {
@@ -204,7 +207,10 @@ public final class Functions {
      * @param type 任务类型
      */
     public static void clearAllMissions(String type) {
-        for (UUID u : Files.getAllPlayerUUID()) {
+        List<UUID> uuids = Files.getAllPlayerUUID();
+        if (uuids == null)
+            return;
+        for (UUID u : uuids) {
             clearMission(u, type);
         }
     }
@@ -215,6 +221,8 @@ public final class Functions {
     public static void clearAllExpiredMissions() {
         for (String type : new String[] {"daily", "weekly"}) {
             Map<UUID, FileConfiguration> playerdatas = Files.getAllPlayerdata();
+            if (playerdatas == null)
+                continue;
             FileConfiguration playerdata;
             ConfigurationSection inprogMissions;
             for (UUID u : playerdatas.keySet()) {
@@ -267,9 +275,7 @@ public final class Functions {
     }
 
     /**
-     * 处理任务刷新的相关逻辑。
-     * 先判断是不是满足了刷新时间，如果不是则不执行。
-     * 如果是，先清除所有玩家的所有类型的过期任务，然后再生成一份到玩家的任务列表中。
+     * 处理任务刷新的相关逻辑。 先判断是不是满足了刷新时间，如果不是则不执行。 如果是，先清除所有玩家的所有类型的过期任务，然后再生成一份到玩家的任务列表中。
      * 最后判断如果不需要手动接受就帮玩家自动接受。
      */
     public static void handleMissionRefresh() {
@@ -283,9 +289,10 @@ public final class Functions {
             }
         }
     }
-    
+
     /**
      * 初始化一名玩家
+     * 
      * @param p 玩家对象
      */
     public static void initPlayer(Player p) {
@@ -301,8 +308,9 @@ public final class Functions {
 
     /**
      * 为指定玩家接受所有指定类型的任务，用于 {@code}require-acceptance=false{@code} 的情形
+     * 
      * @param type 任务类型
-     * @param u UUID
+     * @param u    UUID
      */
     public static void acceptMissionsFor(String type, UUID u) {
         if (!List.of("weekly", "daily").contains(type))
@@ -321,12 +329,16 @@ public final class Functions {
 
     /**
      * 为所有玩家接受指定类型的任务，用于 {@code}require-acceptance=false{@code} 的情形
+     * 
      * @param type
      */
     public static void acceptMissionsForAll(String type) {
         if (!List.of("weekly", "daily").contains(type))
             return;
-        for (UUID u : Files.getAllPlayerUUID()) {
+        List<UUID> uuids = Files.getAllPlayerUUID();
+        if (uuids == null)
+            return;
+        for (UUID u : uuids) {
             acceptMissionsFor(type, u);
         }
     }
