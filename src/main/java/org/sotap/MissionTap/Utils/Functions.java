@@ -102,6 +102,10 @@ public final class Functions {
         return item;
     }
 
+    /**
+     * 重载插件，本项不会重载 Menu 和 Events
+     * @param plugin
+     */
     public static void reloadPlugin(MissionTap plugin) {
         plugin.reloadConfig();
         Files.init(plugin);
@@ -113,6 +117,11 @@ public final class Functions {
         }
     }
 
+    /**
+     * 处理玩家 {@code}p{@code} 对任务 {@code}m{@code} 的完成操作
+     * @param m
+     * @param p
+     */
     public static void finishMission(Mission m, Player p) {
         if (Files.config.getBoolean("require-acceptance")
                 && !Files.config.getBoolean("allow-multiple-acceptance")) {
