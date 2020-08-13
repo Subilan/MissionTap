@@ -297,18 +297,20 @@ public final class Functions {
      * @param p 玩家对象
      */
     public static void initPlayer(UUID u) {
-        if (!hasMissions(u)) {
+        if (isMissionEmpty(u)) {
+            LogUtil.info("检测到该玩家没有任务数据，初始化中...");
             generateMissionsFor(u, "daily");
             generateMissionsFor(u, "weekly");
             if (!Files.config.getBoolean("require-acceptance")) {
                 acceptMissionsFor("daily", u);
                 acceptMissionsFor("weekly", u);
             }
+            LogUtil.success("初始化成功。");
         }
     }
 
-    public static boolean hasMissions(UUID u) {
-       return !Files.isEmptyConfiguration(Files.getPlayerMissions(u));
+    public static boolean isMissionEmpty(UUID u) {
+       return Files.isEmptyConfiguration(Files.getPlayerMissions(u));
     }
 
     /**
