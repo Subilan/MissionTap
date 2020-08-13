@@ -71,9 +71,7 @@ public final class Functions {
             playermission.createSection(type, getRandomMissions(type));
             Files.savePlayerMission(playermission, UUID.fromString(key));
         }
-        Files.meta.set(type + ".last-regen", Calendars.getNow());
-        Files.meta.set(type + ".next-regen", Calendars.getNextRefresh(type));
-        Files.saveMeta();
+        updateNextRefreshTime(type);
     }
 
     /**
@@ -341,5 +339,15 @@ public final class Functions {
         for (UUID u : uuids) {
             acceptMissionsFor(type, u);
         }
+    }
+
+    /**
+     * 更新指定类型的下次刷新时间，该函数将一并写入执行该函数的时间到 last-regen 项内
+     * @param type 任务类型
+     */
+    public static void updateNextRefreshTime(String type) {
+        Files.meta.set(type + ".last-regen", Calendars.getNow());
+        Files.meta.set(type + ".next-regen", Calendars.getNextRefresh(type));
+        Files.saveMeta();
     }
 }
