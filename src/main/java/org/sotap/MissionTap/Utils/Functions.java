@@ -65,6 +65,9 @@ public final class Functions {
      */
     public static void generateMissionsForAll(String type) {
         Map<String, FileConfiguration> playermissions = Files.getAllPlayerMissions();
+        if (playermissions == null) {
+            return;
+        }
         FileConfiguration playermission;
         for (String key : playermissions.keySet()) {
             playermission = playermissions.get(key);
