@@ -15,7 +15,9 @@ public final class MissionTap extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         Functions.reloadPlugin(this);
+        LogUtil.info("正在初始化任务...");
         Functions.handleMissionRefresh();
+        LogUtil.success("初始化成功。");
         @SuppressWarnings("unused")
         BukkitTask timer = new GlobalTasks().runTaskTimer(this, 0, 20);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
