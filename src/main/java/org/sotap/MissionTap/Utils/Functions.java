@@ -306,7 +306,9 @@ public final class Functions {
             if (!Files.config.getBoolean("require-acceptance")) {
                 acceptMissionsFor("daily", u);
                 acceptMissionsFor("weekly", u);
-                acceptMissionsFor("special", u);
+                if (Files.config.getBoolean("special-missions")) {
+                    acceptMissionsFor("special", u);
+                }
             }
             LogUtil.success("初始化成功。");
         }
