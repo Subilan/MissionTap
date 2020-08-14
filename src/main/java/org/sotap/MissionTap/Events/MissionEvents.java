@@ -112,6 +112,7 @@ public final class MissionEvents implements Listener {
         if (e.getEntity().getKiller() == null)
             return;
         Player p = e.getEntity().getKiller();
+        if (e.getEntityType() == EntityType.PLAYER) return;
         updateData(p, "combat", e.getEntity().getType().toString());
     }
 
