@@ -41,16 +41,23 @@ public final class CommandHandler implements CommandExecutor {
         }
     }
 
+    public static void playerOnlyWarning(Player p) {
+        if (p == null) {
+            LogUtil.failed("该指令只能由玩家执行。");
+        }
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("missiontap")) {
-            Player p = Bukkit.getPlayer(sender.getName());
-            if (args.length == 0) {
+            Player p = sender instanceof Player ? Bukkit.getPlayer(sender.getName()) : null;
+
+            if (p != null && args.length == 0) {
                 Menus.mainMenu.open(p);
                 return true;
             }
 
-            if (!args[0].equalsIgnoreCase("about")) {
+            if (p != null && !args[0].equalsIgnoreCase("about")) {
                 if (!p.hasPermission("missiontap." + getPermissionNode(args[0]))) {
                     noPermission(p);
                     return true;
@@ -60,24 +67,28 @@ public final class CommandHandler implements CommandExecutor {
             switch (args[0]) {
                 case "daily":
                 case "d": {
+                    playerOnlyWarning(p);
                     Menus.dailyMissionMenu.open(p);
                     break;
                 }
 
                 case "weekly":
                 case "w": {
+                    playerOnlyWarning(p);
                     Menus.weeklyMissionMenu.open(p);
                     break;
                 }
 
                 case "inprogress":
                 case "i": {
+                    playerOnlyWarning(p);
                     Menus.inprogressMenu.open(p);
                     break;
                 }
 
                 case "special":
                 case "s": {
+                    playerOnlyWarning(p);
                     Menus.specialMissionMenu.open(p);
                     break;
                 }
