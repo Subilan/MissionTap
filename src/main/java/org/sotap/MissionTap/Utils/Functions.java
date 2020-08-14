@@ -306,13 +306,14 @@ public final class Functions {
             if (!Files.config.getBoolean("require-acceptance")) {
                 acceptMissionsFor("daily", u);
                 acceptMissionsFor("weekly", u);
+                acceptMissionsFor("special", u);
             }
             LogUtil.success("初始化成功。");
         }
     }
 
     public static boolean isMissionEmpty(UUID u) {
-       return Files.isEmptyConfiguration(Files.getPlayerMissions(u));
+        return Files.isEmptyConfiguration(Files.getPlayerMissions(u));
     }
 
     /**
@@ -322,17 +323,28 @@ public final class Functions {
      * @param u    UUID
      */
     public static void acceptMissionsFor(String type, UUID u) {
-        if (!List.of("weekly", "daily").contains(type))
+        if (!List.of("weekly", "daily", "special").contains(type))
             return;
-        FileConfiguration playermission = Files.getPlayerMissions(u);
-        ConfigurationSection missions = playermission.getConfigurationSection(type);
-        if (missions == null) {
-            LogUtil.warn("未找到 &e" + u.toString() + "&r 的任务列表。");
-            return;
-        }
-        for (String key : missions.getKeys(false)) {
-            Mission m = new Mission(u, type, key);
-            m.accept();
+        if (type == "special") {
+            if (Files.specialMissions == null) {
+                LogUtil.warn("特殊任务已启用，但未找到特殊任务。");
+                return;
+            }
+            for (String key : Files.specialMissions.getKeys(false)) {
+                Mission m = new Mission(u, type, key);
+                m.accept();
+            }
+        } else {
+            FileConfiguration playermission = Files.getPlayerMissions(u);
+            ConfigurationSection missions = playermission.getConfigurationSection(type);
+            if (missions == null) {
+                LogUtil.warn("未找到 &e" + u.toString() + "&r 的任务列表。");
+                return;
+            }
+            for (String key : missions.getKeys(false)) {
+                Mission m = new Mission(u, type, key);
+                m.accept();
+            }
         }
     }
 
@@ -342,7 +354,7 @@ public final class Functions {
      * @param type
      */
     public static void acceptMissionsForAll(String type) {
-        if (!List.of("weekly", "daily").contains(type))
+        if (!List.of("weekly", "daily", "special").contains(type))
             return;
         List<UUID> uuids = Files.getAllPlayerUUID();
         if (uuids == null)
@@ -354,6 +366,7 @@ public final class Functions {
 
     /**
      * 更新指定类型的下次刷新时间，该函数将一并写入执行该函数的时间到 last-regen 项内
+     * 
      * @param type 任务类型
      */
     public static void updateNextRefreshTime(String type) {

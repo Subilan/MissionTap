@@ -59,7 +59,7 @@ public final class Mission {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
             if (Files.config.getBoolean("require-submittion")) {
                 finalLore.add(
-                        LogUtil.translateColor(isFinished() ? "&a&lFinished" : "&c&lUnfinished"));
+                        LogUtil.translateColor(isFinished() ? "&a&l已完成" : "&c&l未完成"));
                 finalLore.add("");
             }
         }
