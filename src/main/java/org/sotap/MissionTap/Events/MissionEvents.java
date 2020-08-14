@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
@@ -97,6 +99,11 @@ public final class MissionEvents implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
+        BlockData data = e.getBlock().getBlockData();
+        if (data instanceof Ageable) {
+            Ageable age = (Ageable) data;
+            if (age.getAge() != age.getMaximumAge()) return;
+        }
         updateData(p, "blockbreak", e.getBlock().getType().toString());
     }
 
