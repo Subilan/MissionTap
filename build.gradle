@@ -25,6 +25,8 @@ dependencies {
     implementation 'org.jetbrains:annotations:16.0.2'
     // https://mvnrepository.com/artifact/javax.validation/validation-api
     implementation group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
 
 sourceSets {
