@@ -47,6 +47,7 @@ public final class Mission {
 
     /**
      * 获取该任务的 ItemStack 图标，参数中的全局内容是指是否显示在 MainMenu 类菜单中，若不填则为 false
+     * 
      * @param global 是否为全局内容
      * @return
      */
@@ -58,8 +59,7 @@ public final class Mission {
         if (!global) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
             if (Files.config.getBoolean("require-submittion")) {
-                finalLore.add(
-                        LogUtil.translateColor(isFinished() ? "&a&l已完成" : "&c&l未完成"));
+                finalLore.add(LogUtil.translateColor(isFinished() ? "&a&l已完成" : "&c&l未完成"));
                 finalLore.add("");
             }
         }
@@ -71,11 +71,13 @@ public final class Mission {
         }
         finalLore.add("");
         if (type != "special") {
-            finalLore.add(LogUtil
-                    .translateColor("&8" + ((!global) ? Calendars.stampToString(expiration)
+            finalLore.add(
+                    LogUtil.translateColor("&8" + ((!global) ? Calendars.stampToString(expiration)
                             : Calendars.stampToString(refresh))));
         }
-        return Functions.createItemStack(object.getString("name"),
+        return Functions.createItemStack(
+                LogUtil.translateColor(
+                        (type == "special" ? "&l&6" : "") + object.getString("name")),
                 (!global) ? (isFinished() ? Material.ENCHANTED_BOOK : Material.BOOK)
                         : Material.BOOK,
                 finalLore);
