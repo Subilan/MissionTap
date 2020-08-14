@@ -78,7 +78,8 @@ public final class InprogressMenu implements Listener {
         Mission clickedMission = missions.get(slot);
         p.closeInventory();
         if (clickedMission.isExpired()) {
-            LogUtil.warn("这个任务已经&c过期&r了。", p);
+            LogUtil.warn("这个任务已经&c过期&r了，已自动移除。", p);
+            clickedMission.destory();
             return;
         }
         if (clickedMission.type == "special" && !Files.config.getBoolean("special-missions")) {
