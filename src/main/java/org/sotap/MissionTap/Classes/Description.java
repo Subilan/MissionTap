@@ -71,31 +71,37 @@ public final class Description {
      * @param type 要求类型，选填、一个或多个字符串
      * @return
      */
-    public List<String> getDescription(String... type) {
+    public List<String> getDescription(boolean... global) {
         if (missionObject == null)
             return null;
+        final boolean finalGlobal = global.length == 0 ? false : global[0];
         ConfigurationSection data;
         List<String> result = new ArrayList<>();
         Integer amountLeft;
-        Integer anyAmount;
-        for (String dataType : type.length == 0 ? Mission.missionDataTypes : type) {
+        Integer requirement;
+        for (String dataType : Mission.missionDataTypes) {
             data = missionObject.getConfigurationSection(dataType);
             if (data == null) {
-                anyAmount = missionObject.getInt(dataType);
-                if (anyAmount == 0)
+                requirement = missionObject.getInt(dataType);
+                if (requirement == 0)
                     continue;
-                amountLeft = getAnyAmountLeft(dataType, anyAmount);
-                result.add(
-                        ChatColor.WHITE + LogUtil.translateColor((amountLeft == 0 ? "&8&m&o" : "")
-                                + getDataTypeName(dataType) + (amountLeft == 0 ? " " : " &e")
-                                + amountLeft + (amountLeft == 0 ? " " : "&r&f ")
-                                + getQuantifier(dataType) + "任意" + getObjectName(dataType)));
+                amountLeft = getAnyAmountLeft(dataType, requirement);
+                result.add(ChatColor.WHITE + LogUtil
+                        .translateColor((finalGlobal ? "" : (amountLeft == requirement ? "" : "还需"))
+                                + (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
+                                + (amountLeft == 0 ? " " : " &e")
+                                + (finalGlobal ? requirement : amountLeft)
+                                + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType) + "任意"
+                                + getObjectName(dataType)));
             } else {
                 for (String itemKey : data.getKeys(false)) {
+                    requirement = data.getInt(itemKey);
                     amountLeft = getAmountLeft(dataType, itemKey, data);
                     result.add(ChatColor.WHITE + LogUtil.translateColor(
-                            (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
-                                    + (amountLeft == 0 ? " " : " &e") + amountLeft
+                            (finalGlobal ? "" : (amountLeft == requirement ? "" : "还需"))
+                                    + (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
+                                    + (amountLeft == 0 ? " " : " &e")
+                                    + (finalGlobal ? requirement : amountLeft)
                                     + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType)
                                     + Files.translations.getString(itemKey)));
                 }
