@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -140,6 +141,7 @@ public final class Functions {
         } else {
             m.destory();
         }
+        p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10, 1);
         LogUtil.success("&e恭喜！ &r你成功完成了任务 &a" + m.getName() + "&r！", p);
         if (!m.reward(p)) {
             LogUtil.warn("这个任务&c没有给予任何奖励&r。", p);
