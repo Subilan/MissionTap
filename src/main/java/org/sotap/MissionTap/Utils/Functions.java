@@ -114,9 +114,10 @@ public final class Functions {
      * @param plugin
      */
     public static void reloadPlugin(MissionTap plugin) {
-        plugin.reloadConfig();
         Files.init(plugin);
         LogUtil.init(plugin);
+        plugin.reloadConfig();
+        plugin.handleMissionGeneration();
         if (Files.config.getBoolean("special-missions")) {
             Mission.missionTypes = new String[] {"daily", "weekly", "special"};
         } else {
