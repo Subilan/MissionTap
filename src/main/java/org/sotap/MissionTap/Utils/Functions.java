@@ -114,8 +114,8 @@ public final class Functions {
      * @param plugin
      */
     public static void reloadPlugin(MissionTap plugin) {
-        Files.init(plugin);
         LogUtil.init(plugin);
+        Files.init(plugin);
         plugin.reloadConfig();
         plugin.handleMissionGeneration();
         if (Files.config.getBoolean("special-missions")) {
