@@ -1,14 +1,16 @@
 package org.sotap.MissionTap.Utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -185,8 +187,9 @@ public final class Files {
     public static boolean download(String url, File folder, String name) {
         try {
             URL httpURL = new URL(url);
-            File file = getFile(folder, name);
-            FileUtils.copyURLToFile(httpURL, file);
+            ReadableByteChannel rbc = Channels.newChannel(httpURL.openStream());
+            FileOutputStream fos = new FileOutputStream(getFile(folder, name));
+            fos.getChannel().transferFrom(rbc, 0, Integer.MAX_VALUE);
             return true;
         } catch (IOException e) {
             return false;
