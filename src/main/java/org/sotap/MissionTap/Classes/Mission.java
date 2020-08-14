@@ -50,13 +50,12 @@ public final class Mission {
      * @param global 是否为全局内容
      * @return
      */
-    public ItemStack getItemStack(boolean... global) {
-        final boolean finalGlobal = global.length == 0 ? false : global[0];
+    public ItemStack getItemStack(boolean global) {
         List<String> lore = object.getStringList("lore");
         List<String> finalLore = new ArrayList<>();
         Long expiration = 0L;
         Long refresh = Files.meta.getLong(type + ".next-regen");
-        if (!finalGlobal) {
+        if (!global) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
             if (Files.config.getBoolean("require-submittion")) {
                 finalLore.add(
@@ -65,7 +64,7 @@ public final class Mission {
             }
         }
         final Description desc = new Description(u, type, key);
-        finalLore.addAll(desc.getDescription(finalGlobal));
+        finalLore.addAll(desc.getDescription(global));
         finalLore.add("");
         for (String text : lore) {
             finalLore.add(ChatColor.WHITE + LogUtil.translateColor(text));
@@ -73,11 +72,11 @@ public final class Mission {
         finalLore.add("");
         if (type != "special") {
             finalLore.add(LogUtil
-                    .translateColor("&8" + ((!finalGlobal) ? Calendars.stampToString(expiration)
+                    .translateColor("&8" + ((!global) ? Calendars.stampToString(expiration)
                             : Calendars.stampToString(refresh))));
         }
         return Functions.createItemStack(object.getString("name"),
-                (!finalGlobal) ? (isFinished() ? Material.ENCHANTED_BOOK : Material.BOOK)
+                (!global) ? (isFinished() ? Material.ENCHANTED_BOOK : Material.BOOK)
                         : Material.BOOK,
                 finalLore);
     }

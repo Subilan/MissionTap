@@ -71,10 +71,9 @@ public final class Description {
      * @param type 要求类型，选填、一个或多个字符串
      * @return
      */
-    public List<String> getDescription(boolean... global) {
+    public List<String> getDescription(boolean global) {
         if (missionObject == null)
             return null;
-        final boolean finalGlobal = global.length == 0 ? false : global[0];
         ConfigurationSection data;
         List<String> result = new ArrayList<>();
         Integer amountLeft;
@@ -87,10 +86,10 @@ public final class Description {
                     continue;
                 amountLeft = getAnyAmountLeft(dataType, requirement);
                 result.add(ChatColor.WHITE + LogUtil
-                        .translateColor((finalGlobal ? "" : (amountLeft == requirement ? "" : "还需"))
+                        .translateColor((global ? "" : (amountLeft == requirement ? "" : "还需"))
                                 + (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
                                 + (amountLeft == 0 ? " " : " &e")
-                                + (finalGlobal ? requirement : amountLeft)
+                                + (global ? requirement : amountLeft)
                                 + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType) + "任意"
                                 + getObjectName(dataType)));
             } else {
@@ -98,10 +97,10 @@ public final class Description {
                     requirement = data.getInt(itemKey);
                     amountLeft = getAmountLeft(dataType, itemKey, data);
                     result.add(ChatColor.WHITE + LogUtil.translateColor(
-                            (finalGlobal ? "" : (amountLeft == requirement ? "" : "还需"))
+                            (global ? "" : (amountLeft == requirement ? "" : "还需"))
                                     + (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
                                     + (amountLeft == 0 ? " " : " &e")
-                                    + (finalGlobal ? requirement : amountLeft)
+                                    + (global ? requirement : amountLeft)
                                     + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType)
                                     + Files.translations.getString(itemKey)));
                 }
