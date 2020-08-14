@@ -77,7 +77,7 @@ public final class Mission {
         }
         return Functions.createItemStack(
                 LogUtil.translateColor(
-                        (type == "special" ? "&l&6" : "") + object.getString("name")),
+                        (type == "special" ? "&l&6" : "") + getName()),
                 (!global) ? (isFinished() ? Material.ENCHANTED_BOOK : Material.BOOK)
                         : Material.BOOK,
                 finalLore);
@@ -85,7 +85,7 @@ public final class Mission {
 
     public void accept() {
         Map<String, Object> missionContent = new HashMap<>();
-        missionContent.put("name", object.getString("name"));
+        missionContent.put("name", getName());
         missionContent.put("acceptance", Calendars.getNow());
         if (type != "special") {
             missionContent.put("expiration", Calendars.getMissionExpiration(type));
