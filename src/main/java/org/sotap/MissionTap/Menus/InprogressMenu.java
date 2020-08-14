@@ -81,6 +81,11 @@ public final class InprogressMenu implements Listener {
             LogUtil.warn("这个任务已经&c过期&r了。", p);
             return;
         }
+        if (clickedMission.type == "special" && !Files.config.getBoolean("special-missions")) {
+            LogUtil.failed("该特殊任务已下架，已自动移除。", p);
+            clickedMission.destory();
+            return;
+        }
         if (e.getClick() == ClickType.SHIFT_LEFT) {
             if (!Files.config.getBoolean("allow-cancelling")
                     || !Files.config.getBoolean("require-acceptance")) {
