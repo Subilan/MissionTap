@@ -45,7 +45,8 @@ public final class MissionTap extends JavaPlugin {
             LogUtil.warn("找不到每周任务池的内容。");
         }
         if (Files.isEmptyConfiguration(Files.dailyMissions) && Files.isEmptyConfiguration(Files.weeklyMissions)) {
-            LogUtil.warn("请在任务编写好后输入 &b/mt init&r 来初始化任务生成，在此期间请&c不要&r让玩家进入服务器。");
+            LogUtil.warn("请在任务编写好后输入 &b/mt reload&r 来重载任务，在没写好并重载前请&c不要&r让玩家进入服务器。");
+            LogUtil.warn("若已经有玩家进入服务器，则应当让玩家退出后重新加入，否则任务数据为空。");
         }
         if (!Files.isEmptyConfiguration(Files.dailyMissions) || !Files.isEmptyConfiguration(Files.weeklyMissions)) {
             LogUtil.info("刷新玩家任务中...");
