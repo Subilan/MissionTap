@@ -34,11 +34,13 @@ public final class Files {
         meta = Files.load("./generated", "meta.yml");
         translations = Files.load(".", "translations.yml");
         if (isEmptyConfiguration(translations)) {
-            LogUtil.warn("语言文件丢失，正在尝试从 GitHub 下载。");
+            LogUtil.warn("语言文件丢失，正在尝试从 Gitee 镜像下载。");
             if (download("https://raw.githubusercontent.com/sotapmc/MaterialTranslation/master/translations.yml", new File(cwd), "translations.yml")) {
                 LogUtil.success("下载成功。");
             } else {
-                LogUtil.failed("下载失败，物品、方块、生物名称可能显示为 &enull&r。\n请手动前往 &bhttps://raw.githubusercontent.com/sotapmc/MaterialTranslation/master/translations.yml&r 下载文件并放置在 &bMissionTap&r 目录下。\n随后执行 &b/mt reload&r 即可。");
+                LogUtil.failed("下载失败，物品、方块、生物名称可能显示为 &enull&r。");
+                LogUtil.failed("请手动前往 &bhttps://raw.githubusercontent.com/sotapmc/MaterialTranslation/master/translations.yml&r 下载文件并放置在 &bMissionTap&r 目录下。");
+                LogUtil.failed("随后执行 &b/mt reload&r 即可。");
             }
         }
     }
@@ -191,7 +193,7 @@ public final class Files {
             FileOutputStream fos = new FileOutputStream(getFile(folder, name));
             fos.getChannel().transferFrom(rbc, 0, Integer.MAX_VALUE);
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return false;
         }
     }
