@@ -2,11 +2,13 @@ package org.sotap.MissionTap.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,6 +31,14 @@ public final class Files {
         specialMissions = Files.load(".", "special-missions.yml");
         meta = Files.load("./generated", "meta.yml");
         translations = Files.load(".", "translations.yml");
+        if (isEmptyConfiguration(translations)) {
+            LogUtil.warn("语言文件丢失，正在尝试从 GitHub 下载。");
+            if (download("https://raw.githubusercontent.com/sotapmc/MaterialTranslation/master/translations.yml", new File(cwd), "translations.yml")) {
+                LogUtil.success("下载成功。");
+            } else {
+                LogUtil.failed("下载失败，物品、方块、生物名称可能显示为 &enull&r。\n请手动前往 &bhttps://raw.githubusercontent.com/sotapmc/MaterialTranslation/master/translations.yml&r 下载文件并放置在 &bMissionTap&r 目录下。\n随后执行 &b/mt reload&r 即可。");
+            }
+        }
     }
 
     public static File getFile(File folder, String name) {
@@ -169,6 +179,17 @@ public final class Files {
             return result;
         } catch (NullPointerException e) {
             return null;
+        }
+    }
+
+    public static boolean download(String url, File folder, String name) {
+        try {
+            URL httpURL = new URL(url);
+            File file = getFile(folder, name);
+            FileUtils.copyURLToFile(httpURL, file);
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
 }
