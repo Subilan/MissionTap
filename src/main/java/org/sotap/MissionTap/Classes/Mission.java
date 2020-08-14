@@ -66,6 +66,7 @@ public final class Mission {
         }
         final Description desc = new Description(u, type, key);
         finalLore.addAll(desc.getDescription());
+        finalLore.add("");
         for (String text : lore) {
             finalLore.add(ChatColor.WHITE + LogUtil.translateColor(text));
         }
