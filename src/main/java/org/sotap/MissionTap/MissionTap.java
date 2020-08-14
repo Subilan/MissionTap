@@ -6,6 +6,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.sotap.MissionTap.Classes.AgeingAPI;
 import org.sotap.MissionTap.Commands.CommandHandler;
 import org.sotap.MissionTap.Commands.Tab;
+import org.sotap.MissionTap.Utils.Calendars;
 import org.sotap.MissionTap.Utils.Events;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
@@ -43,15 +44,21 @@ public final class MissionTap extends JavaPlugin {
         if (Files.isEmptyConfiguration(Files.weeklyMissions)) {
             LogUtil.warn("找不到每周任务池的内容。");
         }
-        if (Files.isEmptyConfiguration(Files.dailyMissions) && Files.isEmptyConfiguration(Files.weeklyMissions)) {
+        if (Files.isEmptyConfiguration(Files.dailyMissions)
+                && Files.isEmptyConfiguration(Files.weeklyMissions)) {
             LogUtil.warn("请在任务编写好后输入 &b/mt reload&r 来重载任务，在没写好并重载前请&c不要&r让玩家进入服务器。");
             LogUtil.warn("若已经有玩家进入服务器，则应当让玩家退出后重新加入，否则任务数据为空。");
         }
-        if (!Files.isEmptyConfiguration(Files.dailyMissions) || !Files.isEmptyConfiguration(Files.weeklyMissions)) {
+        if (!Files.isEmptyConfiguration(Files.dailyMissions)
+                || !Files.isEmptyConfiguration(Files.weeklyMissions)) {
             if (Files.isEmptyConfiguration(Files.meta)) {
                 LogUtil.info("初始化任务刷新时间...");
                 Functions.updateNextRefreshTime("daily");
+                LogUtil.info("下次每日任务刷新时间： &a"
+                        + Calendars.stampToString(Files.meta.getLong("daily.next-regen")));
                 Functions.updateNextRefreshTime("weekly");
+                LogUtil.info("下次每周任务刷新时间： &a"
+                        + Calendars.stampToString(Files.meta.getLong("weekly.next-regen")));
                 LogUtil.success("初始化成功。");
             }
             LogUtil.info("刷新玩家任务中...");
