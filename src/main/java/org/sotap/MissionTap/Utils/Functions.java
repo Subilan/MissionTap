@@ -120,6 +120,7 @@ public final class Functions {
         if (Files.config.getBoolean("special-missions")) {
             Mission.missionTypes = new String[] {"daily", "weekly", "special"};
         } else {
+            clearAllMissions("special");
             Mission.missionTypes = new String[] {"daily", "weekly"};
         }
     }
