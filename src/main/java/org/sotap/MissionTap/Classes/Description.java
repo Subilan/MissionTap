@@ -87,7 +87,8 @@ public final class Description {
                 amountLeft = getAnyAmountLeft(dataType, anyAmount);
                 result.add(
                         ChatColor.WHITE + LogUtil.translateColor((amountLeft == 0 ? "&8&m&o" : "")
-                                + getDataTypeName(dataType) + " &e" + amountLeft + "&r&f "
+                                + getDataTypeName(dataType) + (amountLeft == 0 ? " " : " &e")
+                                + amountLeft + (amountLeft == 0 ? " " : "&r&f ")
                                 + getQuantifier(dataType) + "任意" + getObjectName(dataType)));
             } else {
                 for (String itemKey : data.getKeys(false)) {
