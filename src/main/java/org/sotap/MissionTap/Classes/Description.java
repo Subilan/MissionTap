@@ -85,10 +85,9 @@ public final class Description {
                 if (requirement == 0)
                     continue;
                 amountLeft = getAnyAmountLeft(dataType, requirement);
-                result.add(ChatColor.WHITE + LogUtil
-                        .translateColor((global ? "" : (amountLeft == requirement ? "" : "还需"))
-                                + (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
-                                + (amountLeft == 0 ? " " : " &e")
+                result.add(
+                        ChatColor.WHITE + LogUtil.translateColor((amountLeft == 0 ? "&8&m&o" : "")
+                                + getDataTypeName(dataType) + (amountLeft == 0 ? " " : " &e")
                                 + (global ? requirement : amountLeft)
                                 + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType) + "任意"
                                 + getObjectName(dataType)));
@@ -96,10 +95,9 @@ public final class Description {
                 for (String itemKey : data.getKeys(false)) {
                     requirement = data.getInt(itemKey);
                     amountLeft = getAmountLeft(dataType, itemKey, data);
-                    result.add(ChatColor.WHITE + LogUtil.translateColor(
-                            (global ? "" : (amountLeft == requirement ? "" : "还需"))
-                                    + (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
-                                    + (amountLeft == 0 ? " " : " &e")
+                    result.add(ChatColor.WHITE
+                            + LogUtil.translateColor((amountLeft == 0 ? "&8&m&o" : "")
+                                    + getDataTypeName(dataType) + (amountLeft == 0 ? " " : " &e")
                                     + (global ? requirement : amountLeft)
                                     + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType)
                                     + Files.translations.getString(itemKey)));
