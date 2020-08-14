@@ -25,7 +25,6 @@ permissions:
       missiontap.weekly: true
       missiontap.inprogress: true
       missiontap.special: true
-      missiontap.init: true
       missiontap.player: true
       missiontap.reload: true
       missiontap.enable: true
@@ -38,8 +37,6 @@ permissions:
     default: true
   missiontap.special:
     default: true
-  missiontap.init:
-    default: op
   missiontap.player:
     default: op
   missiontap.reload:

@@ -82,10 +82,6 @@ public final class CommandHandler implements CommandExecutor {
                     break;
                 }
 
-                case "init": {
-                    break;
-                }
-
                 case "player": {
                     if (args.length < 3) {
                         LogUtil.failed("参数不足。", p);
