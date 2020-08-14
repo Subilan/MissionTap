@@ -94,8 +94,8 @@ public final class Description {
                     amountLeft = getAmountLeft(dataType, itemKey, data);
                     result.add(ChatColor.WHITE + LogUtil.translateColor(
                             (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
-                                    + (amountLeft == 0 ? "" : " &e") + amountLeft
-                                    + (amountLeft == 0 ? "" : "&r&f ") + getQuantifier(dataType)
+                                    + (amountLeft == 0 ? " " : " &e") + amountLeft
+                                    + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType)
                                     + Files.translations.getString(itemKey)));
                 }
             }
