@@ -49,6 +49,12 @@ public final class MissionTap extends JavaPlugin {
             LogUtil.warn("若已经有玩家进入服务器，则应当让玩家退出后重新加入，否则任务数据为空。");
         }
         if (!Files.isEmptyConfiguration(Files.dailyMissions) || !Files.isEmptyConfiguration(Files.weeklyMissions)) {
+            if (Files.isEmptyConfiguration(Files.meta)) {
+                LogUtil.info("初始化任务刷新时间...");
+                Functions.updateNextRefreshTime("daily");
+                Functions.updateNextRefreshTime("weekly");
+                LogUtil.success("初始化成功。");
+            }
             LogUtil.info("刷新玩家任务中...");
             Functions.handleMissionRefresh();
             LogUtil.success("刷新成功。");
