@@ -34,7 +34,7 @@ public final class Files {
         meta = Files.load("./generated", "meta.yml");
         translations = Files.load(".", "translations.yml");
         if (isEmptyConfiguration(translations)) {
-            LogUtil.warn("语言文件丢失，正在尝试从 Gitee 镜像下载。");
+            LogUtil.warn("语言文件丢失，正在尝试从 GitHub 下载。");
             if (download("https://raw.githubusercontent.com/sotapmc/MaterialTranslation/master/translations.yml", new File(cwd), "translations.yml")) {
                 LogUtil.success("下载成功。");
             } else {
