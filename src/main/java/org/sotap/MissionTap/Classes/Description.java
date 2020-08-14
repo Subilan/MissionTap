@@ -92,10 +92,10 @@ public final class Description {
             } else {
                 for (String itemKey : data.getKeys(false)) {
                     amountLeft = getAmountLeft(dataType, itemKey, data);
-                    result.add(ChatColor.WHITE + LogUtil.translateColor(amountLeft == 0 ? "&8&m&o"
-                            : "" + getDataTypeName(dataType) + (amountLeft == 0 ? "" : " &e")
-                                    + amountLeft + (amountLeft == 0 ? "" : "&r&f ")
-                                    + getQuantifier(dataType)
+                    result.add(ChatColor.WHITE + LogUtil.translateColor(
+                            (amountLeft == 0 ? "&8&m&o" : "") + getDataTypeName(dataType)
+                                    + (amountLeft == 0 ? "" : " &e") + amountLeft
+                                    + (amountLeft == 0 ? "" : "&r&f ") + getQuantifier(dataType)
                                     + Files.translations.getString(itemKey)));
                 }
             }
