@@ -116,6 +116,7 @@ public final class Functions {
     public static void reloadPlugin(MissionTap plugin) {
         LogUtil.init(plugin);
         Files.init(plugin);
+        Calendars.init();
         plugin.reloadConfig();
         plugin.handleMissionGeneration();
         if (Files.config.getBoolean("special-missions")) {
