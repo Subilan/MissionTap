@@ -64,8 +64,8 @@ public final class Mission {
             }
         }
         if (Calendars.timeOffset != 0) {
-            expiration -= Calendars.timeOffset;
-            refresh -= Calendars.timeOffset;
+            expiration -= Calendars.timeOffset * 3600000;
+            refresh -= Calendars.timeOffset * 3600000;
         }
         final Description desc = new Description(u, type, key);
         finalLore.addAll(desc.getDescription(global));
