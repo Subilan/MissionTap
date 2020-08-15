@@ -281,23 +281,25 @@ public final class Functions {
     }
 
     /**
-     * 处理任务刷新的相关逻辑。 先判断是不是满足了刷新时间，如果不是则不执行。 如果是，先清除所有玩家的所有类型的过期任务，然后再生成一份到玩家的任务列表中。
+     * 处理指定类型任务刷新的相关逻辑。 先判断是不是满足了刷新时间，如果不是则不执行。 如果是，先清除所有玩家的指定类型的过期任务，然后再生成一份到玩家的任务列表中。
      * 最后判断如果不需要手动接受就帮玩家自动接受。
+     * 
+     * @param type 任务类型
      */
-    public static void handleMissionRefresh() {
-        for (String type : new String[] {"daily", "weekly"}) {
-            if (isTimeForRefreshFor(type)) {
-                clearAllExpiredMissions();
-                generateMissionsForAll(type);
-                if (!Files.config.getBoolean("require-acceptance")) {
-                    acceptMissionsForAll(type);
-                }
-            }
+    public static void handleMissionRefresh(String type) {
+        if (!List.of("daily", "weekly").contains(type))
+            return;
+        LogUtil.info("正在刷新" + type == "daily" ? "每日" : "每周" + "任务。");
+        clearAllExpiredMissions();
+        generateMissionsForAll(type);
+        if (!Files.config.getBoolean("require-acceptance")) {
+            acceptMissionsForAll(type);
         }
+        LogUtil.success("刷新成功。");
     }
 
     /**
-     * 处理任务生成的相关逻辑。其中包含日志输出、空文件处理和调用 {@code}handleMissionRefresh(){@code}。
+     * 用于服务器开启或重载时的一个函数。其中包含日志输出、空文件处理和调用 {@code}handleMissionRefresh(){@code}。
      */
     public static void handleMissionGeneration() {
         if (Files.isEmptyConfiguration(Files.dailyMissions)) {
@@ -317,27 +319,13 @@ public final class Functions {
                 LogUtil.info("初始化任务刷新时间...");
                 updateNextRefreshTime("daily");
                 updateNextRefreshTime("weekly");
+                LogUtil.success("初始化成功。");
             }
-            LogUtil.info("刷新玩家任务中...");
-            handleMissionRefresh();
-            Long dailyNextRegen = Files.meta.getLong("daily.next-regen");
-            Long weeklyNextRegen = Files.meta.getLong("weekly.next-regen");
-            Long dailyNextRegenREAL = 0L;
-            Long weeklyNextRegenREAL = 0L;
-            if (Calendars.timeOffset != 0) {
-                dailyNextRegenREAL = dailyNextRegen - Calendars.timeOffset * 3600000;
-                weeklyNextRegenREAL = weeklyNextRegen - Calendars.timeOffset * 3600000;
+            for (String type : new String[] {"daily", "weekly"}) {
+                if (isTimeForRefreshFor(type)) {
+                    handleMissionRefresh(type);
+                }
             }
-            LogUtil.info("下次每日任务刷新时间： &a" + Calendars.stampToString(dailyNextRegen)
-                    + (dailyNextRegenREAL != 0L
-                            ? "&r（真实时间 &a" + Calendars.stampToString(dailyNextRegenREAL) + "&r）"
-                            : ""));
-            LogUtil.info("下次每周任务刷新时间： &a" + Calendars.stampToString(weeklyNextRegen)
-                    + (weeklyNextRegenREAL != 0L
-                            ? "&r（真实时间 &a" + Calendars.stampToString(weeklyNextRegenREAL) + "&r）"
-                            : ""));
-            LogUtil.success("初始化成功。");
-            LogUtil.success("刷新成功。");
         }
     }
 
@@ -420,8 +408,20 @@ public final class Functions {
      * @param type 任务类型
      */
     public static void updateNextRefreshTime(String type) {
+        if (!List.of("daily", "weekly").contains(type))
+            return;
+        Long nextRegen = Calendars.getNextRefresh(type);
         Files.meta.set(type + ".last-regen", Calendars.getNow());
         Files.meta.set(type + ".next-regen", Calendars.getNextRefresh(type));
+        Long nextRegenReal = 0l;
+        if (Calendars.timeOffset != 0) {
+            nextRegenReal = nextRegen - Calendars.timeOffset * 3600000;
+        }
+        LogUtil.info("下次" + type == "daily" ? "每日"
+                : "每周" + "任务刷新时间： &a" + Calendars.stampToString(nextRegen)
+                        + (nextRegenReal != 0L
+                                ? "&r（真实时间 &a" + Calendars.stampToString(nextRegenReal) + "&r）"
+                                : ""));
         Files.saveMeta();
     }
 }
