@@ -9,6 +9,6 @@ public final class GlobalTasks extends BukkitRunnable {
 
     @Override
     public void run() {
-        Functions.handleMissionRefresh();
+        Functions.handleMissionGeneration();
     }
 }
