@@ -15,12 +15,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
@@ -34,7 +36,8 @@ public final class MissionEvents implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    public static void updateData(Player p, String missionType, String dataName, Integer... addend) {
+    public static void updateData(Player p, String missionType, String dataName,
+            Integer... addend) {
         UUID u = p.getUniqueId();
         final Integer finalAddend = addend.length == 0 ? 1 : addend[0];
         FileConfiguration playerdata = Files.loadPlayer(u);
@@ -79,9 +82,35 @@ public final class MissionEvents implements Listener {
     }
 
     @EventHandler
+    public void onBlockDispense(BlockDispenseEvent e) {
+        ItemStack item = e.getItem();
+        ItemMeta meta = item.getItemMeta();
+        List<String> loreBefore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
+        loreBefore.add("dispensed");
+        meta.setLore(loreBefore);
+        item.setItemMeta(meta);
+        e.setItem(item);
+    }
+
+    @EventHandler
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
         if (e.getEntityType() != EntityType.PLAYER)
             return;
+        ItemStack item = e.getItem().getItemStack();
+        ItemMeta meta = item.getItemMeta();
+        if (meta.hasLore()) {
+            if (meta.getLore().contains("dispensed")) {
+                List<String> loreBefore = meta.getLore();
+                loreBefore.remove("dispensed");
+                meta.setLore(loreBefore);
+                item.setItemMeta(meta);
+                e.setCancelled(true);
+                Player p = (Player) e.getEntity();
+                p.getInventory().addItem(item);
+                e.getItem().remove();
+                return;
+            }
+        }
         if (droppedItem.contains(e.getItem().getUniqueId()))
             return;
         Player p = (Player) e.getEntity();
@@ -102,7 +131,8 @@ public final class MissionEvents implements Listener {
         BlockData data = e.getBlock().getBlockData();
         if (data instanceof Ageable) {
             Ageable age = (Ageable) data;
-            if (age.getAge() != age.getMaximumAge()) return;
+            if (age.getAge() != age.getMaximumAge())
+                return;
         }
         updateData(p, "blockbreak", e.getBlock().getType().toString());
     }
@@ -112,7 +142,8 @@ public final class MissionEvents implements Listener {
         if (e.getEntity().getKiller() == null)
             return;
         Player p = e.getEntity().getKiller();
-        if (e.getEntityType() == EntityType.PLAYER) return;
+        if (e.getEntityType() == EntityType.PLAYER)
+            return;
         updateData(p, "combat", e.getEntity().getType().toString());
     }
 
@@ -149,10 +180,11 @@ public final class MissionEvents implements Listener {
                 }
             }
             Integer realResult = spaceLeft >= rawResult ? rawResult : spaceLeft;
-            updateData(p, "crafting", e.getInventory().getResult().getType().toString(), realResult);
+            updateData(p, "crafting", e.getInventory().getResult().getType().toString(),
+                    realResult);
         } else {
             updateData(p, "crafting", e.getInventory().getResult().getType().toString(),
-                e.getInventory().getResult().getAmount());
+                    e.getInventory().getResult().getAmount());
         }
     }
 }
