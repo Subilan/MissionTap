@@ -118,7 +118,7 @@ public final class Functions {
         Files.init(plugin);
         Calendars.init();
         plugin.reloadConfig();
-        plugin.handleMissionGeneration();
+        handleMissionGeneration();
         if (Files.config.getBoolean("special-missions")) {
             Mission.missionTypes = new String[] {"daily", "weekly", "special"};
         } else {
@@ -293,6 +293,51 @@ public final class Functions {
                     acceptMissionsForAll(type);
                 }
             }
+        }
+    }
+
+    /**
+     * 处理任务生成的相关逻辑。其中包含日志输出、空文件处理和调用 {@code}handleMissionRefresh(){@code}。
+     */
+    public static void handleMissionGeneration() {
+        if (Files.isEmptyConfiguration(Files.dailyMissions)) {
+            LogUtil.warn("找不到每日任务池的内容。");
+        }
+        if (Files.isEmptyConfiguration(Files.weeklyMissions)) {
+            LogUtil.warn("找不到每周任务池的内容。");
+        }
+        if (Files.isEmptyConfiguration(Files.dailyMissions)
+                && Files.isEmptyConfiguration(Files.weeklyMissions)) {
+            LogUtil.warn("请在任务编写好后输入 &b/mt reload&r 来重载任务，在没写好并重载前请&c不要&r让玩家进入服务器。");
+            LogUtil.warn("若已经有玩家进入服务器，则应当让玩家退出后重新加入，否则任务数据为空。");
+        }
+        if (!Files.isEmptyConfiguration(Files.dailyMissions)
+                || !Files.isEmptyConfiguration(Files.weeklyMissions)) {
+            if (Files.isEmptyConfiguration(Files.meta)) {
+                LogUtil.info("初始化任务刷新时间...");
+                updateNextRefreshTime("daily");
+                updateNextRefreshTime("weekly");
+            }
+            LogUtil.info("刷新玩家任务中...");
+            handleMissionRefresh();
+            Long dailyNextRegen = Files.meta.getLong("daily.next-regen");
+            Long weeklyNextRegen = Files.meta.getLong("weekly.next-regen");
+            Long dailyNextRegenREAL = 0L;
+            Long weeklyNextRegenREAL = 0L;
+            if (Calendars.timeOffset != 0) {
+                dailyNextRegenREAL = dailyNextRegen - Calendars.timeOffset * 3600000;
+                weeklyNextRegenREAL = weeklyNextRegen - Calendars.timeOffset * 3600000;
+            }
+            LogUtil.info("下次每日任务刷新时间： &a" + Calendars.stampToString(dailyNextRegen)
+                    + (dailyNextRegenREAL != 0L
+                            ? "&r（真实时间 &a" + Calendars.stampToString(dailyNextRegenREAL) + "&r）"
+                            : ""));
+            LogUtil.info("下次每周任务刷新时间： &a" + Calendars.stampToString(weeklyNextRegen)
+                    + (weeklyNextRegenREAL != 0L
+                            ? "&r（真实时间 &a" + Calendars.stampToString(weeklyNextRegenREAL) + "&r）"
+                            : ""));
+            LogUtil.success("初始化成功。");
+            LogUtil.success("刷新成功。");
         }
     }
 
