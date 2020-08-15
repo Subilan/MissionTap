@@ -5,10 +5,15 @@ import org.sotap.MissionTap.Utils.Functions;
 
 public final class GlobalTasks extends BukkitRunnable {
 
-    public GlobalTasks() {}
+    public GlobalTasks() {
+    }
 
     @Override
     public void run() {
-        Functions.handleMissionGeneration();
+        for (String type : new String[] {"daily", "weekly"}) {
+            if (Functions.isTimeForRefreshFor(type)) {
+                Functions.handleMissionRefresh(type);
+            }
+        }
     }
 }
