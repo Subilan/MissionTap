@@ -63,6 +63,10 @@ public final class Mission {
                 finalLore.add("");
             }
         }
+        if (Calendars.timeOffset != 0) {
+            expiration -= Calendars.timeOffset;
+            refresh -= Calendars.timeOffset;
+        }
         final Description desc = new Description(u, type, key);
         finalLore.addAll(desc.getDescription(global));
         finalLore.add("");

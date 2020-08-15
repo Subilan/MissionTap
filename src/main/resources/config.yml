@@ -23,4 +23,5 @@ multiple-acceptance-cooldown: 0
 # 手动开关：是否显示特殊任务
 special-missions: false
 # 控制时差，单位小时，必须为整数
+# 计算方法：真实时间与服务器时间的差值
 time-offset: 0

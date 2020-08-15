@@ -6,6 +6,11 @@ import java.util.Date;
 import java.util.List;
 
 public final class Calendars {
+    public static Integer timeOffset;
+
+    public static void init() {
+        timeOffset = Files.config.getInt("time-offset");
+    }
 
     public static SimpleDateFormat getFormatter() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -16,7 +21,12 @@ public final class Calendars {
     }
 
     public static Long getNow() {
-        return new Date().getTime();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        if (timeOffset != 0) {
+            cal.add(Calendar.HOUR_OF_DAY, timeOffset);
+        }
+        return cal.getTime().getTime();
     }
 
     public static Date getNextWeeklyRefresh() {
@@ -26,6 +36,9 @@ public final class Calendars {
         Integer refreshDay = Files.config.getInt("weekly-refresh-time");
         Integer nextWeekdayOffset = today == (refreshDay - 1) ? 1 : refreshDay + 7 - today;
         cal.add(Calendar.DAY_OF_MONTH, nextWeekdayOffset);
+        if (timeOffset != 0) {
+            cal.add(Calendar.HOUR_OF_DAY, timeOffset);
+        }
         return cal.getTime();
     }
 
@@ -40,6 +53,9 @@ public final class Calendars {
         cal.set(Calendar.HOUR_OF_DAY, refreshHour);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
+        if (timeOffset != 0) {
+            cal.add(Calendar.HOUR_OF_DAY, timeOffset);
+        }
         return cal.getTime();
     }
 
@@ -53,6 +69,9 @@ public final class Calendars {
             if (Files.config.getBoolean("allow-tarriance")) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
+                if (timeOffset != 0) {
+                    cal.add(Calendar.HOUR_OF_DAY, timeOffset);
+                }
                 cal.add(Calendar.MONTH, 1);
                 weeklyRefresh = cal.getTime();
             }
