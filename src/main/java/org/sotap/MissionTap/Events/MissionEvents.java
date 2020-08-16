@@ -3,6 +3,8 @@ package org.sotap.MissionTap.Events;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
@@ -105,13 +107,18 @@ public final class MissionEvents implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
-        BlockData data = e.getBlock().getBlockData();
+        Block b = e.getBlock();
+        Location loc = b.getLocation();
+        if (prv.manuallyPlacedBlocks.containsKey(loc) && prv.manuallyPlacedBlocks.containsValue(b)) {
+            return;
+        }
+        BlockData data = b.getBlockData();
         if (data instanceof Ageable) {
             Ageable age = (Ageable) data;
             if (age.getAge() != age.getMaximumAge())
                 return;
         }
-        updateData(p, "blockbreak", e.getBlock().getType().toString());
+        updateData(p, "blockbreak", b.getType().toString());
     }
 
     @EventHandler(ignoreCancelled = true)
