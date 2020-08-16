@@ -1,6 +1,5 @@
 package org.sotap.MissionTap.Events;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -72,21 +71,18 @@ public final class MissionEvents implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
         if (e.getEntityType() != EntityType.PLAYER)
             return;
         ItemStack item = e.getItem().getItemStack();
         ItemMeta meta = item.getItemMeta();
         if (meta.hasLore()) {
-            if (meta.getLore().contains("dispensed")) {
-                List<String> loreBefore = meta.getLore();
-                loreBefore.remove("dispensed");
-                meta.setLore(loreBefore);
-                item.setItemMeta(meta);
+            if (meta.getLore().contains("dispensed") || meta.getLore().contains("from-container")) {
                 e.setCancelled(true);
                 Player p = (Player) e.getEntity();
-                p.getInventory().addItem(item);
+                p.getInventory().addItem(Functions.removeLore("from-container",
+                        Functions.removeLore("dispensed", item)));
                 e.getItem().remove();
                 return;
             }
@@ -97,7 +93,7 @@ public final class MissionEvents implements Listener {
         updateData(p, "collecting", e.getItem().getItemStack().getType().toString());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityBreeding(EntityBreedEvent e) {
         if (e.getBreeder().getType() != EntityType.PLAYER)
             return;
@@ -105,7 +101,7 @@ public final class MissionEvents implements Listener {
         updateData(p, "breeding", e.getEntity().getType().toString());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
         BlockData data = e.getBlock().getBlockData();
@@ -117,7 +113,7 @@ public final class MissionEvents implements Listener {
         updateData(p, "blockbreak", e.getBlock().getType().toString());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent e) {
         if (e.getEntity().getKiller() == null)
             return;
@@ -127,7 +123,7 @@ public final class MissionEvents implements Listener {
         updateData(p, "combat", e.getEntity().getType().toString());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onItemCraft(CraftItemEvent e) {
         HumanEntity h = e.getView().getPlayer();
         if (!(h instanceof Player))
