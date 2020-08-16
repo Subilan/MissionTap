@@ -78,10 +78,11 @@ public final class MissionEvents implements Listener {
         ItemStack item = e.getItem().getItemStack();
         ItemMeta meta = item.getItemMeta();
         if (meta.hasLore()) {
-            if (meta.getLore().contains("dispensed")) {
+            if (meta.getLore().contains("dispensed") || meta.getLore().contains("from-container")) {
                 e.setCancelled(true);
                 Player p = (Player) e.getEntity();
-                p.getInventory().addItem(Functions.removeLore("dispensed", item));
+                p.getInventory().addItem(Functions.removeLore("from-container",
+                        Functions.removeLore("dispensed", item)));
                 e.getItem().remove();
                 return;
             }
@@ -89,7 +90,8 @@ public final class MissionEvents implements Listener {
         if (prv.manuallyDroppedItems.contains(e.getItem().getUniqueId()))
             return;
         Player p = (Player) e.getEntity();
-        updateData(p, "collecting", e.getItem().getItemStack().getType().toString(), e.getItem().getItemStack().getAmount());
+        updateData(p, "collecting", e.getItem().getItemStack().getType().toString(),
+                e.getItem().getItemStack().getAmount());
     }
 
     @EventHandler(ignoreCancelled = true)
