@@ -424,4 +424,61 @@ public final class Functions {
                                 : ""));
         Files.saveMeta();
     }
+
+    /**
+     * 为指定的 IS 添加一行 lore
+     * @param line 要添加的 lore
+     * @param stack 要添加的 IS
+     * @return 添加后的 IS
+     */
+    public static ItemStack addLore(String line, ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        List<String> loreBefore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
+        loreBefore.add(line);
+        meta.setLore(loreBefore);
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    /**
+     * 移除指定 IS 的某一行 lore
+     * @param line 要移除的 lore
+     * @param stack 要移除的 IS
+     * @return 移除后的 IS
+     */
+    public static ItemStack removeLore(String line, ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        if (!meta.hasLore()) return stack;
+        List<String> lore = meta.getLore();
+        lore.remove(line);
+        meta.setLore(lore);
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    /**
+     * 清空指定 IS 的 lore
+     * @param stack 要清空的 IS
+     * @return 清空后的 IS
+     */
+    public static ItemStack clearLore(ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        if (!meta.hasLore()) return stack;
+        meta.getLore().clear();
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    /**
+     * 将指定 IS 的 lore 设置为指定值
+     * @param lore 指定值
+     * @param stack 指定 IS
+     * @return 设置后的 IS
+     */
+    public static ItemStack setLore(List<String> lore, ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        meta.setLore(lore);
+        stack.setItemMeta(meta);
+        return stack;
+    }
 }
