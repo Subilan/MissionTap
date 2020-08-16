@@ -89,7 +89,7 @@ public final class MissionEvents implements Listener {
         if (prv.manuallyDroppedItems.contains(e.getItem().getUniqueId()))
             return;
         Player p = (Player) e.getEntity();
-        updateData(p, "collecting", e.getItem().getItemStack().getType().toString());
+        updateData(p, "collecting", e.getItem().getItemStack().getType().toString(), e.getItem().getItemStack().getAmount());
     }
 
     @EventHandler(ignoreCancelled = true)
