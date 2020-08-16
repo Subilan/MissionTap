@@ -1,6 +1,5 @@
 package org.sotap.MissionTap.Events;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -15,12 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.MissionTap;
@@ -29,11 +26,11 @@ import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
 
 public final class MissionEvents implements Listener {
-    private List<UUID> droppedItem;
+    public final Preventers prv;
 
     public MissionEvents(MissionTap plugin) {
-        this.droppedItem = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        this.prv = new Preventers(plugin);
     }
 
     public static void updateData(Player p, String missionType, String dataName,
@@ -75,23 +72,6 @@ public final class MissionEvents implements Listener {
         }
     }
 
-    // cheating action filter
-    @EventHandler
-    public void onPlayerDropItem(PlayerDropItemEvent e) {
-        droppedItem.add(e.getItemDrop().getUniqueId());
-    }
-
-    @EventHandler
-    public void onBlockDispense(BlockDispenseEvent e) {
-        ItemStack item = e.getItem();
-        ItemMeta meta = item.getItemMeta();
-        List<String> loreBefore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
-        loreBefore.add("dispensed");
-        meta.setLore(loreBefore);
-        item.setItemMeta(meta);
-        e.setItem(item);
-    }
-
     @EventHandler
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
         if (e.getEntityType() != EntityType.PLAYER)
@@ -111,7 +91,7 @@ public final class MissionEvents implements Listener {
                 return;
             }
         }
-        if (droppedItem.contains(e.getItem().getUniqueId()))
+        if (prv.droppedItem.contains(e.getItem().getUniqueId()))
             return;
         Player p = (Player) e.getEntity();
         updateData(p, "collecting", e.getItem().getItemStack().getType().toString());
