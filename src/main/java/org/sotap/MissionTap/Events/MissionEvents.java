@@ -98,6 +98,8 @@ public final class MissionEvents implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityBreeding(EntityBreedEvent e) {
+        if (e.getBreeder() == null)
+            return;
         if (e.getBreeder().getType() != EntityType.PLAYER)
             return;
         Player p = (Player) e.getBreeder();
