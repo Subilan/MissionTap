@@ -289,7 +289,7 @@ public final class Functions {
     public static void handleMissionRefresh(String type) {
         if (!List.of("daily", "weekly").contains(type))
             return;
-        LogUtil.info("正在刷新" + type == "daily" ? "每日" : "每周" + "任务。");
+        LogUtil.info("正在刷新" + (type == "daily" ? "每日" : "每周") + "任务。");
         clearAllExpiredMissions();
         generateMissionsForAll(type);
         if (!Files.config.getBoolean("require-acceptance")) {
@@ -417,8 +417,8 @@ public final class Functions {
         if (Calendars.timeOffset != 0) {
             nextRegenReal = nextRegen - Calendars.timeOffset * 3600000;
         }
-        LogUtil.info("下次" + type == "daily" ? "每日"
-                : "每周" + "任务刷新时间： &a" + Calendars.stampToString(nextRegen)
+        LogUtil.info("下次" + (type == "daily" ? "每日"
+                : "每周") + "任务刷新时间： &a" + Calendars.stampToString(nextRegen)
                         + (nextRegenReal != 0L
                                 ? "&r（真实时间 &a" + Calendars.stampToString(nextRegenReal) + "&r）"
                                 : ""));
