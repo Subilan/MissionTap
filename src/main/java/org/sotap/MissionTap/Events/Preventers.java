@@ -25,10 +25,12 @@ import org.sotap.MissionTap.Utils.Functions;
 public final class Preventers implements Listener {
     public List<UUID> manuallyDroppedItems;
     public Map<Location, Block> manuallyPlacedBlocks;
+    public List<ItemStack> manuallyDroppedItemStacks;
 
     public Preventers(MissionTap plugin) {
         this.manuallyDroppedItems = new ArrayList<>();
         this.manuallyPlacedBlocks = new HashMap<>();
+        this.manuallyDroppedItemStacks = new ArrayList<>();
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -37,10 +39,10 @@ public final class Preventers implements Listener {
         manuallyDroppedItems.add(e.getItemDrop().getUniqueId());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    /*@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent e) {
         ItemStack item = e.getItem();
-        e.setItem(Functions.addLore("dispensed", item));
+        manuallyDroppedItemStacks.add(item);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -51,13 +53,12 @@ public final class Preventers implements Listener {
             return;
         InventoryHolder holder = (InventoryHolder) state;
         Inventory inventory = holder.getInventory();
-        List<ItemStack> progressed = new ArrayList<>();
         for (ItemStack stack : inventory.getContents()) {
             if (Functions.isEmptyItemStack(stack))
                 continue;
-            progressed.add(Functions.addLore("from-container", stack));
+            manuallyDroppedItemStacks.add(stack);
         }
-    }
+    }*/
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent e) {
