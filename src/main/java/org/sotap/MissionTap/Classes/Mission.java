@@ -28,7 +28,7 @@ public final class Mission {
     public final UUID u;
     public static String[] missionTypes = {"daily", "weekly", "special"};
     public static String[] missionDataTypes =
-            {"blockbreak", "collecting", "breeding", "combat", "crafting"};
+            {"blockbreak", "breeding", "combat", "crafting"};
 
     public Mission(UUID u, String type, String key) {
         this.type = type;

@@ -17,7 +17,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.sotap.MissionTap.MissionTap;
@@ -70,20 +69,6 @@ public final class MissionEvents implements Listener {
                 }
             }
         }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerPickupItem(EntityPickupItemEvent e) {
-        if (e.getEntityType() != EntityType.PLAYER)
-            return;
-        if (prv.manuallyDroppedItems.contains(e.getItem().getUniqueId()))
-            return;
-        System.out.println(e.getItem().getItemStack());
-        if (prv.manuallyDroppedItemStacks.contains(e.getItem().getItemStack()))
-            return;
-        Player p = (Player) e.getEntity();
-        updateData(p, "collecting", e.getItem().getItemStack().getType().toString(),
-                e.getItem().getItemStack().getAmount());
     }
 
     @EventHandler(ignoreCancelled = true)
