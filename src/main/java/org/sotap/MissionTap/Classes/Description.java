@@ -31,6 +31,7 @@ public final class Description {
      */
     public static String getDataTypeName(String dataType) {
         Map<String, String> map = new HashMap<>();
+        map.put("collecting", "物品");
         map.put("blockbreak", "破坏");
         map.put("combat", "击杀");
         map.put("breeding", "繁殖");
@@ -46,6 +47,7 @@ public final class Description {
      */
     public static String getQuantifier(String dataType) {
         Map<String, String> map = new HashMap<>();
+        map.put("collecting", "个");
         map.put("blockbreak", "个");
         map.put("combat", "只");
         map.put("breeding", "对");
@@ -53,8 +55,15 @@ public final class Description {
         return map.get(dataType);
     }
 
+    /**
+     * 根据 dataType 获取对应的物件名称
+     * 
+     * @param dataType 要求类型
+     * @return
+     */
     public static String getObjectName(String dataType) {
         Map<String, String> map = new HashMap<>();
+        map.put("collecting", "物品");
         map.put("blockbreak", "方块");
         map.put("combat", "生物");
         map.put("breeding", "动物");
