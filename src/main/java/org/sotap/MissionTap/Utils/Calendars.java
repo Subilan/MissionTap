@@ -72,7 +72,7 @@ public final class Calendars {
                 if (timeOffset != 0) {
                     cal.add(Calendar.HOUR_OF_DAY, timeOffset);
                 }
-                cal.add(Calendar.MONTH, 1);
+                cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
                 weeklyRefresh = cal.getTime();
             }
             return weeklyRefresh.getTime();
