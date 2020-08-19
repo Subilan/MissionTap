@@ -20,7 +20,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
@@ -77,19 +76,10 @@ public final class MissionEvents implements Listener {
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
         if (e.getEntityType() != EntityType.PLAYER)
             return;
-        ItemStack item = e.getItem().getItemStack();
-        ItemMeta meta = item.getItemMeta();
-        if (meta.hasLore()) {
-            if (meta.getLore().contains("dispensed") || meta.getLore().contains("from-container")) {
-                e.setCancelled(true);
-                Player p = (Player) e.getEntity();
-                p.getInventory().addItem(Functions.removeLore("from-container",
-                        Functions.removeLore("dispensed", item)));
-                e.getItem().remove();
-                return;
-            }
-        }
         if (prv.manuallyDroppedItems.contains(e.getItem().getUniqueId()))
+            return;
+        System.out.println(e.getItem().getItemStack());
+        if (prv.manuallyDroppedItemStacks.contains(e.getItem().getItemStack()))
             return;
         Player p = (Player) e.getEntity();
         updateData(p, "collecting", e.getItem().getItemStack().getType().toString(),
@@ -111,7 +101,8 @@ public final class MissionEvents implements Listener {
         Player p = e.getPlayer();
         Block b = e.getBlock();
         Location loc = b.getLocation();
-        if (prv.manuallyPlacedBlocks.containsKey(loc) && prv.manuallyPlacedBlocks.containsValue(b)) {
+        if (prv.manuallyPlacedBlocks.containsKey(loc)
+                && prv.manuallyPlacedBlocks.containsValue(b)) {
             return;
         }
         BlockData data = b.getBlockData();
