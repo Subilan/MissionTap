@@ -70,9 +70,28 @@ public final class Functions {
             return;
         }
         FileConfiguration playermission;
+        ConfigurationSection missionsBefore;
+        Map<String,Object> missionBeforeMap;
+        Map<String, Object> resultMap;
         for (String key : playermissions.keySet()) {
             playermission = playermissions.get(key);
-            playermission.createSection(type, getRandomMissions(type));
+            resultMap = getRandomMissions(type);
+            if (type == "weekly") {
+                missionsBefore = playermission.getConfigurationSection(type);
+                if (missionsBefore != null) {
+                    missionBeforeMap = missionsBefore.getValues(false);
+                    Map<String,Object> mergedMap = new HashMap<>();
+                    for (String keyBefore : missionBeforeMap.keySet()) {
+                        if (resultMap.containsKey(keyBefore)) {
+                            resultMap.remove(keyBefore);
+                        }
+                    }
+                    mergedMap.putAll(missionBeforeMap);
+                    mergedMap.putAll(resultMap);
+                    resultMap = mergedMap;
+                }
+            }
+            playermission.createSection(type, resultMap);
             Files.savePlayerMission(playermission, UUID.fromString(key));
         }
         updateNextRefreshTime(type);
