@@ -17,12 +17,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
+import org.sotap.MissionTap.Utils.Identifiers;
 
 public final class MissionEvents implements Listener {
     public final Preventers prv;
@@ -85,6 +87,7 @@ public final class MissionEvents implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
         Block b = e.getBlock();
+        identifyAll(b.getDrops());
         Location loc = b.getLocation();
         if (prv.manuallyPlacedBlocks.containsKey(loc)
                 && prv.manuallyPlacedBlocks.containsValue(b)) {
@@ -97,6 +100,18 @@ public final class MissionEvents implements Listener {
                 return;
         }
         updateData(p, "blockbreak", b.getType().toString());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerPickupItem(EntityPickupItemEvent e) {
+        if (e.getEntityType() != EntityType.PLAYER) return;
+        ItemStack pickedUp = e.getItem().getItemStack();
+        Player p = (Player) e.getEntity();
+        System.out.println(Identifiers.identifier.identified);
+        if (Identifiers.isValidIdentified(pickedUp)) {
+            Identifiers.setInvalid(pickedUp);
+            updateData(p, "collecting", pickedUp.getType().toString(), pickedUp.getAmount());
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -147,6 +162,12 @@ public final class MissionEvents implements Listener {
         } else {
             updateData(p, "crafting", e.getInventory().getResult().getType().toString(),
                     e.getInventory().getResult().getAmount());
+        }
+    }
+
+    public static void identifyAll(Iterable<ItemStack> stacks) {
+        for (ItemStack i : stacks) {
+            Identifiers.identify(i);
         }
     }
 }
