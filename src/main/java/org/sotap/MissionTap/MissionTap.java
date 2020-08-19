@@ -8,6 +8,7 @@ import org.sotap.MissionTap.Commands.CommandHandler;
 import org.sotap.MissionTap.Commands.Tab;
 import org.sotap.MissionTap.Utils.Events;
 import org.sotap.MissionTap.Utils.Functions;
+import org.sotap.MissionTap.Utils.Identifiers;
 import org.sotap.MissionTap.Utils.LogUtil;
 import org.sotap.MissionTap.Utils.Menus;
 
@@ -19,6 +20,7 @@ public final class MissionTap extends JavaPlugin {
         Functions.reloadPlugin(this);
         Menus.init(this);
         Events.init(this);
+        Identifiers.init(this);
         @SuppressWarnings("unused")
         BukkitTask timer = new GlobalTasks().runTaskTimer(this, 0, 20);
         Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
