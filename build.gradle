@@ -11,8 +11,8 @@ sourceCompatibility = 11
 
 repositories {
     jcenter()
-    maven { name 'Spigot';      url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-    maven { name 'Sonatype';    url 'https://oss.sonatype.org/content/groups/public' }
+    maven { name 'Spigot'; url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { name 'Sonatype'; url 'https://oss.sonatype.org/content/groups/public' }
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
@@ -31,9 +31,13 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
-task runBuild(type:Exec) {
+import org.apache.tools.ant.taskdefs.condition.Os;
+
+task runBuild(type: Exec) {
     doFirst {
-        commandLine = ['cmd', '/C', 'start', 'copy.bat']
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            commandLine = ['cmd', '/C', 'start', 'copy.bat']
+        }
     }
 }
 jar.finalizedBy runBuild
