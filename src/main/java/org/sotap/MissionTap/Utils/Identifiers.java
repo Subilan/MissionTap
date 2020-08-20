@@ -1,14 +1,13 @@
 package org.sotap.MissionTap.Utils;
 
 import org.bukkit.inventory.ItemStack;
-import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.ItemStackIdentifier;
 
 public final class Identifiers {
     public static ItemStackIdentifier identifier;
 
-    public static void init(MissionTap plugin) {
-        identifier = new ItemStackIdentifier(plugin);
+    public static void init() {
+        identifier = new ItemStackIdentifier();
     }
 
     /**
@@ -27,16 +26,6 @@ public final class Identifiers {
      */
     public static boolean isValidIdentified(ItemStack stack) {
         return identifier.isIdentified(stack, true);
-    }
-    
-    /**
-     * 判断 stack 是否包含无效标识
-     * 
-     * @param stack
-     * @return 是否包含无效标识
-     */
-    public static boolean isInvalidIdentified(ItemStack stack) {
-        return identifier.isIdentified(stack, false);
     }
 
     /**

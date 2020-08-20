@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,14 +46,20 @@ public final class Files {
         }
     }
 
-    public static File getFile(File folder, String name) {
+    public static File getFile(File folder, String name) throws IOException {
         File file = new File(folder, name);
         if (!folder.exists()) {
-            folder.mkdir();
+            boolean state = folder.mkdir();
+            if (!state) {
+                throw new IOException("cannot create file directory automatically");
+            }
         }
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                boolean state = file.createNewFile();
+                if (!state) {
+                    throw new IOException("cannot create file automatically.");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -61,9 +68,14 @@ public final class Files {
     }
 
     public static FileConfiguration load(String path, String name) {
-        return YamlConfiguration
-                .loadConfiguration(getFile(new File(path.replace(path.length() == 1 ? "." : "./",
-                        path.length() == 1 ? cwd : cwd + "/")), name));
+        try {
+            return YamlConfiguration
+                    .loadConfiguration(getFile(new File(path.replace(path.length() == 1 ? "." : "./",
+                            path.length() == 1 ? cwd : cwd + "/")), name));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static boolean isEmptyConfiguration(ConfigurationSection config) {
@@ -74,10 +86,6 @@ public final class Files {
 
     public static FileConfiguration loadPlayer(UUID u) {
         return load("./playerdata", u.toString() + ".yml");
-    }
-
-    public static FileConfiguration loadMissionFor(UUID u) {
-        return load("./generated/player", u.toString() + ".yml");
     }
 
     public static void save(FileConfiguration data, String targetFile) {
@@ -106,7 +114,7 @@ public final class Files {
 
     /**
      * 获取指定类型的任务源文件
-     * 
+     *
      * @param type 类型
      * @return 源文件的 FC 实例
      */
@@ -137,8 +145,8 @@ public final class Files {
 
     /**
      * 获取有记录的所有玩家的 UUID 和其对应的 FC 实例所组成的 Map
-     * 
-     * @return Map(String,FC)
+     *
+     * @return Map(String, FC)
      */
     public static Map<UUID, FileConfiguration> getAllPlayerdata() {
         Map<UUID, FileConfiguration> result = new HashMap<>();
@@ -155,7 +163,7 @@ public final class Files {
 
     /**
      * 获取有记录的所有玩家的 UUID
-     * 
+     *
      * @return UUID 的 List
      */
     public static List<UUID> getAllPlayerUUID() {

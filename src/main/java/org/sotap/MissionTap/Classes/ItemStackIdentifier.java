@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+
 import org.bukkit.inventory.ItemStack;
-import org.sotap.MissionTap.MissionTap;
 
 public final class ItemStackIdentifier {
     public Map<UUID, Map<ItemStack, Boolean>> identified;
 
-    public ItemStackIdentifier(MissionTap plugin) {
+    public ItemStackIdentifier() {
         this.identified = new HashMap<>();
     }
 
@@ -21,11 +21,6 @@ public final class ItemStackIdentifier {
 
     public boolean isIdentified(ItemStack stack, boolean requireValid) {
         return identified.containsValue(createState(stack, requireValid));
-    }
-
-    public boolean isIdentified(ItemStack stack) {
-        return identified.containsValue(createState(stack, true))
-                || identified.containsValue(createState(stack, false));
     }
 
     public void setInvalid(ItemStack stack) {

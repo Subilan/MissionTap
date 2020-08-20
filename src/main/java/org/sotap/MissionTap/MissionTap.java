@@ -12,6 +12,8 @@ import org.sotap.MissionTap.Utils.Identifiers;
 import org.sotap.MissionTap.Utils.LogUtil;
 import org.sotap.MissionTap.Utils.Menus;
 
+import java.util.Objects;
+
 public final class MissionTap extends JavaPlugin {
 
     @Override
@@ -20,11 +22,11 @@ public final class MissionTap extends JavaPlugin {
         Functions.reloadPlugin(this);
         Menus.init(this);
         Events.init(this);
-        Identifiers.init(this);
+        Identifiers.init();
         @SuppressWarnings("unused")
         BukkitTask timer = new GlobalTasks().runTaskTimer(this, 0, 20);
-        Bukkit.getPluginCommand("missiontap").setExecutor(new CommandHandler(this));
-        Bukkit.getPluginCommand("missiontap").setTabCompleter(new Tab());
+        Objects.requireNonNull(Bukkit.getPluginCommand("missiontap")).setExecutor(new CommandHandler(this));
+        Objects.requireNonNull(Bukkit.getPluginCommand("missiontap")).setTabCompleter(new Tab());
         AgeingAPI.load();
         if (!AgeingAPI.isAvailable()) {
             LogUtil.failed("找不到必要的依赖 &eAgeing&r。");

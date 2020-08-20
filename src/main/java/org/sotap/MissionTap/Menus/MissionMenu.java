@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,13 +19,13 @@ import org.bukkit.inventory.ItemStack;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
+import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.LogUtil;
 
 public final class MissionMenu implements Listener {
     private final Inventory inventory;
     private final String type;
-    private ConfigurationSection objects;
-    private List<Mission> missions;
+    private final List<Mission> missions;
 
     public MissionMenu(String type, MissionTap plugin) {
         this.type = type;
@@ -34,7 +35,7 @@ public final class MissionMenu implements Listener {
     }
 
     private void init(UUID u) {
-        this.objects = type != null ? Files.getPlayerMissions(u).getConfigurationSection(type) : null;
+        ConfigurationSection objects = type != null ? Files.getPlayerMissions(u).getConfigurationSection(type) : null;
         if (Files.isEmptyConfiguration(objects)) {
             LogUtil.warn("由于数据为空，无法加载 GUI。");
             return;
@@ -54,7 +55,7 @@ public final class MissionMenu implements Listener {
             LogUtil.info("你现在不需要手动接受任务。", p);
             return;
         }
-        if (!Files.config.getBoolean("special-missions") && type == "special") {
+        if (!Files.config.getBoolean("special-missions") && Functions.eq(type, "special")) {
             LogUtil.info("当前特殊任务尚未开放。", p);
             return;
         }
@@ -73,7 +74,7 @@ public final class MissionMenu implements Listener {
         if (clicked.getType() == Material.AIR)
             return;
         final Player p = (Player) e.getWhoClicked();
-        final Integer slot = e.getSlot();
+        final int slot = e.getSlot();
         final Mission clickedMission = missions.get(slot);
         p.closeInventory();
         if (clickedMission.isAccepted()) {

@@ -1,7 +1,9 @@
 package org.sotap.MissionTap.Events;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -35,16 +37,16 @@ public final class MissionEvents implements Listener {
     }
 
     public static void updateData(Player p, String missionType, String dataName,
-            Integer... addend) {
+                                  Integer... addend) {
         UUID u = p.getUniqueId();
-        final Integer finalAddend = addend.length == 0 ? 1 : addend[0];
+        final int finalAddend = addend.length == 0 ? 1 : addend[0];
         FileConfiguration playerdata = Files.loadPlayer(u);
         for (String type : Mission.missionTypes) {
             ConfigurationSection section = playerdata.getConfigurationSection(type);
             if (section == null || Files.isEmptyConfiguration(section))
                 continue;
             Map<String, Object> data = section.getValues(false);
-            String dest = "";
+            String dest;
             for (String key : data.keySet()) {
                 dest = missionType + "-data" + "." + dataName;
                 ConfigurationSection object = (ConfigurationSection) data.get(key);
@@ -141,8 +143,8 @@ public final class MissionEvents implements Listener {
                     checked++;
                 }
             }
-            Integer rawResult = e.getRecipe().getResult().getAmount() * creation;
-            Integer spaceLeft = 0;
+            int rawResult = e.getRecipe().getResult().getAmount() * creation;
+            int spaceLeft = 0;
             ItemStack[] contents = e.getView().getPlayer().getInventory().getContents();
             for (int i = 0; i < 36; i++) {
                 ItemStack item = contents[i];
@@ -154,11 +156,11 @@ public final class MissionEvents implements Listener {
                     spaceLeft += item.getMaxStackSize() - item.getAmount();
                 }
             }
-            Integer realResult = spaceLeft >= rawResult ? rawResult : spaceLeft;
-            updateData(p, "crafting", e.getInventory().getResult().getType().toString(),
+            Integer realResult = Math.min(spaceLeft, rawResult);
+            updateData(p, "crafting", Objects.requireNonNull(e.getInventory().getResult()).getType().toString(),
                     realResult);
         } else {
-            updateData(p, "crafting", e.getInventory().getResult().getType().toString(),
+            updateData(p, "crafting", Objects.requireNonNull(e.getInventory().getResult()).getType().toString(),
                     e.getInventory().getResult().getAmount());
         }
     }
@@ -177,7 +179,7 @@ public final class MissionEvents implements Listener {
             if (prv.manuallyPlacedBlocks.containsKey(loc)
                     || prv.manuallyPlacedBlocks.containsKey(secondLoc)) {
                 Block target = prv.manuallyPlacedBlocks.containsKey(loc) ? prv.manuallyPlacedBlocks.get(loc) : prv.manuallyPlacedBlocks.get(secondLoc);
-                Integer delta = Math.abs(b.getY() - target.getY());
+                int delta = Math.abs(b.getY() - target.getY());
                 return delta == 0 || delta == 1;
             }
             return false;

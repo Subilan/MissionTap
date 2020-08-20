@@ -1,10 +1,6 @@
 package org.sotap.MissionTap.Classes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -33,29 +29,29 @@ public final class Mission {
     public Mission(UUID u, String type, String key) {
         this.type = type;
         this.key = key;
-        if (type != "special") {
+        if (!Functions.eq(type, "special")) {
             this.missionFile = Files.getPlayerMissions(u);
             this.missions = missionFile.getConfigurationSection(type);
         } else {
             this.missionFile = Files.specialMissions;
             this.missions = Files.specialMissions;
         }
-        this.object = missions.getConfigurationSection(key);
+        this.object = Objects.requireNonNull(missions).getConfigurationSection(key);
         this.playerdata = Files.loadPlayer(u);
         this.u = u;
     }
 
     /**
      * 获取该任务的 ItemStack 图标，参数中的全局内容是指是否显示在 MainMenu 类菜单中，若不填则为 false
-     * 
+     *
      * @param global 是否为全局内容
      * @return
      */
     public ItemStack getItemStack(boolean global) {
         List<String> lore = object.getStringList("lore");
         List<String> finalLore = new ArrayList<>();
-        Long expiration = 0L;
-        Long refresh = Files.meta.getLong(type + ".next-regen");
+        long expiration = 0L;
+        long refresh = Files.meta.getLong(type + ".next-regen");
         if (!global) {
             expiration = Files.loadPlayer(u).getLong(type + "." + key + ".expiration");
             if (Files.config.getBoolean("require-submittion")) {
@@ -68,20 +64,23 @@ public final class Mission {
             refresh -= Calendars.timeOffset * 3600000;
         }
         final Description desc = new Description(u, type, key);
-        finalLore.addAll(desc.getDescription(global));
+        List<String> descList = desc.getDescription(global);
+        if (descList != null) {
+            finalLore.addAll(descList);
+        }
         finalLore.add("");
         for (String text : lore) {
             finalLore.add(ChatColor.WHITE + LogUtil.translateColor(text));
         }
         finalLore.add("");
-        if (type != "special") {
+        if (!Functions.eq(type, "special")) {
             finalLore.add(
                     LogUtil.translateColor("&8" + ((!global) ? Calendars.stampToString(expiration)
                             : Calendars.stampToString(refresh))));
         }
         return Functions.createItemStack(
                 LogUtil.translateColor(
-                        (type == "special" ? "&l&6" : "") + getName()),
+                        (Functions.eq(type, "special") ? "&l&6" : "") + getName()),
                 (!global) ? (isFinished() ? Material.ENCHANTED_BOOK : Material.BOOK)
                         : Material.BOOK,
                 finalLore);
@@ -91,7 +90,7 @@ public final class Mission {
         Map<String, Object> missionContent = new HashMap<>();
         missionContent.put("name", getName());
         missionContent.put("acceptance", Calendars.getNow());
-        if (type != "special") {
+        if (!Functions.eq(type, "special")) {
             missionContent.put("expiration", Calendars.getMissionExpiration(type));
         }
         playerdata.createSection(type + "." + key, missionContent);
@@ -104,14 +103,14 @@ public final class Mission {
 
     public boolean isAccepted() {
         try {
-            return playerdata.getConfigurationSection(type).getKeys(false).contains(key);
+            return Objects.requireNonNull(playerdata.getConfigurationSection(type)).getKeys(false).contains(key);
         } catch (NullPointerException e) {
             return false;
         }
     }
 
     public boolean isExpired() {
-        if (type == "special")
+        if (Functions.eq(type, "special"))
             return false;
         try {
             return playerdata.getLong(type + "." + key + ".expiration") <= Calendars.getNow();
@@ -123,16 +122,18 @@ public final class Mission {
     public boolean isFinished() {
         for (String dataType : missionDataTypes) {
             if (object.getConfigurationSection(dataType) == null) {
-                Integer anyRequirement = object.getInt(dataType);
+                int anyRequirement = object.getInt(dataType);
                 if (anyRequirement == 0) {
                     continue;
                 }
-                if (playerdata.getConfigurationSection(
-                        type + "." + key + "." + dataType + "-data") == null)
+                Map<String, Object> progress;
+                try {
+                    progress = Objects.requireNonNull(playerdata
+                            .getConfigurationSection(type + "." + key + "." + dataType + "-data"))
+                            .getValues(false);
+                } catch (NullPointerException e) {
                     return false;
-                Map<String, Object> progress = playerdata
-                        .getConfigurationSection(type + "." + key + "." + dataType + "-data")
-                        .getValues(false);
+                }
                 Integer total = 0;
                 for (String progKey : progress.keySet()) {
                     total += (Integer) progress.get(progKey);
@@ -141,14 +142,21 @@ public final class Mission {
                     return false;
                 }
             } else {
-                if (playerdata.getConfigurationSection(
-                        type + "." + key + "." + dataType + "-data") == null)
+                Map<String, Object> progress;
+                Map<String, Object> requirement;
+                try {
+                    progress = Objects.requireNonNull(playerdata
+                            .getConfigurationSection(type + "." + key + "." + dataType + "-data"))
+                            .getValues(false);
+                } catch (NullPointerException e) {
                     return false;
-                Map<String, Object> progress = playerdata
-                        .getConfigurationSection(type + "." + key + "." + dataType + "-data")
-                        .getValues(false);
-                Map<String, Object> requirement =
-                        object.getConfigurationSection(dataType).getValues(false);
+                }
+                try {
+                    requirement =
+                            Objects.requireNonNull(object.getConfigurationSection(dataType)).getValues(false);
+                } catch (NullPointerException e) {
+                    return true;
+                }
                 for (String reqKey : requirement.keySet()) {
                     if (progress.get(reqKey) == null)
                         return false;
@@ -167,7 +175,7 @@ public final class Mission {
 
     public boolean reward(Player p) {
         List<String> commands = object.getStringList("rewards");
-        Integer ageExp = object.getInt("age-exp");
+        int ageExp = object.getInt("age-exp");
         if (commands.size() == 0 && ageExp == 0)
             return false;
         Functions.dispatchCommands(p, commands);
@@ -184,7 +192,6 @@ public final class Mission {
 
     public void setSubmitted() {
         List<String> submittedList = playerdata.getStringList("submitted-list." + type);
-        submittedList = submittedList == null ? new ArrayList<>() : submittedList;
         submittedList.add(key);
         playerdata.set("submitted-list." + type, submittedList);
         Files.savePlayer(playerdata, u);
@@ -192,7 +199,7 @@ public final class Mission {
 
     public boolean isSubmitted() {
         List<String> submittedList = playerdata.getStringList("submitted-list." + type);
-        if (submittedList != null) {
+        if (submittedList.size() > 0) {
             return submittedList.contains(key);
         }
         return false;
@@ -206,21 +213,24 @@ public final class Mission {
     }
 
     public void clearDataWithRequirement() {
-        Integer result;
+        int result;
         for (String dataType : missionDataTypes) {
             if (object.getConfigurationSection(dataType) == null || playerdata
                     .getConfigurationSection(type + "." + key + "." + dataType + "-data") == null)
                 continue;
-            Map<String, Object> requirement =
-                    object.getConfigurationSection(dataType).getValues(false);
-            Map<String, Object> progress =
-                    playerdata.getConfigurationSection(type + "." + key + "." + dataType + "-data")
-                            .getValues(false);
+            Map<String, Object> requirement;
+            Map<String, Object> progress;
+            try {
+                requirement = Objects.requireNonNull(object.getConfigurationSection(dataType)).getValues(false);
+                progress = Objects.requireNonNull(playerdata.getConfigurationSection(type + "." + key + "." + dataType + "-data"))
+                        .getValues(false);
+            } catch (NullPointerException e) {
+                return;
+            }
             for (String reqKey : requirement.keySet()) {
-                // if is finished, the former value should be greater than the latter value.
                 result = (Integer) progress.get(reqKey) - (Integer) requirement.get(reqKey);
                 playerdata.set(type + "." + key + "." + dataType + "-data." + reqKey,
-                        result < 0 ? 0 : result);
+                        Math.max(result, 0));
             }
         }
         Files.savePlayer(playerdata, u);

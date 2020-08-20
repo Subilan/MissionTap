@@ -10,7 +10,7 @@ public final class GlobalTasks extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (String type : new String[] {"daily", "weekly"}) {
+        for (String type : new String[]{"daily", "weekly"}) {
             if (Functions.isTimeForRefreshFor(type)) {
                 Functions.handleMissionRefresh(type);
             }

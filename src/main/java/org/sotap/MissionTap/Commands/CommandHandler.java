@@ -13,6 +13,7 @@ import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.LogUtil;
 import org.sotap.MissionTap.Utils.Menus;
 
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 public final class CommandHandler implements CommandExecutor {
     public final MissionTap plugin;
 
@@ -41,10 +42,8 @@ public final class CommandHandler implements CommandExecutor {
         }
     }
 
-    public static void playerOnlyWarning(Player p) {
-        if (p == null) {
-            LogUtil.failed("该指令只能由玩家执行。");
-        }
+    public static void playerOnlyWarning() {
+        LogUtil.failed("该指令只能由玩家执行。");
     }
 
     @Override
@@ -67,28 +66,40 @@ public final class CommandHandler implements CommandExecutor {
             switch (args[0]) {
                 case "daily":
                 case "d": {
-                    playerOnlyWarning(p);
+                    if (p == null) {
+                        playerOnlyWarning();
+                        break;
+                    }
                     Menus.dailyMissionMenu.open(p);
                     break;
                 }
 
                 case "weekly":
                 case "w": {
-                    playerOnlyWarning(p);
+                    if (p == null) {
+                        playerOnlyWarning();
+                        break;
+                    }
                     Menus.weeklyMissionMenu.open(p);
                     break;
                 }
 
                 case "inprogress":
                 case "i": {
-                    playerOnlyWarning(p);
+                    if (p == null) {
+                        playerOnlyWarning();
+                        break;
+                    }
                     Menus.inprogressMenu.open(p);
                     break;
                 }
 
                 case "special":
                 case "s": {
-                    playerOnlyWarning(p);
+                    if (p == null) {
+                        playerOnlyWarning();
+                        break;
+                    }
                     Menus.specialMissionMenu.open(p);
                     break;
                 }
@@ -122,7 +133,7 @@ public final class CommandHandler implements CommandExecutor {
                             case "clear-missions": {
                                 if (args.length >= 4) {
                                     if (List.of("all", "daily", "weekly", "special").contains(args[3])) {
-                                        if (args[3] == "all") {
+                                        if (Functions.eq(args[3], "all")) {
                                             Functions.clearAllMissionsFor(u);
                                         } else {
                                             Functions.clearMission(u, args[3]);

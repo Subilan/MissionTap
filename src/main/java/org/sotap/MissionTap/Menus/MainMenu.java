@@ -51,7 +51,7 @@ public final class MainMenu implements Listener {
         if (clicked.getType() == Material.AIR)
             return;
         final Player p = (Player) e.getWhoClicked();
-        final Integer slot = e.getSlot();
+        final int slot = e.getSlot();
         p.closeInventory();
         switch (slot) {
             case 10: {
@@ -72,10 +72,6 @@ public final class MainMenu implements Listener {
             case 16: {
                 Menus.inprogressMenu.open(p);
                 break;
-            }
-
-            default: {
-                return;
             }
         }
     }

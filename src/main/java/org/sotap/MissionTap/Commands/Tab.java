@@ -31,7 +31,7 @@ public final class Tab implements TabCompleter {
 
     public List<String> getResult(String arg, List<String> commands) {
         List<String> result = new ArrayList<>();
-        result = StringUtil.copyPartialMatches(arg, commands, result);
+        StringUtil.copyPartialMatches(arg, commands, result);
         Collections.sort(result);
         return result;
     }

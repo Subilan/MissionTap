@@ -1,11 +1,7 @@
 package org.sotap.MissionTap.Utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -47,9 +43,9 @@ public final class Functions {
             return null;
         Map<String, Object> result = new HashMap<>();
         List<String> keys = new ArrayList<>(pool.getKeys(false));
-        Integer amount = Files.config.getInt(type + "-mission-amount");
-        final Integer finalAmount = amount == 0 ? (type == "daily" ? 2 : 4)
-                : (keys.size() >= amount ? amount : keys.size());
+        int amount = Files.config.getInt(type + "-mission-amount");
+        final int finalAmount = amount == 0 ? (Objects.equals(type, "daily") ? 2 : 4)
+                : (Math.min(keys.size(), amount));
         String randomKey;
         while (result.size() < finalAmount) {
             randomKey = keys.get(random.nextInt(keys.size()));
@@ -77,15 +73,14 @@ public final class Functions {
         for (String key : playermissions.keySet()) {
             playermission = playermissions.get(key);
             resultMap = getRandomMissions(type);
-            if (type == "weekly") {
+            if (resultMap == null) return;
+            if (Objects.equals(type, "weekly")) {
                 missionsBefore = playermission.getConfigurationSection(type);
                 if (missionsBefore != null) {
                     missionBeforeMap = missionsBefore.getValues(false);
                     Map<String, Object> mergedMap = new HashMap<>();
                     for (String keyBefore : missionBeforeMap.keySet()) {
-                        if (resultMap.containsKey(keyBefore)) {
-                            resultMap.remove(keyBefore);
-                        }
+                        resultMap.remove(keyBefore);
                     }
                     mergedMap.putAll(missionBeforeMap);
                     mergedMap.putAll(resultMap);
@@ -106,7 +101,10 @@ public final class Functions {
      */
     public static void generateMissionsFor(UUID u, String type) {
         FileConfiguration playermission = Files.getPlayerMissions(u);
-        playermission.createSection(type, getRandomMissions(type));
+        Map<String, Object> map = getRandomMissions(type);
+        if (map != null) {
+            playermission.createSection(type, map);
+        }
         Files.savePlayerMission(playermission, u);
     }
 
@@ -118,10 +116,9 @@ public final class Functions {
      * @param lore     介绍部分（lore）
      * @return 所求 ItemStack
      */
-    public static ItemStack createItemStack(final String name, final Material material,
-            final List<String> lore) {
+    public static ItemStack createItemStack(final String name, final Material material, final List<String> lore) {
         final ItemStack item = new ItemStack(material);
-        final ItemMeta meta = item.getItemMeta();
+        final ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
         meta.setDisplayName(ChatColor.AQUA + name);
         meta.setLore(lore);
         item.setItemMeta(meta);
@@ -194,25 +191,6 @@ public final class Functions {
         FileConfiguration playerdata = Files.loadPlayer(u);
         playerdata.set("submittion-list", null);
         Files.savePlayer(playerdata, u);
-    }
-
-    /**
-     * 删除所有玩家的指定类型的提交记录，若类型为空，则删除所有玩家的所有任务提交记录
-     * 
-     * @param type
-     */
-    public static void clearAllSubmittionsForAll(String... type) {
-        String typeStr = type.length > 0 ? type[0] : null;
-        List<UUID> uuids = Files.getAllPlayerUUID();
-        if (uuids == null)
-            return;
-        for (UUID u : uuids) {
-            if (typeStr != null) {
-                clearSubmittion(u, typeStr);
-            } else {
-                clearAllSubmittions(u);
-            }
-        }
     }
 
     /**
@@ -309,7 +287,7 @@ public final class Functions {
     public static void handleMissionRefresh(String type) {
         if (!List.of("daily", "weekly").contains(type))
             return;
-        LogUtil.info("正在刷新" + (type == "daily" ? "每日" : "每周") + "任务。");
+        LogUtil.info("正在刷新" + (eq(type, "daily") ? "每日" : "每周") + "任务。");
         clearAllExpiredMissions();
         generateMissionsForAll(type);
         if (!Files.config.getBoolean("require-acceptance")) {
@@ -352,7 +330,7 @@ public final class Functions {
     /**
      * 初始化一名玩家
      * 
-     * @param p 玩家对象
+     * @param u 玩家对象 UUID
      */
     public static void initPlayer(UUID u) {
         if (isMissionEmpty(u)) {
@@ -383,7 +361,7 @@ public final class Functions {
     public static void acceptMissionsFor(String type, UUID u) {
         if (!List.of("weekly", "daily", "special").contains(type))
             return;
-        if (type == "special") {
+        if (eq(type, "special")) {
             if (Files.specialMissions == null) {
                 LogUtil.warn("特殊任务已启用，但未找到特殊任务。");
                 return;
@@ -430,82 +408,19 @@ public final class Functions {
     public static void updateNextRefreshTime(String type) {
         if (!List.of("daily", "weekly").contains(type))
             return;
-        Long nextRegen = Calendars.getNextRefresh(type);
+        long nextRegen = Calendars.getNextRefresh(type);
         Files.meta.set(type + ".last-regen", Calendars.getNow());
         Files.meta.set(type + ".next-regen", Calendars.getNextRefresh(type));
-        Long nextRegenReal = 0l;
+        long nextRegenReal = 0L;
         if (Calendars.timeOffset != 0) {
             nextRegenReal = nextRegen - Calendars.timeOffset * 3600000;
         }
-        LogUtil.info("下次" + (type == "daily" ? "每日" : "每周") + "任务刷新时间： &a"
+        LogUtil.info("下次" + (eq(type, "daily") ? "每日" : "每周") + "任务刷新时间： &a"
                 + Calendars.stampToString(nextRegen)
                 + (nextRegenReal != 0L
                         ? "&r（真实时间 &a" + Calendars.stampToString(nextRegenReal) + "&r）"
                         : ""));
         Files.saveMeta();
-    }
-
-    /**
-     * 为指定的 IS 添加一行 lore
-     * 
-     * @param line  要添加的 lore
-     * @param stack 要添加的 IS
-     * @return 添加后的 IS
-     */
-    public static ItemStack addLore(String line, ItemStack stack) {
-        ItemMeta meta = stack.getItemMeta();
-        List<String> loreBefore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
-        loreBefore.add(line);
-        meta.setLore(loreBefore);
-        stack.setItemMeta(meta);
-        return stack;
-    }
-
-    /**
-     * 移除指定 IS 的某一行 lore
-     * 
-     * @param line  要移除的 lore
-     * @param stack 要移除的 IS
-     * @return 移除后的 IS
-     */
-    public static ItemStack removeLore(String line, ItemStack stack) {
-        ItemMeta meta = stack.getItemMeta();
-        if (!meta.hasLore())
-            return stack;
-        List<String> lore = meta.getLore();
-        lore.remove(line);
-        meta.setLore(lore);
-        stack.setItemMeta(meta);
-        return stack;
-    }
-
-    /**
-     * 清空指定 IS 的 lore
-     * 
-     * @param stack 要清空的 IS
-     * @return 清空后的 IS
-     */
-    public static ItemStack clearLore(ItemStack stack) {
-        ItemMeta meta = stack.getItemMeta();
-        if (!meta.hasLore())
-            return stack;
-        meta.getLore().clear();
-        stack.setItemMeta(meta);
-        return stack;
-    }
-
-    /**
-     * 将指定 IS 的 lore 设置为指定值
-     * 
-     * @param lore  指定值
-     * @param stack 指定 IS
-     * @return 设置后的 IS
-     */
-    public static ItemStack setLore(List<String> lore, ItemStack stack) {
-        ItemMeta meta = stack.getItemMeta();
-        meta.setLore(lore);
-        stack.setItemMeta(meta);
-        return stack;
     }
 
     /**
@@ -527,5 +442,9 @@ public final class Functions {
             default:
                 return false;
         }
+    }
+
+    public static boolean eq(Object a, Object b) {
+        return Objects.equals(a, b);
     }
 }

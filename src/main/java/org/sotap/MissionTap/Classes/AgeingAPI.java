@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.sotap.Ageing.API;
 import org.sotap.Ageing.Ageing;
 
+import java.util.Objects;
+
 public final class AgeingAPI {
     public static Ageing ageing;
     public static API api;
@@ -13,7 +15,7 @@ public final class AgeingAPI {
     }
 
     public static void load() {
-        ageing = (Ageing) Bukkit.getPluginManager().getPlugin("Ageing");
+        ageing = (Ageing) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Ageing"));
         api = ageing.api;
     }
 }

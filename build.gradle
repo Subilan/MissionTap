@@ -27,14 +27,13 @@ dependencies {
     implementation group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
 }
 
-sourceSets {
-    main {
-        resources {
-            srcDirs "src/main/java/resources"
-        }
-    }
-}
-
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
+
+task runBuild(type:Exec) {
+    doFirst {
+        commandLine = ['cmd', '/C', 'start', 'copy.bat']
+    }
+}
+jar.finalizedBy runBuild

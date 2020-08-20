@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -74,7 +75,7 @@ public final class InprogressMenu implements Listener {
         if (clicked.getType() != Material.BOOK && clicked.getType() != Material.ENCHANTED_BOOK)
             return;
         Player p = (Player) e.getWhoClicked();
-        Integer slot = e.getSlot();
+        int slot = e.getSlot();
         Mission clickedMission = missions.get(slot);
         p.closeInventory();
         if (clickedMission.isExpired()) {
@@ -82,7 +83,7 @@ public final class InprogressMenu implements Listener {
             clickedMission.destory();
             return;
         }
-        if (clickedMission.type == "special" && !Files.config.getBoolean("special-missions")) {
+        if (Functions.eq(clickedMission.type, "special") && !Files.config.getBoolean("special-missions")) {
             LogUtil.failed("该特殊任务已下架，已自动移除。", p);
             clickedMission.destory();
             return;
@@ -107,7 +108,6 @@ public final class InprogressMenu implements Listener {
             } else {
                 LogUtil.failed("你还没有完成这个任务。", p);
             }
-            return;
         }
     }
 

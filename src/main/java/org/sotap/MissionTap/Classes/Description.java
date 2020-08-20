@@ -25,7 +25,7 @@ public final class Description {
 
     /**
      * 根据 dataType 获取对应的中文动词
-     * 
+     *
      * @param dataType 要求类型
      * @return
      */
@@ -41,7 +41,7 @@ public final class Description {
 
     /**
      * 根据 dataType 获取对应的中文量词（部分不准）
-     * 
+     *
      * @param dataType 要求类型
      * @return
      */
@@ -57,7 +57,7 @@ public final class Description {
 
     /**
      * 根据 dataType 获取对应的物件名称
-     * 
+     *
      * @param dataType 要求类型
      * @return
      */
@@ -73,8 +73,8 @@ public final class Description {
 
     /**
      * 获取介绍正文，返回的是一个 {@code}List(String){@code}
-     * 
-     * @param type 要求类型，选填、一个或多个字符串
+     *
+     * @param global 设置正文是否为全局显示
      * @return
      */
     public List<String> getDescription(boolean global) {
@@ -83,7 +83,7 @@ public final class Description {
         ConfigurationSection data;
         List<String> result = new ArrayList<>();
         Integer amountLeft;
-        Integer requirement;
+        int requirement;
         for (String dataType : Mission.missionDataTypes) {
             data = missionObject.getConfigurationSection(dataType);
             if (data == null) {
@@ -103,10 +103,10 @@ public final class Description {
                     amountLeft = getAmountLeft(dataType, itemKey, data);
                     result.add(ChatColor.WHITE
                             + LogUtil.translateColor((amountLeft == 0 ? "&8&m&o" : "")
-                                    + getDataTypeVerb(dataType) + (amountLeft == 0 ? " " : " &e")
-                                    + (global ? requirement : amountLeft)
-                                    + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType)
-                                    + Files.translations.getString(itemKey)));
+                            + getDataTypeVerb(dataType) + (amountLeft == 0 ? " " : " &e")
+                            + (global ? requirement : amountLeft)
+                            + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType)
+                            + Files.translations.getString(itemKey)));
                 }
             }
         }
@@ -115,14 +115,14 @@ public final class Description {
 
     /**
      * 获取用户剩余未完成的数值
-     * 
+     *
      * @param type            要求类型
      * @param itemKey         要求项目名称
      * @param requirementData 要求的 CS 实例
      * @return
      */
     public Integer getAmountLeft(String type, String itemKey,
-            ConfigurationSection requirementData) {
+                                 ConfigurationSection requirementData) {
         ConfigurationSection playerdata = playerObject.getConfigurationSection(type + "-data");
         Integer requirement = requirementData.getInt(itemKey);
         if (playerdata == null)
@@ -133,7 +133,7 @@ public final class Description {
 
     /**
      * 获取用户任意项未完成的数值
-     * 
+     *
      * @param type      要求类型
      * @param anyAmount 任意项要求数值（需要任意项多少个）
      * @return
@@ -142,7 +142,7 @@ public final class Description {
         ConfigurationSection playerdata = playerObject.getConfigurationSection(type + "-data");
         if (playerdata == null)
             return anyAmount;
-        Integer progress = 0;
+        int progress = 0;
         for (String itemKey : playerdata.getKeys(false)) {
             progress += playerdata.getInt(itemKey);
         }
