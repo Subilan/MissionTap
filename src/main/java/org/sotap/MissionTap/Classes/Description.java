@@ -31,7 +31,7 @@ public final class Description {
      */
     public static String getDataTypeName(String dataType) {
         Map<String, String> map = new HashMap<>();
-        map.put("collecting", "物品");
+        map.put("collecting", "收集");
         map.put("blockbreak", "破坏");
         map.put("combat", "击杀");
         map.put("breeding", "繁殖");
