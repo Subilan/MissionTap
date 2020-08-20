@@ -38,7 +38,7 @@ task runBuild(type: Exec) {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             commandLine = ['cmd', '/C', 'start', 'copy.bat']
         } else {
-            println("Skipped command line options.")
+            commandLine = ['echo', 'hello']
         }
     }
 }
