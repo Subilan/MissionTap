@@ -87,12 +87,10 @@ public final class MissionEvents implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
         Block b = e.getBlock();
-        identifyAll(b.getDrops());
-        Location loc = b.getLocation();
-        if (prv.manuallyPlacedBlocks.containsKey(loc)
-                && prv.manuallyPlacedBlocks.containsValue(b)) {
+        if (isManuallyPlaced(b)) {
             return;
         }
+        identifyAll(b.getDrops());
         BlockData data = b.getBlockData();
         if (data instanceof Ageable) {
             Ageable age = (Ageable) data;
@@ -104,10 +102,10 @@ public final class MissionEvents implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
-        if (e.getEntityType() != EntityType.PLAYER) return;
+        if (e.getEntityType() != EntityType.PLAYER)
+            return;
         ItemStack pickedUp = e.getItem().getItemStack();
         Player p = (Player) e.getEntity();
-        System.out.println(Identifiers.identifier.identified);
         if (Identifiers.isValidIdentified(pickedUp)) {
             Identifiers.setInvalid(pickedUp);
             updateData(p, "collecting", pickedUp.getType().toString(), pickedUp.getAmount());
@@ -165,9 +163,26 @@ public final class MissionEvents implements Listener {
         }
     }
 
-    public static void identifyAll(Iterable<ItemStack> stacks) {
+    public void identifyAll(Iterable<ItemStack> stacks) {
         for (ItemStack i : stacks) {
             Identifiers.identify(i);
         }
+    }
+
+    public boolean isManuallyPlaced(Block b) {
+        Location loc = b.getLocation();
+        if (Functions.isTallPlant(b)) {
+            Location secondLoc = loc.clone();
+            secondLoc.setY(loc.getY() + 1.0);
+            if (prv.manuallyPlacedBlocks.containsKey(loc)
+                    || prv.manuallyPlacedBlocks.containsKey(secondLoc)) {
+                Block target = prv.manuallyPlacedBlocks.containsKey(loc) ? prv.manuallyPlacedBlocks.get(loc) : prv.manuallyPlacedBlocks.get(secondLoc);
+                Integer delta = Math.abs(b.getY() - target.getY());
+                return delta == 0 || delta == 1;
+            }
+            return false;
+        }
+        return prv.manuallyPlacedBlocks.containsKey(loc)
+                && prv.manuallyPlacedBlocks.containsValue(b);
     }
 }

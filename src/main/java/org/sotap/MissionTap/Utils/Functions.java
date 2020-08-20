@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -71,7 +72,7 @@ public final class Functions {
         }
         FileConfiguration playermission;
         ConfigurationSection missionsBefore;
-        Map<String,Object> missionBeforeMap;
+        Map<String, Object> missionBeforeMap;
         Map<String, Object> resultMap;
         for (String key : playermissions.keySet()) {
             playermission = playermissions.get(key);
@@ -80,7 +81,7 @@ public final class Functions {
                 missionsBefore = playermission.getConfigurationSection(type);
                 if (missionsBefore != null) {
                     missionBeforeMap = missionsBefore.getValues(false);
-                    Map<String,Object> mergedMap = new HashMap<>();
+                    Map<String, Object> mergedMap = new HashMap<>();
                     for (String keyBefore : missionBeforeMap.keySet()) {
                         if (resultMap.containsKey(keyBefore)) {
                             resultMap.remove(keyBefore);
@@ -436,17 +437,18 @@ public final class Functions {
         if (Calendars.timeOffset != 0) {
             nextRegenReal = nextRegen - Calendars.timeOffset * 3600000;
         }
-        LogUtil.info("下次" + (type == "daily" ? "每日"
-                : "每周") + "任务刷新时间： &a" + Calendars.stampToString(nextRegen)
-                        + (nextRegenReal != 0L
-                                ? "&r（真实时间 &a" + Calendars.stampToString(nextRegenReal) + "&r）"
-                                : ""));
+        LogUtil.info("下次" + (type == "daily" ? "每日" : "每周") + "任务刷新时间： &a"
+                + Calendars.stampToString(nextRegen)
+                + (nextRegenReal != 0L
+                        ? "&r（真实时间 &a" + Calendars.stampToString(nextRegenReal) + "&r）"
+                        : ""));
         Files.saveMeta();
     }
 
     /**
      * 为指定的 IS 添加一行 lore
-     * @param line 要添加的 lore
+     * 
+     * @param line  要添加的 lore
      * @param stack 要添加的 IS
      * @return 添加后的 IS
      */
@@ -461,13 +463,15 @@ public final class Functions {
 
     /**
      * 移除指定 IS 的某一行 lore
-     * @param line 要移除的 lore
+     * 
+     * @param line  要移除的 lore
      * @param stack 要移除的 IS
      * @return 移除后的 IS
      */
     public static ItemStack removeLore(String line, ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
-        if (!meta.hasLore()) return stack;
+        if (!meta.hasLore())
+            return stack;
         List<String> lore = meta.getLore();
         lore.remove(line);
         meta.setLore(lore);
@@ -477,12 +481,14 @@ public final class Functions {
 
     /**
      * 清空指定 IS 的 lore
+     * 
      * @param stack 要清空的 IS
      * @return 清空后的 IS
      */
     public static ItemStack clearLore(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
-        if (!meta.hasLore()) return stack;
+        if (!meta.hasLore())
+            return stack;
         meta.getLore().clear();
         stack.setItemMeta(meta);
         return stack;
@@ -490,7 +496,8 @@ public final class Functions {
 
     /**
      * 将指定 IS 的 lore 设置为指定值
-     * @param lore 指定值
+     * 
+     * @param lore  指定值
      * @param stack 指定 IS
      * @return 设置后的 IS
      */
@@ -499,5 +506,26 @@ public final class Functions {
         meta.setLore(lore);
         stack.setItemMeta(meta);
         return stack;
+    }
+
+    /**
+     * 判断指定方块是否属于两格高整体植株，海带会返回 {@code}false{@code}
+     * 
+     * @param b 指定方块
+     * @return
+     */
+    public static boolean isTallPlant(Block b) {
+        Material type = b.getType();
+        switch (type) {
+            case ROSE_BUSH:
+            case TALL_GRASS:
+            case LILAC:
+            case PEONY:
+            case LARGE_FERN:
+                return true;
+
+            default:
+                return false;
+        }
     }
 }
