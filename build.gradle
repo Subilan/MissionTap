@@ -38,7 +38,7 @@ task runBuild(type: Exec) {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             commandLine = ['cmd', '/C', 'start', 'copy.bat']
         } else {
-            commandLine = ['echo', 'hello']
+            commandLine = ['echo', 'Nothing to do on system other than Windows.']
         }
     }
 }
