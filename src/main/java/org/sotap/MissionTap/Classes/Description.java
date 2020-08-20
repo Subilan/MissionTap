@@ -29,7 +29,7 @@ public final class Description {
      * @param dataType 要求类型
      * @return
      */
-    public static String getDataTypeName(String dataType) {
+    public static String getDataTypeVerb(String dataType) {
         Map<String, String> map = new HashMap<>();
         map.put("collecting", "收集");
         map.put("blockbreak", "破坏");
@@ -93,7 +93,7 @@ public final class Description {
                 amountLeft = getAnyAmountLeft(dataType, requirement);
                 result.add(
                         ChatColor.WHITE + LogUtil.translateColor((amountLeft == 0 ? "&8&m&o" : "")
-                                + getDataTypeName(dataType) + (amountLeft == 0 ? " " : " &e")
+                                + getDataTypeVerb(dataType) + (amountLeft == 0 ? " " : " &e")
                                 + (global ? requirement : amountLeft)
                                 + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType) + "任意"
                                 + getObjectName(dataType)));
@@ -103,7 +103,7 @@ public final class Description {
                     amountLeft = getAmountLeft(dataType, itemKey, data);
                     result.add(ChatColor.WHITE
                             + LogUtil.translateColor((amountLeft == 0 ? "&8&m&o" : "")
-                                    + getDataTypeName(dataType) + (amountLeft == 0 ? " " : " &e")
+                                    + getDataTypeVerb(dataType) + (amountLeft == 0 ? " " : " &e")
                                     + (global ? requirement : amountLeft)
                                     + (amountLeft == 0 ? " " : "&r&f ") + getQuantifier(dataType)
                                     + Files.translations.getString(itemKey)));
