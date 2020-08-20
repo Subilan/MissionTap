@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'org.sotap'
-version '1.0'
+version '1.1'
 ext.minecraftVersion = '1.16.1'
 ext.papiVersion = '2.10.7'
 
