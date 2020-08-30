@@ -18,7 +18,7 @@
 - 配置每个任务奖励的 [Ageing](//github.com/sotapmc/Ageing) 经验值。
 - ...
 
-同时，你还可以通过改变配置文件中不同的项目，来搭配出与众不同的任务模式。关于这一点，可查看我们的[开发文档](//book.sotap.org/#/missiontap/index)。
+同时，你还可以通过改变配置文件中不同的项目，来搭配出与众不同的任务模式。关于这一点，可查看我们的[开发文档](//docs.sotap.dev/#/missiontap/index)。
 
 ## 关于和下载
 
