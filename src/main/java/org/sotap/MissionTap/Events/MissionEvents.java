@@ -93,9 +93,9 @@ public final class MissionEvents implements Listener {
         if (isManuallyPlaced(b)) {
             return;
         }
-        if (!b.getDrops(p.getInventory().getItemInMainHand()).isEmpty()) {
+        /* if (!b.getDrops(p.getInventory().getItemInMainHand()).isEmpty()) {
             identifyAll(b.getDrops(), p.getUniqueId());
-        }
+        } */
         BlockData data = b.getBlockData();
         if (data instanceof Ageable) {
             Ageable age = (Ageable) data;
@@ -105,7 +105,7 @@ public final class MissionEvents implements Listener {
         updateData(p, "blockbreak", b.getType().toString());
     }
 
-    @EventHandler(ignoreCancelled = true)
+    /* @EventHandler(ignoreCancelled = true)
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
         if (e.getEntityType() != EntityType.PLAYER)
             return;
@@ -115,7 +115,7 @@ public final class MissionEvents implements Listener {
             Identifiers.remove(pickedUp, p.getUniqueId());
             updateData(p, "collecting", pickedUp.getType().toString(), pickedUp.getAmount());
         }
-    }
+    } */
 
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent e) {

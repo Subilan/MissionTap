@@ -28,6 +28,6 @@ public final class GlobalEvents implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        Identifiers.clearDataFor(p.getUniqueId());
+        // Identifiers.clearDataFor(p.getUniqueId());
     }
 }
