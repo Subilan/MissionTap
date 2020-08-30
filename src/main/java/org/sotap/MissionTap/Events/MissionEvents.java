@@ -93,7 +93,9 @@ public final class MissionEvents implements Listener {
         if (isManuallyPlaced(b)) {
             return;
         }
-        identifyAll(b.getDrops());
+        if (!b.getDrops(p.getInventory().getItemInMainHand()).isEmpty()) {
+            identifyAll(b.getDrops(), p.getUniqueId());
+        }
         BlockData data = b.getBlockData();
         if (data instanceof Ageable) {
             Ageable age = (Ageable) data;
@@ -109,8 +111,8 @@ public final class MissionEvents implements Listener {
             return;
         ItemStack pickedUp = e.getItem().getItemStack();
         Player p = (Player) e.getEntity();
-        if (Identifiers.isValidIdentified(pickedUp)) {
-            Identifiers.setInvalid(pickedUp);
+        if (Identifiers.isIdentified(pickedUp, p.getUniqueId())) {
+            Identifiers.remove(pickedUp, p.getUniqueId());
             updateData(p, "collecting", pickedUp.getType().toString(), pickedUp.getAmount());
         }
     }
@@ -166,9 +168,9 @@ public final class MissionEvents implements Listener {
         }
     }
 
-    public void identifyAll(Iterable<ItemStack> stacks) {
+    public void identifyAll(Iterable<ItemStack> stacks, UUID u) {
         for (ItemStack i : stacks) {
-            Identifiers.identify(i);
+            Identifiers.identify(i, u);
         }
     }
 

@@ -28,13 +28,4 @@ public final class Preventers implements Listener {
         Block b = e.getBlock();
         manuallyPlacedBlocks.put(b.getLocation(), b);
     }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onItemMerge(ItemMergeEvent e) {
-        ItemStack aStack = e.getEntity().getItemStack();
-        ItemStack bStack = e.getTarget().getItemStack();
-        if (Identifiers.isValidIdentified(aStack) || Identifiers.isValidIdentified(bStack)) {
-            e.setCancelled(true);
-        }
-    }
 }

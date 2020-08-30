@@ -1,41 +1,50 @@
 package org.sotap.MissionTap.Classes;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.sotap.MissionTap.Utils.Files;
 
 public final class ItemStackIdentifier {
-    public Map<UUID, Map<ItemStack, Boolean>> identified;
+    public static MemoryConfiguration mc;
+    public UUID u;
+    public List<ItemStack> stacks;
+    public ConfigurationSection data;
 
     public ItemStackIdentifier() {
-        this.identified = new HashMap<>();
+        mc = new MemoryConfiguration();
+    }
+
+    public void setUUID(UUID u) {
+        this.u = u;
+        data = mc.getConfigurationSection(u.toString());
     }
 
     public void addIdentifier(ItemStack stack) {
-        UUID random = UUID.randomUUID();
-        identified.put(random, createState(stack, true));
+        data.set(UUID.randomUUID().toString(), stack);
     }
 
-    public boolean isIdentified(ItemStack stack, boolean requireValid) {
-        return identified.containsValue(createState(stack, requireValid));
+    public boolean isIdentified(ItemStack stack) {
+        if (Files.isEmptyConfiguration(data)) return false;
+        for (String key : data.getKeys(false)) {
+            if (Objects.equals(data.getItemStack(key), stack)) return true;
+        }
+        return false;
     }
 
-    public void setInvalid(ItemStack stack) {
-        for (UUID u : identified.keySet()) {
-            if (Objects.equals(identified.get(u), createState(stack, true))) {
-                identified.remove(u);
-                identified.put(u, createState(stack, false));
+    public void remove(ItemStack stack) {
+        if (Files.isEmptyConfiguration(data)) return;
+        for (String key : data.getKeys(false)) {
+            if (Objects.equals(data.getItemStack(key), stack)) {
+                data.set(key, null);
                 break;
             }
         }
     }
 
-    private Map<ItemStack, Boolean> createState(ItemStack stack, Boolean bool) {
-        Map<ItemStack, Boolean> map = new HashMap<>();
-        map.put(stack, bool);
-        return map;
+    public static void clearDataFor(UUID u) {
+        mc.set(u.toString(), null);
     }
 }
