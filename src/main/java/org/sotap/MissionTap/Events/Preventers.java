@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.Identifiers;
 
+@SuppressWarnings("unused")
 public final class Preventers implements Listener {
     public Map<Location, Block> manuallyPlacedBlocks;
 

@@ -28,6 +28,7 @@ import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
 import org.sotap.MissionTap.Utils.Identifiers;
 
+@SuppressWarnings("unused")
 public final class MissionEvents implements Listener {
     public final Preventers prv;
 

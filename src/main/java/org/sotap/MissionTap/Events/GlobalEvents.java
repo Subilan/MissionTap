@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Utils.Functions;
 
+@SuppressWarnings("unused")
 public final class GlobalEvents implements Listener {
     public MissionTap plugin;
 
