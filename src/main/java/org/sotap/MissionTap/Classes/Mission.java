@@ -30,13 +30,19 @@ public final class Mission {
         this.type = type;
         this.key = key;
         if (!Functions.eq(type, "special")) {
+            // 指定玩家 u 的所有任务
             this.missionFile = Files.getPlayerMissions(u);
+            // 指定玩家 u 的特定类型任务
             this.missions = missionFile.getConfigurationSection(type);
         } else {
             this.missionFile = Files.specialMissions;
             this.missions = Files.specialMissions;
         }
-        this.object = Objects.requireNonNull(missions).getConfigurationSection(key);
+        // 确切的任务主体
+        this.object = missions.getConfigurationSection(key);
+        if (Files.isEmptyConfiguration(this.object)) {
+            throw new NullPointerException("The mission object can't be null.");
+        }
         this.playerdata = Files.loadPlayer(u);
         this.u = u;
     }
@@ -121,7 +127,7 @@ public final class Mission {
 
     public boolean isFinished() {
         for (String dataType : missionDataTypes) {
-            if (object.getConfigurationSection(dataType) == null) {
+            if (Files.isEmptyConfiguration(object.getConfigurationSection(dataType)) && object.getInt(dataType) > 0) {
                 int anyRequirement = object.getInt(dataType);
                 if (anyRequirement == 0) {
                     continue;
