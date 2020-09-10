@@ -5,16 +5,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
@@ -76,7 +74,7 @@ public final class MissionEvents implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityBreeding(EntityBreedEvent e) {
         if (e.getBreeder() == null)
             return;
@@ -86,26 +84,20 @@ public final class MissionEvents implements Listener {
         updateData(p, "breeding", e.getEntity().getType().toString());
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent e) {
-        Player p = e.getPlayer();
         Block b = e.getBlock();
-        if (isManuallyPlaced(b)) {
+        if (prv.isManuallyPlaced(b)) {
+            prv.clearManuallyPlaced(b);
             return;
         }
         /* if (!b.getDrops(p.getInventory().getItemInMainHand()).isEmpty()) {
             identifyAll(b.getDrops(), p.getUniqueId());
         } */
-        BlockData data = b.getBlockData();
-        if (data instanceof Ageable) {
-            Ageable age = (Ageable) data;
-            if (age.getAge() != age.getMaximumAge())
-                return;
-        }
-        updateData(p, "blockbreak", b.getType().toString());
+        updateData(e.getPlayer(), "blockbreak", b.getType().toString());
     }
 
-    /* @EventHandler(ignoreCancelled = true)
+    /* @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
         if (e.getEntityType() != EntityType.PLAYER)
             return;
@@ -117,7 +109,7 @@ public final class MissionEvents implements Listener {
         }
     } */
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent e) {
         if (e.getEntity().getKiller() == null)
             return;
@@ -127,7 +119,7 @@ public final class MissionEvents implements Listener {
         updateData(p, "combat", e.getEntity().getType().toString());
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onItemCraft(CraftItemEvent e) {
         HumanEntity h = e.getView().getPlayer();
         if (!(h instanceof Player))
@@ -172,22 +164,5 @@ public final class MissionEvents implements Listener {
         for (ItemStack i : stacks) {
             Identifiers.identify(i, u);
         }
-    }
-
-    public boolean isManuallyPlaced(Block b) {
-        Location loc = b.getLocation();
-        if (Functions.isTallPlant(b)) {
-            Location secondLoc = loc.clone();
-            secondLoc.setY(loc.getY() + 1.0);
-            if (prv.manuallyPlacedBlocks.containsKey(loc)
-                    || prv.manuallyPlacedBlocks.containsKey(secondLoc)) {
-                Block target = prv.manuallyPlacedBlocks.containsKey(loc) ? prv.manuallyPlacedBlocks.get(loc) : prv.manuallyPlacedBlocks.get(secondLoc);
-                int delta = Math.abs(b.getY() - target.getY());
-                return delta == 0 || delta == 1;
-            }
-            return false;
-        }
-        return prv.manuallyPlacedBlocks.containsKey(loc)
-                && prv.manuallyPlacedBlocks.containsValue(b);
     }
 }

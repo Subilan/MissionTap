@@ -13,7 +13,7 @@ public final class ItemStackIdentifier {
     public List<ItemStack> stacks;
     public ConfigurationSection data;
 
-    public ItemStackIdentifier() {
+    static {
         mc = new MemoryConfiguration();
     }
 

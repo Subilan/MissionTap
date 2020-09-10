@@ -5,7 +5,6 @@ import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -29,7 +28,7 @@ public final class Functions {
 
     /**
      * 获取一份随机生成的任务，返回的值是 Map，需要通过 createConfigurationSection 使用
-     * 
+     *
      * @param type 任务类型
      * @return 随机生成的任务
      */
@@ -58,7 +57,7 @@ public final class Functions {
 
     /**
      * 为所有有记录玩家重新生成一份任务
-     * 
+     *
      * @param type 任务类型
      */
     public static void generateMissionsForAll(String type) {
@@ -95,7 +94,7 @@ public final class Functions {
 
     /**
      * 为单一玩家单独生成新的任务，本项不属于刷新操作，故不会更新 {@code}last-regen{@code} 或者 {@code}next-regen{@code} 时间。
-     * 
+     *
      * @param u    玩家 UUID
      * @param type 任务类型
      */
@@ -110,7 +109,7 @@ public final class Functions {
 
     /**
      * 根据所提供的信息创建一个 ItemStack
-     * 
+     *
      * @param name     物品名称
      * @param material 物品材质
      * @param lore     介绍部分（lore）
@@ -127,7 +126,7 @@ public final class Functions {
 
     /**
      * 重载插件，本项不会重载 Menu 和 Events
-     * 
+     *
      * @param plugin
      */
     public static void reloadPlugin(MissionTap plugin) {
@@ -146,7 +145,7 @@ public final class Functions {
 
     /**
      * 处理玩家 {@code}p{@code} 对任务 {@code}m{@code} 的完成操作
-     * 
+     *
      * @param m
      * @param p
      */
@@ -170,7 +169,7 @@ public final class Functions {
 
     /**
      * 删除指定玩家的任务提交记录
-     * 
+     *
      * @param u    UUID
      * @param type 类型
      */
@@ -184,7 +183,7 @@ public final class Functions {
 
     /**
      * 删除指定玩家的所有任务提交记录
-     * 
+     *
      * @param u UUID
      */
     public static void clearAllSubmittions(UUID u) {
@@ -195,7 +194,7 @@ public final class Functions {
 
     /**
      * 删除指定玩家数据中指定类型的所有任务
-     * 
+     *
      * @param u    UUID
      * @param type 任务类型
      */
@@ -207,7 +206,7 @@ public final class Functions {
 
     /**
      * 删除所有玩家数据中指定类型的所有任务
-     * 
+     *
      * @param type 任务类型
      */
     public static void clearAllMissions(String type) {
@@ -246,7 +245,7 @@ public final class Functions {
 
     /**
      * 删除指定玩家数据中的所有任务
-     * 
+     *
      * @param u UUID
      */
     public static void clearAllMissionsFor(UUID u) {
@@ -260,7 +259,7 @@ public final class Functions {
 
     /**
      * 判断指定 ItemStack 是否为空，即是否为 NULL 或者空气
-     * 
+     *
      * @param i ItemStack
      * @return
      */
@@ -270,7 +269,7 @@ public final class Functions {
 
     /**
      * 判断当前时间是否已经为或超过指定类型任务的下次刷新时间
-     * 
+     *
      * @param type 任务类型
      * @return
      */
@@ -281,7 +280,7 @@ public final class Functions {
     /**
      * 处理指定类型任务刷新的相关逻辑。 先判断是不是满足了刷新时间，如果不是则不执行。 如果是，先清除所有玩家的指定类型的过期任务，然后再生成一份到玩家的任务列表中。
      * 最后判断如果不需要手动接受就帮玩家自动接受。
-     * 
+     *
      * @param type 任务类型
      */
     public static void handleMissionRefresh(String type) {
@@ -329,7 +328,7 @@ public final class Functions {
 
     /**
      * 初始化一名玩家
-     * 
+     *
      * @param u 玩家对象 UUID
      */
     public static void initPlayer(UUID u) {
@@ -354,7 +353,7 @@ public final class Functions {
 
     /**
      * 为指定玩家接受所有指定类型的任务，用于 {@code}require-acceptance=false{@code} 的情形
-     * 
+     *
      * @param type 任务类型
      * @param u    UUID
      */
@@ -386,7 +385,7 @@ public final class Functions {
 
     /**
      * 为所有玩家接受指定类型的任务，用于 {@code}require-acceptance=false{@code} 的情形
-     * 
+     *
      * @param type
      */
     public static void acceptMissionsForAll(String type) {
@@ -402,7 +401,7 @@ public final class Functions {
 
     /**
      * 更新指定类型的下次刷新时间，该函数将一并写入执行该函数的时间到 last-regen 项内
-     * 
+     *
      * @param type 任务类型
      */
     public static void updateNextRefreshTime(String type) {
@@ -421,27 +420,6 @@ public final class Functions {
                         ? "&r（真实时间 &a" + Calendars.stampToString(nextRegenReal) + "&r）"
                         : ""));
         Files.saveMeta();
-    }
-
-    /**
-     * 判断指定方块是否属于两格高整体植株，海带会返回 {@code}false{@code}
-     * 
-     * @param b 指定方块
-     * @return
-     */
-    public static boolean isTallPlant(Block b) {
-        Material type = b.getType();
-        switch (type) {
-            case ROSE_BUSH:
-            case TALL_GRASS:
-            case LILAC:
-            case PEONY:
-            case LARGE_FERN:
-                return true;
-
-            default:
-                return false;
-        }
     }
 
     public static boolean eq(Object a, Object b) {
