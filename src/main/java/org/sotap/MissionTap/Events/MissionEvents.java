@@ -24,9 +24,7 @@ import org.sotap.MissionTap.MissionTap;
 import org.sotap.MissionTap.Classes.Mission;
 import org.sotap.MissionTap.Utils.Files;
 import org.sotap.MissionTap.Utils.Functions;
-import org.sotap.MissionTap.Utils.Identifiers;
 
-@SuppressWarnings("unused")
 public final class MissionEvents implements Listener {
     private final Preventers prv;
     private final Identifiers idt;
@@ -34,7 +32,7 @@ public final class MissionEvents implements Listener {
     public MissionEvents(MissionTap plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
         this.prv = new Preventers(plugin);
-        this.idt = new Identifiers();
+        this.idt = new Identifiers(plugin);
     }
 
     public static void updateData(Player p, String missionType, String dataName,

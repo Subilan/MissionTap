@@ -6,7 +6,6 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
@@ -17,12 +16,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.ItemMergeEvent;
-import org.bukkit.inventory.ItemStack;
 import org.sotap.MissionTap.MissionTap;
-import org.sotap.MissionTap.Utils.Identifiers;
 
-@SuppressWarnings("unused")
 public final class Preventers implements Listener {
     private Map<String, Material> manuallyPlacedBlocks;
 
