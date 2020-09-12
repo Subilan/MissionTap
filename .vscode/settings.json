@@ -1,0 +1,7 @@
+{
+  "java.semanticHighlighting.enabled": true,
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.configuration.checkProjectSettingsExclusions": false,
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+}
