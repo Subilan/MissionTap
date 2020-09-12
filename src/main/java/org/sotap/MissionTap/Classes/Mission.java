@@ -126,52 +126,51 @@ public final class Mission {
     }
 
     public boolean isFinished() {
+        int missionCount = 0, finishedCount = 0;
         for (String dataType : missionDataTypes) {
-            if (Files.isEmptyConfiguration(object.getConfigurationSection(dataType)) && object.getInt(dataType) > 0) {
-                int anyRequirement = object.getInt(dataType);
-                if (anyRequirement == 0) {
-                    continue;
+            ConfigurationSection targetData = object.getConfigurationSection(dataType);
+            ConfigurationSection progressData = playerdata.getConfigurationSection(type + "." + key + "." + dataType + "-data");
+            if (targetData != null) {
+                int targetTotalCount = 0, targetFinishedCount = 0;
+                Map<String, Object> targetEntries = targetData.getValues(false);
+                Map<String, Object> progressEntries = progressData != null ? progressData.getValues(false) : null;
+                for (String entry : targetEntries.keySet()) {
+                    Object target = targetEntries.get(entry);
+                    Object progress = progressEntries != null ? progressEntries.get(entry) : null;
+                    int targetValue = (target instanceof Integer) ? (Integer)target : 0;
+                    int progressValue = (progress instanceof Integer) ? (Integer)progress : 0;
+                    if (targetValue > 0) {
+                        targetTotalCount++;
+                        if (progressValue >= targetValue) {
+                            targetFinishedCount++;
+                        }
+                    }
                 }
-                Map<String, Object> progress;
-                try {
-                    progress = Objects.requireNonNull(playerdata
-                            .getConfigurationSection(type + "." + key + "." + dataType + "-data"))
-                            .getValues(false);
-                } catch (NullPointerException e) {
-                    return false;
-                }
-                Integer total = 0;
-                for (String progKey : progress.keySet()) {
-                    total += (Integer) progress.get(progKey);
-                }
-                if (anyRequirement > total) {
-                    return false;
+                if (targetTotalCount > 0) {
+                    missionCount++;
+                    if (targetTotalCount == targetFinishedCount) {
+                        finishedCount++;
+                    }
                 }
             } else {
-                Map<String, Object> progress;
-                Map<String, Object> requirement;
-                try {
-                    progress = Objects.requireNonNull(playerdata
-                            .getConfigurationSection(type + "." + key + "." + dataType + "-data"))
-                            .getValues(false);
-                } catch (NullPointerException e) {
-                    return false;
+                int target = object.getInt(dataType);
+                int progress = 0;
+                if (progressData != null) {
+                    for (Object i : progressData.getValues(false).values()) {
+                        if (i instanceof Integer) {
+                            progress += (Integer)i;
+                        }
+                    }
                 }
-                try {
-                    requirement =
-                            Objects.requireNonNull(object.getConfigurationSection(dataType)).getValues(false);
-                } catch (NullPointerException e) {
-                    return true;
-                }
-                for (String reqKey : requirement.keySet()) {
-                    if (progress.get(reqKey) == null)
-                        return false;
-                    if ((Integer) progress.get(reqKey) < (Integer) requirement.get(reqKey))
-                        return false;
+                if (target > 0) {
+                    missionCount++;
+                    if (progress >= target) {
+                        finishedCount++;
+                    }
                 }
             }
         }
-        return true;
+        return missionCount > 0 && missionCount == finishedCount;
     }
 
     public void destory() {
