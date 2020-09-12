@@ -21,7 +21,6 @@ public final class MissionTap extends JavaPlugin {
         Functions.reloadPlugin(this);
         Menus.init(this);
         Events.init(this);
-        // Identifiers.init();
         @SuppressWarnings("unused")
         BukkitTask timer = new GlobalTasks().runTaskTimer(this, 0, 20);
         Objects.requireNonNull(Bukkit.getPluginCommand("missiontap")).setExecutor(new CommandHandler(this));

@@ -28,11 +28,13 @@ import org.sotap.MissionTap.Utils.Identifiers;
 
 @SuppressWarnings("unused")
 public final class MissionEvents implements Listener {
-    public final Preventers prv;
+    private final Preventers prv;
+    private final Identifiers idt;
 
     public MissionEvents(MissionTap plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
         this.prv = new Preventers(plugin);
+        this.idt = new Identifiers();
     }
 
     public static void updateData(Player p, String missionType, String dataName,
@@ -91,23 +93,22 @@ public final class MissionEvents implements Listener {
             prv.clearManuallyPlaced(b);
             return;
         }
-        /* if (!b.getDrops(p.getInventory().getItemInMainHand()).isEmpty()) {
-            identifyAll(b.getDrops(), p.getUniqueId());
-        } */
-        updateData(e.getPlayer(), "blockbreak", b.getType().toString());
+        Player p = e.getPlayer();
+        idt.queueAll(b.getDrops(p.getInventory().getItemInMainHand(), p), p);
+        updateData(p, "blockbreak", b.getType().toString());
     }
 
-    /* @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerPickupItem(EntityPickupItemEvent e) {
         if (e.getEntityType() != EntityType.PLAYER)
             return;
         ItemStack pickedUp = e.getItem().getItemStack();
         Player p = (Player) e.getEntity();
-        if (Identifiers.isIdentified(pickedUp, p.getUniqueId())) {
-            Identifiers.remove(pickedUp, p.getUniqueId());
-            updateData(p, "collecting", pickedUp.getType().toString(), pickedUp.getAmount());
+        int identifiedAmount = idt.dequeue(pickedUp, p);
+        if (identifiedAmount > 0) {
+            updateData(p, "collecting", pickedUp.getType().toString(), identifiedAmount);
         }
-    } */
+    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent e) {
@@ -157,12 +158,6 @@ public final class MissionEvents implements Listener {
         } else {
             updateData(p, "crafting", Objects.requireNonNull(e.getInventory().getResult()).getType().toString(),
                     e.getInventory().getResult().getAmount());
-        }
-    }
-
-    public void identifyAll(Iterable<ItemStack> stacks, UUID u) {
-        for (ItemStack i : stacks) {
-            Identifiers.identify(i, u);
         }
     }
 }
