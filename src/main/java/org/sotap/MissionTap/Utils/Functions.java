@@ -222,21 +222,26 @@ public final class Functions {
      * 清除所有玩家存在的任何类型的过期任务
      */
     public static void clearAllExpiredMissions() {
-        for (String type : new String[] {"daily", "weekly"}) {
-            Map<UUID, FileConfiguration> playerdatas = Files.getAllPlayerdata();
-            if (playerdatas == null)
+        Map<UUID, FileConfiguration> playerdatas = Files.getAllPlayerdata();
+        if (playerdatas == null)
+            return;
+        for (UUID u : playerdatas.keySet()) {
+            FileConfiguration playerdata = playerdatas.get(u);
+            if (playerdata == null)
                 continue;
-            FileConfiguration playerdata;
-            ConfigurationSection inprogMissions;
-            for (UUID u : playerdatas.keySet()) {
-                playerdata = playerdatas.get(u);
-                inprogMissions = playerdata.getConfigurationSection(type);
+            for (String type : new String[] {"daily", "weekly"}) {
+                ConfigurationSection inprogMissions = playerdata.getConfigurationSection(type);
                 if (inprogMissions == null)
                     continue;
                 for (String key : inprogMissions.getKeys(false)) {
-                    Mission m = new Mission(u, type, key);
-                    if (m.isExpired()) {
-                        m.destory();
+                    try {
+                        Mission m = new Mission(u, type, key);
+                        if (m.isExpired()) {
+                            m.destory();
+                        }
+                    } catch (NullPointerException e) {
+                        playerdata.set(type + "." + key, null);
+                        Files.savePlayer(playerdata, u);
                     }
                 }
             }
